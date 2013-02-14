@@ -1,5 +1,13 @@
 (function() {
 
+    /**
+     * global object
+     *
+     * @class Ink
+     * @static
+     */
+
+
     // skip redefinition of Ink core
     if ('Ink' in window) {
         return;
@@ -81,7 +89,9 @@
         },
 
         /**
-         * @function ? loads a javascript script in the head.
+         * loads a javascript script in the head.
+         *
+         * @method loadScript
          * @param  {String}  uri  can be an http URI or a module name
          */
         loadScript: function(uri) {
@@ -92,7 +102,9 @@
         },
 
         /**
-         * @function ? defines an Ink namespace.
+         * defines an Ink namespace.
+         *
+         * @method namespace
          * @param  {String}            ns
          * @param  {optional Boolean}  returnParentInstead
          * @return if returnParentInstead, returns [parent, lastPart], otherwise return the namespace directly
@@ -122,10 +134,12 @@
         },
 
         /**
-         * @function {Object|Function} ? synchronous. assumes module is loaded already!
+         * synchronous. assumes module is loaded already!
+         *
+         * @method getModule
          * @param  {String}           mod
          * @param  {optional Number}  version
-         * @return module object / function
+         * @return {Object|Function} module object / function
          */
         getModule: function(mod, version) {
             var modParts;
@@ -140,7 +154,9 @@
         },
 
         /**
-         * @function ? must be the wrapper around each Ink lib module for require resolution
+         * must be the wrapper around each Ink lib module for require resolution
+         *
+         * @method createModule
          * @param  {String}    mod    module name. parts are split with dots, must end with version number
          * @param  {String[]}  deps   array of module names which are dependencies for the module being created
          * @param  {Function}  modFn  its arguments are the resolved dependecies, once all of them are fetched. the body of this function should return the module.
@@ -198,7 +214,9 @@
         },
 
         /**
-         * @function ? use this to get depencies, even if they're not loaded yet
+         * use this to get depencies, even if they're not loaded yet
+         *
+         * @method requireModules
          * @param  {String[]}  deps  array of module names which are dependencies for the require function body
          * @param  {Function}  cbFn  its arguments are the resolved dependecies, once all of them are fetched
          */
@@ -238,7 +256,9 @@
         },
 
         /**
-         * @function ? list or module names, ordered by loaded time
+         * list or module names, ordered by loaded time
+         *
+         * @method getModulesLoadOrder
          * @return {String[]} returns the order in which modules were resolved and correctly loaded
          */
         getModulesLoadOrder: function() {

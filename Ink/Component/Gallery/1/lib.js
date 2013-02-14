@@ -1,3 +1,9 @@
+/**
+ * Provides the base Widget class xx...
+ *
+ * @module Component.Gallery.1
+ */
+
 Ink.createModule(
     'Component.Gallery.1',
     ['Dom.Event.1', 'Dom.Css.1'],

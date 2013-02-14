@@ -1,4 +1,4 @@
-# Ink.js - JavaScript FrameWork by SAPO
+# Ink.js - JavaScript Framework by SAPO
 
 
 

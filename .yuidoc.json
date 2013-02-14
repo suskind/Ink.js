@@ -1,0 +1,11 @@
+{
+    "name":        "Ink.js",
+    "description": "JavaScript FrameWork by SAPO",
+    "version":     "latest",
+    "url":         "http://www.todo.com",
+    "logo":        " ",
+    "paths":       ["./Ink/*.js"],
+    "options": {
+        "outdir": "./docs"
+    }
+}
