@@ -4,8 +4,8 @@
 ## Requirements
 
 * makefile
-* node.js
-* yuidoc
+* node.js   http://nodejs.org/
+* yuidoc    http://yui.github.com/yuidoc/
 
 
 ## Install
