@@ -1,5 +1,5 @@
 Ink.createModule(
-    'Dom.Event.1',
+    'Ink.Dom.Event', 1,
     [],
     function() {
 

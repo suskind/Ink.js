@@ -1,6 +1,6 @@
 Ink.createModule(
-    'Component.Slider.2',
-    ['Dom.Event.1', 'Dom.Css.1'],
+    'Ink.Component.Slider', 2,
+    ['Ink.Dom.Event_1', 'Ink.Dom.Css_1'],
     function(Event, Css) {
 
         var Comp = function(el, opts) {

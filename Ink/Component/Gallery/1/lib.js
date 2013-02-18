@@ -5,8 +5,8 @@
  */
 
 Ink.createModule(
-    'Component.Gallery.1',
-    ['Dom.Event.1', 'Dom.Css.1'],
+    'Ink.Component.Gallery', 1,
+    ['Ink.Dom.Event_1', 'Ink.Dom.Css_1'],
     function(Event, Css) {
 
         // NOTICE THAT GALLERY ISN'T RETURING A CLASS CONSTRUCTOR BUT A SIMPLE FUNCTION

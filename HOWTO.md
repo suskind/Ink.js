@@ -11,3 +11,5 @@
 ## Install
 
     [sudo] npm -g install yuidocjs
+			  jshint
+			  uglify-js

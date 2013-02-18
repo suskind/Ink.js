@@ -9,12 +9,13 @@
 
 
     // skip redefinition of Ink core
-    if ('Ink' in window) {
-        return;
-    }
+    if ('Ink' in window) { return; }
 
 
     // internal data
+    var paths = {
+        Ink: 'http://127.0.0.1:8000/Ink/'
+    };
     var modules = {};
     var modulesLoadOrder = [];
     var modulesRequested = {};
@@ -26,7 +27,7 @@
     var isEmptyObject = function(o) {
         if (typeof o !== 'object') { return false; }
         for (var k in o) {
-            return !k; // false
+            return false;
         }
         return true;
     };
@@ -73,32 +74,29 @@
             if (modName.indexOf('/') !== -1) {
                 return modName;
             }
-            var parts = modName.split('.');
-            parts = ['http://127.0.0.1:8000/Ink/', parts.join('/'), '/lib.js'];
-            return parts.join('');
-        },
-
-        _extractVersion: function(modName) {
-            var parts = modName.split('.');
-            var version = parts.pop();
-            version = parseInt(version, 10);
-            if (!isNaN(version)) {
-                return [parts.join('.'), version];
-            }
-            return [modName, undefined];
+            var parts = modName.replace(/_/g, '.').split('.');
+            var root = parts.shift();
+            var uriPrefix = paths[root];
+            return [uriPrefix, parts.join('/'), '/lib.js'].join('');
         },
 
         /**
          * loads a javascript script in the head.
          *
          * @method loadScript
-         * @param  {String}  uri  can be an http URI or a module name
+         * @param  {String}   uri       can be an http URI or a module name
          */
         loadScript: function(uri) {
             var scriptEl = document.createElement('script');
             scriptEl.setAttribute('type', 'text/javascript');
             scriptEl.setAttribute('src', this._modNameToUri(uri));
-            document.head.appendChild(scriptEl);
+
+            if (document.readyState !== 'complete') {
+                document.write( scriptEl.outerHTML );
+            }
+            else {
+                document.head.appendChild(scriptEl);
+            }
         },
 
         /**
@@ -113,11 +111,11 @@
             if (!ns || !ns.length) { return null; }
 
             var levels = ns.split('.');
-            var nsobj = Ink;
+            var nsobj = window;
             var parent;
 
             // Ink is implied, so it is ignored if it is included
-            for (var i = (levels[0] === 'Ink') ? 1 : 0; i < levels.length; ++i) {
+            for (var i = 0, f = levels.length; i < f; ++i) {
                 nsobj[ levels[i] ] = nsobj[ levels[i] ] || {};
                 parent = nsobj;
                 nsobj = nsobj[ levels[i] ];
@@ -142,69 +140,62 @@
          * @return {Object|Function} module object / function
          */
         getModule: function(mod, version) {
-            var modParts;
-            if (version !== undefined) {
-                modParts = [mod, parseInt(version, 10)];
-                mod = modParts.join('.');
-            }
-            else {
-                modParts = this._extractVersion(mod);
-            }
-            return modules[mod];
+            var key = version ? [mod, '_', version].join('') : mod;
+            return modules[key];
         },
 
         /**
          * must be the wrapper around each Ink lib module for require resolution
          *
          * @method createModule
-         * @param  {String}    mod    module name. parts are split with dots, must end with version number
+         * @param  {String}    mod    module name. parts are split with dots
+         * @param  {Number}    version
          * @param  {String[]}  deps   array of module names which are dependencies for the module being created
          * @param  {Function}  modFn  its arguments are the resolved dependecies, once all of them are fetched. the body of this function should return the module.
          */
-        createModule: function(mod, deps, modFn) { // define
+        createModule: function(mod, ver, deps, modFn) { // define
             var cb = function() {
                 /*global console:false */
 
+                if (isNaN(parseInt(ver, 10))) {
+                    throw new Error('version must be passed!');
+                }
+
+                var modAll = [mod, '_', ver].join('');
+
+                delete modulesRequested[modAll];
                 delete modulesRequested[mod];
 
                 var args = Array.prototype.slice.call(arguments);
                 var moduleContent = modFn.apply(window, args);
-                modules[mod] = moduleContent;
-                modulesLoadOrder.push(mod);
-                console.log('** loaded module ' + mod + '**');
-
-
-                // add to global namespace...
-                var modParts = Ink._extractVersion(mod);
-                var namespace = modParts[0];
-                var version   = modParts[1];
-                if (typeof version !== 'number') {
-                    throw new Error('Module name (1st argument) must have a version number suffix!');
-                }
+                modulesLoadOrder.push(modAll);
+                console.log('** loaded module ' + modAll + '**');
 
 
                 // set version
                 if (typeof moduleContent === 'object') { // Dom.Css Dom.Event
-                    moduleContent._version = version;
+                    moduleContent._version = ver;
                 }
                 else if (typeof moduleContent === 'function') {
-                    moduleContent.prototype._version = version; // if constructor
-                    moduleContent._version = version;           // if regular function
+                    moduleContent.prototype._version = ver; // if constructor
+                    moduleContent._version = ver;           // if regular function
                 }
-                console.log(mod);
+
+
+                // add to global namespace...
+                if (modAll.indexOf('Ink.') === 0) {
+                    // define versioned
+                    var t = Ink.namespace(mod, true); // t[0] gets 'Ink.Component.Slider' and t[1] 1
+                    t[0][ t[1] + '_' + ver ] = moduleContent;
+
+                    //check if unversioned object is defined...
+                    if (isEmptyObject( t[0][ t[1] ] )) {
+                        // it isn't, define unversioned too
+                        t[0][ t[1] ]       = moduleContent;
+                        modules[ modAll ] = moduleContent;
+                    }
+                }
                 
-
-                // define versioned
-                var t = Ink.namespace(namespace, true); // t[0] gets 'Component.Slider' and t[1] 1
-                t[0][ t[1] + '_' + version ] = moduleContent;
-
-                //check if unversioned object is defined...
-                if (isEmptyObject( t[0][ t[1] ] )) {
-                    // it isn't, define unversioned too
-                    t[0][ t[1] ]         = moduleContent;
-                    modules[ namespace ] = moduleContent;
-                }
-
                 if (this) { // there may be pending requires expecting this module, check...
                     Ink._checkPendingRequireModules();
                 }
@@ -263,8 +254,29 @@
          */
         getModulesLoadOrder: function() {
             return modulesLoadOrder.slice();
+        },
+
+        i: function(id, from) {
+            return (from || document).getElementById(id);
+        },
+
+        s: function(rule, from) {
+            return (from || document).querySelector(rule);
+        },
+
+        ss: function(rule, from) {
+            return (from || document).querySelectorAll(rule);
         }
 
     };
+
+    // TODO TEMP
+    var tmpTmr = setInterval(function() {
+        var l = Object.keys(modulesRequested).length;
+        console.log(modulesRequested);
+        if (l === 0) {
+            clearInterval(tmpTmr);
+        }
+    }, 1000);
 
 })();

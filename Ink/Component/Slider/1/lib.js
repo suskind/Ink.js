@@ -5,8 +5,8 @@
  */
 
 Ink.createModule(
-    'Component.Slider.1',
-    ['Dom.Event.1', 'Dom.Css.1'],
+    'Ink.Component.Slider', 1,
+    ['Ink.Dom.Event_1', 'Ink.Dom.Css_1'],
     function(Event, Css) {
 
         /**

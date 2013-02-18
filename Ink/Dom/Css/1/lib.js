@@ -1,5 +1,5 @@
 Ink.createModule(
-    'Dom.Css.1',
+    'Ink.Dom.Css', 1,
     [],
     function() {
 

@@ -26,7 +26,7 @@
             };
 
             Ink.requireModules(
-                ['Component.Slider.1', 'Component.Slider.2', 'Component.Gallery', 'Dom.Css.1'],   // notice that modules get loaded in parallel. the load order is undetermined
+                ['Ink.Component.Slider_1', 'Ink.Component.Slider_2', 'Ink.Component.Gallery', 'Ink.Dom.Css_1'],   // notice that modules get loaded in parallel. the load order is undetermined
                 function(Slider1, Slider2, Gallery, Css) {
                     l('\n..require callback started..');
 
@@ -49,10 +49,9 @@
                     // this information can be used to build a bundle!
                     l( Ink.getModulesLoadOrder() );
 
-                    l('equal?', Ink.getModule('Component.Slider.1')  === Ink.Component.Slider_1);
-                    l('equal?', Ink.getModule('Component.Slider', 1) === Ink.Component.Slider_1);
-                    l('equal?', Ink.getModule('Component.Slider.2')  === Ink.Component.Slider_2);
-                    l('equal?', Ink.getModule('Component.Slider')    === Ink.Component.Slider);
+                    l('equal?', Ink.getModule('Ink.Component.Slider', 1) === Ink.Component.Slider_1);
+                    l('equal?', Ink.getModule('Ink.Component.Slider', 2)  === Ink.Component.Slider_2);
+                    l('equal?', Ink.getModule('Ink.Component.Slider')    === Ink.Component.Slider);
 
 
                     l('\nNAMESPACES');
