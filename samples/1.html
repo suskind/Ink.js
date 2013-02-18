@@ -25,9 +25,12 @@
                 console.log.apply(console, args);
             };
 
+            Ink.setPath('CloudPT', 'http://127.0.0.1:8000/CloudPT/');
+
             Ink.requireModules(
-                ['Ink.Component.Slider_1', 'Ink.Component.Slider_2', 'Ink.Component.Gallery', 'Ink.Dom.Css_1'],   // notice that modules get loaded in parallel. the load order is undetermined
+                ['Ink.Component.Slider_1', 'Ink.Component.Slider_2', 'Ink.Component.Gallery', 'Ink.Dom.Css_1', 'CloudPT.Upload', /*, '404'*/],   // notice that modules get loaded in parallel (if after page load. in such cases the load order is undetermined for concurrent versions)
                 function(Slider1, Slider2, Gallery, Css) {
+                    return;
                     l('\n..require callback started..');
 
 
@@ -44,7 +47,7 @@
                     window.sldef = new Ink.Component.Slider(divEl, {value:0});
                     l('should be 1 -> ' + sl1b._version);
                     l('should be 2 -> ' + sl2b._version);
-                    l('undetermined -> ' + sldef._version);
+                    l('first version if onload, undetermined otherwise -> ' + sldef._version);
 
                     // this information can be used to build a bundle!
                     l( Ink.getModulesLoadOrder() );

@@ -1,8 +1,9 @@
 # Ink.js - JavaScript Framework by SAPO
 
 
+## Lib stuff
 
-## Done
+### Implemented:
 
 * core.js defines Ink if not defined
 
@@ -13,8 +14,25 @@
     * Ink.createModule(mod, deps, modFn)
     * Ink.requireModules(deps, cbFn)
 
+
+### TODO:
+
+ * migrate bindObj as bind?
+ * migrate bindOjbEvent as bindEvent?
+ * migrate require?
+
+
+---
+
+
+## Server Tasks
+
+### Implemented:
+
 * symLinks.js updates/deletes lib.js files outside of each module's versions dirs pointing to highest version
 
 
+### TODO:
 
-## TODO
+* jshint code
+* minify code

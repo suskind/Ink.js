@@ -4,12 +4,15 @@
 ## Requirements
 
 * makefile
-* node.js   http://nodejs.org/
-* yuidoc    http://yui.github.com/yuidoc/
+* node.js    http://nodejs.org/
+* yuidoc     http://yui.github.com/yuidoc/
+* uglify-js  x
+* jshint     x
 
 
 ## Install
 
     [sudo] npm -g install yuidocjs
-			  jshint
-			  uglify-js
+    [sudo] npm -g install uglify-js
+    [sudo] npm -g install jshint
+

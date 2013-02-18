@@ -48,14 +48,15 @@ var updateLatestSymLink = function(dir, deleteIt) {
         process.exit(1);
     }
     
-    var rootDir = 'Ink/';
+    var rootDir = './';
     var deleteThem = op === 'delete';
     
     var dirs = [
-        'Component/Gallery',
-        'Component/Slider',
-        'Dom/Css',
-        'Dom/Event'
+        'Ink/Component/Gallery',
+        'Ink/Component/Slider',
+        'Ink/Dom/Css',
+        'Ink/Dom/Event',
+        'CloudPT/Upload'
     ];
     
     var dir;
