@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+
+        <title>binding - Ink.js</title>
+
+        <script type="text/javascript" src="/Ink/lib.js"></script>
+
+        <style type="text/css">
+            body {
+                font-family: sans-serif;
+            }
+        </style>
+    </head>
+
+    <body>
+        <h1>binding - Ink.js</h1>
+
+        <button>click me</button>
+
+
+        <script type="text/javascript">
+            // context
+            var o = {name:'John'};
+
+            // function
+            var f = function(a1, a2) {
+                console.log([
+                    'this.name:', this.name,
+                    ', arg1:', a1,
+                    ', arg2:', a2
+                ].join(''));
+            };
+
+            // native impl
+            setTimeout(f.bind(o, '1st', '2nd'), 100);
+
+            // our impl
+            setTimeout(Ink.bind(f, o, '1st', '2nd'), 100);
+
+
+
+            var f2 = function(ev, a1, a2) {
+                console.log([
+                    'this.name:', this.name,
+                    ', ev:', ev,
+                    ', arg1:', a1,
+                    ', arg2:', a2
+                ].join(''));
+            };
+
+            var bEl = Ink.s('button');
+
+            bEl.addEventListener('click', f2.bind(o, '1st', '2nd'));
+            bEl.addEventListener('click', Ink.bind(f2, o, '1st', '2nd'));
+
+            // promotes 1st argument of fn to first argument of closure
+            bEl.addEventListener('click', Ink.bindEvent(f2, o, '1st', '2nd'));
+
+        </script>
+    </body>
+</html>

@@ -302,6 +302,24 @@
             return modulesLoadOrder.slice();
         },
 
+        bind: function(fn, context) {
+            var args = Array.prototype.slice.call(arguments, 2);
+            return function() {
+                var innerArgs = Array.prototype.slice.call(arguments);
+                var finalArgs = args.concat(innerArgs);
+                return fn.apply(context, finalArgs);
+            };
+        },
+
+        bindEvent: function(fn, context) {
+            var args = Array.prototype.slice.call(arguments, 2);
+            return function(event) {
+                var finalArgs = args.slice();
+                finalArgs.unshift(event || window.event);
+                return fn.apply(context, finalArgs);
+            };
+        },
+
         i: function(id, from) {
             return (from || document).getElementById(id);
         },
