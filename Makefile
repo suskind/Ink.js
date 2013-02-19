@@ -1,14 +1,16 @@
 
 help:
 	@echo Relevant tasks are:
-	@echo "    all"
+	@echo "    all               (extractTree min updateSymLinks docs)"
+	@echo "    clean             (deleteSymLinks deleteMinFiles removeDirs)"
+	@echo "    report"
+	@echo "    docs"
+	@echo "    showDocs"
+	@echo "    min"
 	@echo "    extractTree"
 	@echo "    updateSymLinks"
 	@echo "    deleteSymLinks"
-	@echo "    docs"
-	@echo "    min"
-	@echo "    report"
-	@echo "    clean"
+
 
 
 all: extractTree min updateSymLinks docs done
