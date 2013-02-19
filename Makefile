@@ -1,33 +1,35 @@
 
 help:
-	@echo Valid tasks are:
+	@echo Relevant tasks are:
 	@echo "    all"
 	@echo "    extractTree"
 	@echo "    updateSymLinks"
 	@echo "    deleteSymLinks"
 	@echo "    docs"
-	@echo "    minify"
-	@echo "    hint"
+	@echo "    min"
+	@echo "    report"
+	@echo "    clean"
 
 
-all: extractTree hint minify updateSymLinks docs done
+all: extractTree min updateSymLinks docs done
 
 
-.PHONY: docs
+.PHONY: docs report
 
 
 extractTree:
-	@echo "\nextractTree: TODO"
+	@echo "\nExtracting dirs tree..."
+	@node serverUtils/extractTree.js
 	
 
 updateSymLinks:
 	@echo "\nUpdating sym links..."
-	@node symLinks.js update
+	@node serverUtils/manageSymLinks.js update
 
 
 deleteSymLinks:
 	@echo "\nDeleting sym links..."
-	@node symLinks.js delete
+	@node serverUtils/manageSymLinks.js delete
 
 
 docs:
@@ -35,12 +37,25 @@ docs:
 	@yuidoc -c .yuidoc.json --no-code -T default -q ./Ink
 
 
-minify:
-	@echo "\nminify: TODO"
+min:
+	@echo "\nminifying code..."
+	@node serverUtils/minFiles.js
 
 
-hint:
-	@echo "\nhint: TODO"
+deleteMinFiles:
+	@echo "\nremoving minified files..."
+	@node serverUtils/deleteMinFiles.js
+
+
+report: deleteSymLinks deleteMinFiles
+	@echo "\ngenerating report..."
+	@plato -r -d report Ink
+	@google-chrome report/index.html
+
+
+clean: deleteSymLinks deleteMinFiles
+	@rm -f docs
+	@rm -f report
 
 
 done:
