@@ -14,26 +14,35 @@ help:
 all: extractTree min updateSymLinks docs done
 
 
+report: deleteSymLinks deleteMinFiles
+	@echo "\ngenerating report..."
+	@plato -r -d report Ink
+	@google-chrome report/index.html
+
+
+clean: deleteSymLinks deleteMinFiles removeDirs done
+
+
 .PHONY: docs report
 
 
 extractTree:
-	@echo "\nExtracting dirs tree..."
+	@echo "\nextracting tree..."
 	@node serverUtils/extractTree.js
 	
 
 updateSymLinks:
-	@echo "\nUpdating sym links..."
+	@echo "\nupdating sym links..."
 	@node serverUtils/manageSymLinks.js update
 
 
 deleteSymLinks:
-	@echo "\nDeleting sym links..."
+	@echo "\ndeleting sym links..."
 	@node serverUtils/manageSymLinks.js delete
 
 
 docs:
-	@echo "\nGenerating documentation..."
+	@echo "\ngenerating documentation..."
 	@yuidoc -c .yuidoc.json --no-code -T default -q ./Ink
 
 
@@ -47,15 +56,10 @@ deleteMinFiles:
 	@node serverUtils/deleteMinFiles.js
 
 
-report: deleteSymLinks deleteMinFiles
-	@echo "\ngenerating report..."
-	@plato -r -d report Ink
-	@google-chrome report/index.html
-
-
-clean: deleteSymLinks deleteMinFiles
-	@rm -f docs
-	@rm -f report
+removeDirs:
+	@echo "\nremoving docs and reports directories..."
+	@rm -rf docs
+	@rm -rf report
 
 
 done:

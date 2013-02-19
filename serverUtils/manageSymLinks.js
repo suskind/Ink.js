@@ -21,7 +21,7 @@
                 fs.unlinkSync([dir, 'lib.js'].join('/'));
                 
                 if (deleteIt) {
-                    return console.log('X ' + from);
+                    return;// console.log('X ' + from);
                 }
             }
             
@@ -36,7 +36,7 @@
             var highest = versions.pop();
             
             var to   = [highest, 'lib.js'].join('/');
-            console.log(from, '->', to);
+            //console.log(from, '->', to);
             
             fs.symlink(to, from, 'file', function(err) {
                 if (err) { throw err; }
