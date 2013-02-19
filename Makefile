@@ -46,6 +46,10 @@ docs:
 	@yuidoc -c .yuidoc.json --no-code -T default -q ./Ink
 
 
+showDocs: docs
+	@google-chrome docs/index.html
+
+
 min:
 	@echo "\nminifying code..."
 	@node serverUtils/minFiles.js
