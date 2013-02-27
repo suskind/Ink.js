@@ -320,8 +320,11 @@
             };
         },
 
-        i: function(id, from) {
-            return (from || document).getElementById(id);
+        i: function(id) {
+            if(typeof(id) === 'string') {
+                return document.getElementById(id);
+            }
+            return id;
         },
 
         /* Dom.Selector would override these methods for non-supporting browsers */
