@@ -1,6 +1,8 @@
 
 Notas e duvidas...
 
+para testar ML
+
 
 Ink.loadModules 
     - nao funciona se estiver num dom.loaded - documento ja foi carregado, nao pode haver document.write.. 
