@@ -1,0 +1,18 @@
+
+Notas e duvidas...
+
+
+Ink.loadModules 
+    - nao funciona se estiver num dom.loaded - documento ja foi carregado, nao pode haver document.write.. 
+
+Ink.Dom.Css 
+    - getPropertyFromStylesheet2 - forEach? 
+
+Ink.Dom.Element 
+    - offset2 ? - o que é que substitui? 
+
+    - fillSelect e fillSelect2 ?? WTF ??
+
+    - rever scrollTo - usar offset2 
+
+    - migrado Utility.Dimensions to Dom.Element

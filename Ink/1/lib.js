@@ -14,7 +14,8 @@
 
     // internal data
     var paths = {
-        Ink: 'http://127.0.0.1:8000/Ink/'
+        //Ink: 'http://127.0.0.1:8000/Ink/'
+        Ink: 'http://inkjs.gamblap/Ink/'
     };
     var modules = {};
     var modulesLoadOrder = [];
