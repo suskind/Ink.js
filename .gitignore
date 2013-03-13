@@ -1,3 +1,5 @@
 docs
-Ink/Component/*/lib.js
-Ink/Dom/*/lib.js
+node_modules
+report
+serverUtils/moduleDirs.json
+serverUtils/moduleFiles.json

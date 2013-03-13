@@ -1,46 +1,71 @@
 
 help:
-	@echo Valid tasks are:
-	@echo "    all"
+	@echo Relevant tasks are:
+	@echo "    all               (extractTree min updateSymLinks docs)"
+	@echo "    clean             (deleteSymLinks deleteMinFiles removeDirs)"
+	@echo "    report"
+	@echo "    docs"
+	@echo "    showDocs"
+	@echo "    min"
 	@echo "    extractTree"
 	@echo "    updateSymLinks"
 	@echo "    deleteSymLinks"
-	@echo "    docs"
-	@echo "    minify"
-	@echo "    hint"
 
 
-all: extractTree hint minify updateSymLinks docs done
+
+all: extractTree min updateSymLinks docs done
 
 
-.PHONY: docs
+report: deleteSymLinks deleteMinFiles
+	@echo "\ngenerating report..."
+	@plato -r -d report Ink
+	@google-chrome report/index.html
+
+
+clean: deleteSymLinks deleteMinFiles removeDirs done
+
+
+.PHONY: docs report
 
 
 extractTree:
-	@echo "\nextractTree: TODO"
+	@echo "\nextracting tree..."
+	@node serverUtils/extractTree.js
 	
 
 updateSymLinks:
-	@echo "\nUpdating sym links..."
-	@node symLinks.js update
+	@echo "\nupdating sym links..."
+	@node serverUtils/manageSymLinks.js update
 
 
 deleteSymLinks:
-	@echo "\nDeleting sym links..."
-	@node symLinks.js delete
+	@echo "\ndeleting sym links..."
+	@node serverUtils/manageSymLinks.js delete
 
 
 docs:
-	@echo "\nGenerating documentation..."
+	@echo "\ngenerating documentation..."
 	@yuidoc -c .yuidoc.json --no-code -T default -q ./Ink
 
 
-minify:
-	@echo "\nminify: TODO"
+showDocs: docs
+	@google-chrome docs/index.html
 
 
-hint:
-	@echo "\nhint: TODO"
+min:
+	@echo "\nminifying code..."
+	@node serverUtils/minFiles.js
+
+
+deleteMinFiles:
+	@echo "\nremoving minified files..."
+	@node serverUtils/deleteMinFiles.js
+
+
+removeDirs:
+	@echo "\nremoving docs and reports directories..."
+	@rm -rf docs
+	@rm -rf report
 
 
 done:

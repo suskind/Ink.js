@@ -14,7 +14,8 @@
 
     // internal data
     var paths = {
-        Ink: 'http://127.0.0.1:8000/Ink/'
+        //Ink: 'http://127.0.0.1:8000/Ink/'
+        Ink: 'http://inkjs.gamblap/Ink/'
     };
     var modules = {};
     var modulesLoadOrder = [];
@@ -320,8 +321,11 @@
             };
         },
 
-        i: function(id, from) {
-            return (from || document).getElementById(id);
+        i: function(id) {
+            if(typeof(id) === 'string') {
+                return document.getElementById(id);
+            }
+            return id;
         },
 
         /* Dom.Selector would override these methods for non-supporting browsers */
