@@ -16,10 +16,6 @@
     "forin":         false,
     "immed":         true,
     "laxbreak":      true,
-    /*"maxcomplexity": 12,*/
-    /*"maxdepth":      6,*/
-    /*"maxparams":     4,*/
-    /*"maxstatements": 60,*/
     "newcap":        false,
     "noarg":         true,
     "noempty":       false,
@@ -34,4 +30,8 @@
     "undef":         true,
     "unused":        true,
     "white":         false
+    /*"maxcomplexity": 12,
+    "maxdepth":      6,
+    "maxparams":     4,
+    "maxstatements": 60,*/
 }
