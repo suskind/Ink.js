@@ -341,7 +341,32 @@
             if (!qsa) { throw new Error('Your browser does not support document.querySelectorAll(). Require the module "Ink.Dom.Selector".'); }
             var nodeList = qsa.call(from || document, rule);
             return Array.prototype.slice.call(nodeList); // to mimic selector, which returns an array
+        },
+
+        extendObj: function(destination, source) 
+        {
+            if (source) {
+                for (var property in source) {
+                    if(source.hasOwnProperty(property)){
+                        destination[property] = source[property];
+                    }
+                }
+            }
+            return destination;
+        },
+
+        Browser: {
+            IE: true,
+            GECKO: true,
+            SAFARI: true,
+            OPERA: false,
+            CHROME: true,
+            KONQUEROR: true,
+            modle: '',
+            version: '',
+            userAgent: ''
         }
+
 
     };
 
