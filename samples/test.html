@@ -11,6 +11,16 @@
 <script type="text/javascript" src="/Ink/Dom/Selector/1/"></script>
 <script type="text/javascript" src="/Ink/Dom/Css/1/"></script>
 <script type="text/javascript" src="/Ink/Dom/Element/1/"></script>
+<script type="text/javascript" src="/Ink/Dom/Event/1/"></script>
+
+<script type="text/javascript" src="/Ink/Util/Array/1/"></script>
+<script type="text/javascript" src="/Ink/Util/Url/1/"></script>
+<script type="text/javascript" src="/Ink/Util/Date/1/"></script>
+<script type="text/javascript" src="/Ink/Util/Validator/1/"></script>
+<script type="text/javascript" src="/Ink/Util/Swipe/1/"></script>
+
+<script type="text/javascript" src="/Ink/Net/Ajax/1/"></script>
+<script type="text/javascript" src="/Ink/Net/JsonP/1/"></script>
 
 <style type="text/css">
 .foo{
@@ -31,11 +41,63 @@ Ink.Dom.Loaded.run(function(){
             });
         
         var newDiv = Ink.Dom.Element.create('div', {id:'mydiv', "class":"foo"});
-        Ink.Dom.Element.appendHTML(newDiv, '<p>Hello World</p>');
+        Ink.Dom.Element.appendHTML(newDiv, '<p>Hello World - now click me</p>');
         document.body.appendChild(newDiv);
+
+        console.log(Ink.Dom.Element.offset2(newDiv));
+
+        Ink.Dom.Event.observe(newDiv, 'click', function(event) { alert('clicked => '+Ink.Dom.Event.element(event)); });
+
+        /* Utils... */
+        var myA = [4, 6, 9, 1];
+        console.log('inArray 9 => ' + Ink.Util.Array.inArray(9, myA));
+        console.log('inArray 19 => ' + Ink.Util.Array.inArray(19, myA));
+        console.log('shuffle => ' + Ink.Util.Array.shuffle(myA));
+
+        var InkUrl = Ink.getModule('Ink.Util.Url', '1');
+        console.log('URL => ' + InkUrl.getUrl());
+        console.log('parseURL => ', InkUrl.parseUrl(location.href));
+        console.log('queryString => ', InkUrl.getQueryString());
+
+        console.log('Date => ', Ink.Util.Date.get("Y-m-d H:i:s"));
+
+        console.log('Validator: pt phone 962057655', Ink.Util.Validator.isPTPhone('962057655'));
+        console.log('Validator: pt phone 29872979', Ink.Util.Validator.isPTPhone('29872979'));
+        console.log('Validator: mail inkdev@sapo.pt', Ink.Util.Validator.mail('inkdev@sapo.pt'));
+        console.log('Validator: mail inkdev@sapopt', Ink.Util.Validator.mail('inkdev@sapopt'));
+
+        /* Net */
+
+        var InkAjax = Ink.getModule('Ink.Net.Ajax', '1');
+        new InkAjax('./end.php', {
+                    method:'get',
+                    onSuccess: function(obj) {
+                        console.log(obj);
+                        console.log(obj.responseText);
+                        console.log(obj.responseJSON);
+                    }
+                });
+
+        Ink.Net.Ajax.load('end.php', function(txt) {
+                    console.log('Ajax.load => '+ txt);
+                });
+
+        new Ink.Net.JsonP(
+            'http://api.flickr.com/services/feeds/photos_public.gne',
+            {
+                onComplete:     function(data) {
+                    console.log('JsonP', data);
+                },
+                params: {
+                    tags:       'cat',
+                    tagmode:    'any',
+                    format:     'json'
+                },
+            }
+        );
         
         
-        });
+});
 
 </script>
 
