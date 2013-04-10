@@ -4,6 +4,11 @@ Notas e duvidas...
 para testar ML
 
 
+Ink - core 
+    - Adicionado extendObj
+    
+    - adicionado Browser: {IE, GECKO, CHROME... etc} /* nao esta pronto */ 
+
 Ink.loadModules 
     - nao funciona se estiver num dom.loaded - documento ja foi carregado, nao pode haver document.write.. 
 
@@ -18,3 +23,28 @@ Ink.Dom.Element
     - rever scrollTo - usar offset2 
 
     - migrado Utility.Dimensions to Dom.Element
+
+    - muitos conflitos jshint 
+
+Ink.Dom.Event - migrado 
+
+
+Ink.Util.Array - migrado 
+    - removido o Array.prototype.forEach e o Array.prototype.map 
+
+Ink.Util.Url - migrado 
+    - removido base64Encode e base64Decode - vao passar para o crypto  
+
+Ink.Util.Date - migrado 
+
+Ink.Util.Swipe - migrado (verificar se faz sentido ir para o Ink.Dom) 
+
+Ink.Util.Validator - migrado 
+
+
+Ink.Net.Ajax - migrado 
+    - TODO - remover eval e usar json.parse do crockford 
+
+Ink.Net.JsonP - migrado
+    - onComplete passou para onSuccess 
+
