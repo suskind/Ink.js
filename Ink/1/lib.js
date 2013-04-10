@@ -331,6 +331,9 @@
 
         /* Dom.Selector would override these methods for non-supporting browsers */
         s: function(rule, from) {
+               if(typeof(Ink.Dom.Selector) === 'undefined') {
+                   throw new Error('This method requires Ink.Dom.Selector');
+               }
             var qs = document.querySelector;
             if (!qs) { throw new Error('Your browser does not support document.querySelector(). Require the module "Ink.Dom.Selector".'); }
             return qs.call(from || document, rule);
