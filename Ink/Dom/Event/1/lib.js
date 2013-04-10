@@ -1,12 +1,8 @@
-/*jshint browser:true, eqeqeq:true, undef:true, curly:true, laxbreak:true, forin:true, smarttabs:true */
-/*global Ink:false */
-
-
 /**
  * @author: inkdev AT sapo.pt
  */
 
-Ink.createModule('Ink.Dom.Event', 1, [], function(undefined) {
+Ink.createModule('Ink.Dom.Event', 1, [], function() {
 
 'use strict';
 

@@ -1,11 +1,8 @@
-/*jshint browser:true, eqeqeq:true, undef:true, curly:true, laxbreak:true, forin:true, smarttabs:true */
-/*global Ink:false */
-
 /**
  * @author inkdev AT sapo.pt
  */
 
-Ink.createModule('Ink.Dom.Loaded', 1, [], function(undefined) {
+Ink.createModule('Ink.Dom.Loaded', 1, [], function() {
 
 'use strict';
 
@@ -64,10 +61,10 @@ var Loaded = {
             } catch(e) {}
 
             if ( !ael && this._root.doScroll ) { // IE HACK
-                try { 
-                    this._top = !frameElement; 
+                try {
+                    this._top = !frameElement;
                 } catch(e) { }
-                if (this._top) { 
+                if (this._top) {
                     this._poll();
                 }
             }
@@ -79,8 +76,8 @@ var Loaded = {
     * @param {Event} event Triggered event
     */
     _checkState: function(event) {
-        if ( !event || (event.type === 'readystatechange' && this._doc.readyState !== 'complete')) { 
-            return; 
+        if ( !event || (event.type === 'readystatechange' && this._doc.readyState !== 'complete')) {
+            return;
         }
         var where = (event.type === 'load') ? this._win : this._doc;
         where[this._rem](this._pre+event.type, this._handlers.checkState, false);

@@ -18,7 +18,7 @@ all: extractTree min updateSymLinks docs done
 
 report: deleteSymLinks deleteMinFiles
 	@echo "\ngenerating report..."
-	@plato -r -d report Ink
+	@plato -r -l .jshintrc -d report Ink
 	@google-chrome report/index.html
 
 
@@ -31,7 +31,7 @@ clean: deleteSymLinks deleteMinFiles removeDirs done
 extractTree:
 	@echo "\nextracting tree..."
 	@node serverUtils/extractTree.js
-	
+
 
 extractTestsTree:
 	@echo "\nextracting tests tree..."

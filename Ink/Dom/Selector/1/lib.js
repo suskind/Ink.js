@@ -4,7 +4,7 @@
  * Released under the MIT license
  * http://sizzlejs.com/
  */
-Ink.createModule('Ink.Dom.Selector', 1, [], function( undefined ) {
+Ink.createModule('Ink.Dom.Selector', 1, [], function() {
 
 var i,
 	cachedruns,

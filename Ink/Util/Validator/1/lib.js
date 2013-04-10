@@ -1,6 +1,3 @@
-/*jshint browser:true, eqeqeq:true, undef:true, curly:true, laxbreak:true, forin:true, smarttabs:true */
-/*global Ink:false */
-
 /**
  * @author inkdev AT sapo.pt
  */
@@ -614,7 +611,7 @@ var Validator = {
 
 
         returnBothResults = !!returnBothResults;
-        
+
         cp1 = cp1.replace(trim,'');
         if(typeof(cp2)!=='undefined'){
             cp2 = cp2.replace(trim,'');
@@ -674,9 +671,9 @@ var Validator = {
         var dayIndex = this._dateParsers[format].day;
         var dateParser = this._dateParsers[format].parser;
         var separator = this._dateParsers[format].sep;
-        var trim = /^\w+|\w+$/g;
 
         /* Trim Deactivated
+        * var trim = /^\w+|\w+$/g;
         * dateStr = dateStr.replace(trim,"");
         */
         var data = dateStr.match(dateParser);

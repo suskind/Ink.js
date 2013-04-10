@@ -1,6 +1,3 @@
-/*jshint browser:true, eqeqeq:true, undef:true, curly:true, laxbreak:true, forin:true, smarttabs:true */
-/*global Ink:false */
-
 /**
  * @author inkdev AT sapo.pt
  */
@@ -53,7 +50,7 @@ JsonP.prototype = {
 
         this.uri = uri;
 
-        // prevent SAPO legacy onComplete - make it onSuccess 
+        // prevent SAPO legacy onComplete - make it onSuccess
         if(typeof(this.options.onComplete) === 'function') {
             this.options.onSuccess = this.options.onComplete;
         }
@@ -94,7 +91,6 @@ JsonP.prototype = {
     },
 
     _getScriptContainer: function() {
-        var ctn;
         var headEls = document.getElementsByTagName('head');
         if (headEls.length === 0) {
             var scriptEls = document.getElementsByTagName('script');

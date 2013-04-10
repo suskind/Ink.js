@@ -26,6 +26,7 @@
 
     // auxiliary fns
     var isEmptyObject = function(o) {
+        /*jshint unused:false */
         if (typeof o !== 'object') { return false; }
         for (var k in o) {
             return false;
@@ -219,7 +220,7 @@
                 if (isInkModule) {
                     t = Ink.namespace(mod, true); // for mod 'Ink.Dom.Css', t[0] gets 'Ink.Dom' object and t[1] 'Css'
                 }
-  
+
 
                 // versioned
                 modules[ modAll ] = moduleContent; // in modules
@@ -227,11 +228,11 @@
                 if (isInkModule) {
                     t[0][ t[1] + '_' + ver ] = moduleContent; // in namespace
                 }
-                
+
 
                 // unversioned
                 modules[ mod ] = moduleContent; // in modules
-                
+
                 if (isInkModule) {
                     if (isEmptyObject( t[0][ t[1] ] )) {
                         t[0][ t[1] ] = moduleContent; // in namespace
@@ -343,7 +344,7 @@
             return Array.prototype.slice.call(nodeList); // to mimic selector, which returns an array
         },
 
-        extendObj: function(destination, source) 
+        extendObj: function(destination, source)
         {
             if (source) {
                 for (var property in source) {

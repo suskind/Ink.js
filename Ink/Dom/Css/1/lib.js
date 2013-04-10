@@ -1,7 +1,4 @@
-/*jshint browser:true, eqeqeq:true, undef:true, curly:true, laxbreak:true, forin:true, smarttabs:true */
-/*global Ink:false */
-
-Ink.createModule( 'Ink.Dom.Css', 1, [], function(undefined) {
+Ink.createModule( 'Ink.Dom.Css', 1, [], function() {
 
     'use strict';
 
@@ -458,17 +455,17 @@ Ink.createModule( 'Ink.Dom.Css', 1, [], function(undefined) {
         _loadingCSSFiles: {},
         _loadedCSSFiles:  {},
         appendStylesheetCb: function(url, callback) {
-            if (!url) { 
-                return callback(url); 
+            if (!url) {
+                return callback(url);
             }
 
-            if (this._loadedCSSFiles[url]) { 
-                return callback(url); 
+            if (this._loadedCSSFiles[url]) {
+                return callback(url);
             }
 
             var cbs = this._loadingCSSFiles[url];
-            if (cbs) { 
-                return cbs.push(callback); 
+            if (cbs) {
+                return cbs.push(callback);
             }
 
             this._loadingCSSFiles[url] = [callback];
@@ -580,7 +577,7 @@ Ink.createModule( 'Ink.Dom.Css', 1, [], function(undefined) {
          * @param {String}  property - a CSS property
          * @return  {String}    value of the found property, or null if it wasn't matched
          */
-        getPropertyFromStylesheet: function(selector, property) 
+        getPropertyFromStylesheet: function(selector, property)
         {
             var rule = this.getRuleFromStylesheet(selector);
             if (rule) {
@@ -589,22 +586,21 @@ Ink.createModule( 'Ink.Dom.Css', 1, [], function(undefined) {
             return null;
         },
 
-        getPropertyFromStylesheet2: function(selector, property) 
+        getPropertyFromStylesheet2: function(selector, property)
         {
             var rules = this.getRulesFromStylesheet(selector);
-            var res;
             /*
             rules.forEach(function(rule) {
                 var x = rule.style[property];
-                if (x !== null && x !== undefined) { 
-                    return x; 
+                if (x !== null && x !== undefined) {
+                    return x;
                 }
             });
             */
             var x;
             for(var i=0, t=rules.length; i < t; i++) {
                 x = rules[i].style[property];
-                if (x !== null && x !== undefined) { 
+                if (x !== null && x !== undefined) {
                     return x;
                 }
             }
@@ -614,8 +610,8 @@ Ink.createModule( 'Ink.Dom.Css', 1, [], function(undefined) {
         getRuleFromStylesheet: function(selector) {
             var sheet, rules, ri, rf, rule;
             var s = document.styleSheets;
-            if (!s) { 
-                return null; 
+            if (!s) {
+                return null;
             }
 
             for (var si = 0, sf = document.styleSheets.length; si < sf; ++si) {
@@ -644,8 +640,8 @@ Ink.createModule( 'Ink.Dom.Css', 1, [], function(undefined) {
             for (var si = 0, sf = document.styleSheets.length; si < sf; ++si) {
                 sheet = document.styleSheets[si];
                 rules = sheet.rules ? sheet.rules : sheet.cssRules;
-                if (!rules) { 
-                    return null; 
+                if (!rules) {
+                    return null;
                 }
 
                 for (ri = 0, rf = rules.length; ri < rf; ++ri) {
@@ -676,8 +672,8 @@ Ink.createModule( 'Ink.Dom.Css', 1, [], function(undefined) {
                 var parts = rule.split(';');
                 var steps, val, pre, pos;
                 for (i = 0, f = parts.length; i < f; ++i) {
-                    if (parts[i].charAt(0) === ' ') {   
-                        parts[i] = parts[i].substring(1);   
+                    if (parts[i].charAt(0) === ' ') {
+                        parts[i] = parts[i].substring(1);
                     }
                     steps = parts[i].split(':');
                     prop = this._camelCase( steps[0].toLowerCase()  );
@@ -739,7 +735,7 @@ Ink.createModule( 'Ink.Dom.Css', 1, [], function(undefined) {
          * @param {optional Number}  minVal    if result gets smaller than minVal, change does not occurr
          * @param {optional Number}  maxVal    if result gets bigger  than maxVal, change does not occurr
          */
-        changeFontSize: function(selector, delta, op, minVal, maxVal) 
+        changeFontSize: function(selector, delta, op, minVal, maxVal)
         {
             var InkDomSelector = this.getModule('Ink.Dom.Selector', 1);
             if(typeof(InkDomSelector) === 'undefined') {
@@ -770,6 +766,6 @@ Ink.createModule( 'Ink.Dom.Css', 1, [], function(undefined) {
 
     };
 
-    return DomCss; 
+    return DomCss;
 
-}); 
+});

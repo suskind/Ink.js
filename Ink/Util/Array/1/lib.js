@@ -1,6 +1,3 @@
-/*jshint browser:true, eqeqeq:true, undef:true, curly:true, laxbreak:true, forin:true, smarttabs:true */
-/*global Ink:false */
-
 /**
  * @author inkdev AT sapo.pt
  */
@@ -150,8 +147,8 @@ var InkArray = {
      */
     some: function(arr, cb, context){
 
-        if (arr === null){ 
-            throw new TypeError('First argument is invalid.'); 
+        if (arr === null){
+            throw new TypeError('First argument is invalid.');
         }
 
         var t = Object(arr);
@@ -228,7 +225,7 @@ return InkArray;
 });
 
 
-/* 
+/*
  *  TODO - INCLUDE THIS ON Ink.Util.Array
  *
 // Production steps of ECMA-262, Edition 5, 15.4.4.18
@@ -238,19 +235,19 @@ if (!Array.prototype.forEach) {
     Array.prototype.forEach = function forEach(cb, thisArg) {
         var O, len, T, k, kValue;
 
-        if (this === null || this === undefined) { 
-            throw new TypeError('this is null or not defined'); 
+        if (this === null || this === undefined) {
+            throw new TypeError('this is null or not defined');
         }
 
         O = Object(this);
         len = O.length >>> 0;
 
-        if ({}.toString.call(cb) !== '[object Function]') { 
-            throw new TypeError(cb + ' is not a function'); 
+        if ({}.toString.call(cb) !== '[object Function]') {
+            throw new TypeError(cb + ' is not a function');
         }
 
-        if (thisArg) { 
-            T = thisArg; 
+        if (thisArg) {
+            T = thisArg;
         }
 
         k = 0;
@@ -273,19 +270,19 @@ if (!Array.prototype.map) {
     Array.prototype.map = function(callback, thisArg) {
         var T, A, k;
 
-        if (this === null || this === undefined) { 
-            new TypeError(" this is null or not defined"); 
+        if (this === null || this === undefined) {
+            new TypeError(" this is null or not defined");
         }
 
         var O = Object(this);
         var len = O.length >>> 0;
 
-        if ({}.toString.call(callback) !== "[object Function]") { 
-            throw new TypeError(callback + " is not a function"); 
+        if ({}.toString.call(callback) !== "[object Function]") {
+            throw new TypeError(callback + " is not a function");
         }
 
-        if (thisArg) { 
-            T = thisArg; 
+        if (thisArg) {
+            T = thisArg;
         }
         A = new Array(len);
         k = 0;

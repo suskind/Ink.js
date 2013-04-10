@@ -1,6 +1,3 @@
-/*jshint browser:true, eqeqeq:true, undef:true, curly:true, laxbreak:true, forin:true, smarttabs:true */
-/*global Ink:false */
-
 /**
  * @author inkdev AT sapo.pt
  */
@@ -40,15 +37,15 @@ var Url = {
 
         for (pKey in params) {
             if (params.hasOwnProperty(pKey)) {
-                if (!hasQuestionMark) { 
-                    sep = '?';  
-                    hasQuestionMark = true; 
-                } else {                  
-                    sep = '&';                          
+                if (!hasQuestionMark) {
+                    sep = '?';
+                    hasQuestionMark = true;
+                } else {
+                    sep = '&';
                 }
                 pValue = params[pKey];
-                if (typeof pValue !== 'number' && !pValue) { 
-                    pValue = ''; 
+                if (typeof pValue !== 'number' && !pValue) {
+                    pValue = '';
                 }
                 parts = parts.concat([sep, encodeURIComponent(pKey), '=', encodeURIComponent(pValue)]);
             }

@@ -1,6 +1,3 @@
-/*jshint browser:true, eqeqeq:true, undef:true, curly:true, laxbreak:true, forin:true, smarttabs:true */
-/*global Ink:false */
-
 /**
  * @author inkdev AT sapo.pt
  */
@@ -383,6 +380,7 @@ var InkDate = {
         var iFormat = format.split("");
         var result = new Array( iFormat.length );
         var escapeChar = "\\";
+        var mList;
 
         var objIndex = {
             year  : undefined ,
@@ -596,7 +594,7 @@ var InkDate = {
         var pattr = new RegExp( result.join('') );
 
         try {
-            var mList = str_date.match( pattr );
+            mList = str_date.match( pattr );
             if ( !mList ) { return; }
         }
         catch ( e ) { return ; }
@@ -633,16 +631,18 @@ var InkDate = {
 
         var _haveDiffM    = typeof objIndex.diffM !== 'undefined';
         var _haveDiffH    = typeof objIndex.diffH !== 'undefined';
-        var _haveGMT      = _haveDiffM || _haveDiffH;
+        //var _haveGMT      = _haveDiffM || _haveDiffH;
+        var hour;
+        var min;
 
         if ( _haveDatetime ) {
-            if ( iFormat[ objIndex.date.original ] === 'U' ) { 
-                return new Date( +mList[ objIndex.date.match + 1 ] * 1000 ); 
+            if ( iFormat[ objIndex.date.original ] === 'U' ) {
+                return new Date( +mList[ objIndex.date.match + 1 ] * 1000 );
             }
 
             var dList = mList[ objIndex.date.match + 1 ].match( /\w{3}, (\d{1,2}) (\w{3}) (\d{4}) (\d{2}):(\d{2}):(\d{2}) ([+\-]\d{4})/ );
-            var hour  = +dList[ 4 ] + ( +dList[ 7 ].slice( 0 , 3 ) );
-            var min   = +dList[ 5 ] + ( dList[ 7 ].slice( 0 , 1 ) + dList[ 7 ].slice( 3 ) ) / 100 * 60;
+            hour  = +dList[ 4 ] + ( +dList[ 7 ].slice( 0 , 3 ) );
+            min   = +dList[ 5 ] + ( dList[ 7 ].slice( 0 , 1 ) + dList[ 7 ].slice( 3 ) ) / 100 * 60;
 
             return new Date( dList[ 3 ] , this._iMonth( dList[ 2 ] ) , dList[ 1 ] , hour  , min , dList[ 6 ] );
         }
@@ -652,8 +652,6 @@ var InkDate = {
         var month;
         var day;
         var date;
-        var hour;
-        var min;
         var sec;
         var msec;
         var gmt;
@@ -664,21 +662,21 @@ var InkDate = {
             if ( _haveYear ) {
                 var _y = _d.getFullYear( ) - 50 + '';
                 year   = mList[ objIndex.year.match + 1 ];
-                if ( iFormat[ objIndex.year.original ] === 'y' ) { 
-                    year = +_y.slice( 0 , 2 ) + ( year >= ( _y ).slice( 2 ) ? 0 : 1 ) + year; 
+                if ( iFormat[ objIndex.year.original ] === 'y' ) {
+                    year = +_y.slice( 0 , 2 ) + ( year >= ( _y ).slice( 2 ) ? 0 : 1 ) + year;
                 }
-            } else { 
-                year = _d.getFullYear(); 
+            } else {
+                year = _d.getFullYear();
             }
 
             if ( _haveYDay ) {
                 month = 0;
                 day   = mList[ objIndex.dayY.match + 1 ];
             } else if ( _haveDay ) {
-                if ( _haveMonth ) { 
-                    month = this._iMonth( mList[ objIndex.month.match + 1 ] ); 
-                } else { 
-                    month = _d.getMonth( ); 
+                if ( _haveMonth ) {
+                    month = this._iMonth( mList[ objIndex.month.match + 1 ] );
+                } else {
+                    month = _d.getMonth( );
                 }
 
                 day = mList[ objIndex.day.match + 1 ];
@@ -686,16 +684,16 @@ var InkDate = {
                 month = 0;
 
                 var week;
-                if ( _haveWeek ) { 
-                    week = mList[ objIndex.week.match + 1 ]; 
-                } else { 
+                if ( _haveWeek ) {
+                    week = mList[ objIndex.week.match + 1 ];
+                } else {
                     week = this.get( 'W' , _d );
                 }
 
                 day = ( week - 2 ) * 7 + ( 8 - ( ( new Date( year , 0 , 1 ) ).getDay( ) || 7 ) ) + this._iWeek( mList[ objIndex.week.match + 1 ] );
             }
 
-            if ( month == 0 && day > 31 ) {
+            if ( month === 0 && day > 31 ) {
                 var aux = new Date( year , month , day );
                 month   = aux.getMonth( );
                 day     = aux.getDate( );

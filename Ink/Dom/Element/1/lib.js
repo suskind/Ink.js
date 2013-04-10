@@ -1,12 +1,8 @@
-/*jshint browser:true, eqeqeq:true, undef:true, curly:true, laxbreak:true, forin:true, smarttabs:true */
-/*global Ink:false */
-
-
 /**
  * @author: inkdev AT sapo.pt
  */
 
-Ink.createModule('Ink.Dom.Element', 1, [], function(undefined) {
+Ink.createModule('Ink.Dom.Element', 1, [], function() {
 
 /**
  */
@@ -205,6 +201,7 @@ var Element = {
      * @param {String|DOMElement} el
      */
     offset2: function(el) {
+        /*jshint boss:true */
         el = Ink.i(el);
         var bProp = ['border-left-width', 'border-top-width'];
         var res = [0, 0];
@@ -258,6 +255,7 @@ var Element = {
      * @param {DOMElement|String} targetElm - key element
      */
     insertAfter: function(newElm,targetElm) {
+        /*jshint boss:true */
         if (targetElm = this.get(targetElm)) {
             targetElm.parentNode.insertBefore(newElm, targetElm.nextSibling);
         }
@@ -269,6 +267,7 @@ var Element = {
      * @param {DOMElement|String} targetElm - key element
      */
     insertTop: function(newElm,targetElm) {
+        /*jshint boss:true */
         if (targetElm = this.get(targetElm)) {
             targetElm.insertBefore(newElm, targetElm.firstChild);
         }
@@ -282,7 +281,7 @@ var Element = {
      */
     textContent: function(node){
         node = Ink.i(node);
-        var text;
+        var text, k, cs, m;
 
         switch(node && node.nodeType) {
         case 9: /*DOCUMENT_NODE*/
@@ -295,7 +294,6 @@ var Element = {
                 return text;
             }
             /* falls through */
-
         case 11: /*DOCUMENT_FRAGMENT_NODE*/
             text = node.textContent;
             if (typeof text !== 'undefined') {
@@ -308,8 +306,9 @@ var Element = {
             }
 
             text = [];
-            for (var k = 0, child, cs = node.childNodes, m = cs.length; k < m, child = cs[k]; k++) {
-                text.push(this.textContent(child));
+            cs = node.childNodes;
+            for (k = 0, m = cs.length; k < m; ++k) {
+                text.push( this.textContent( cs[k] ) );
             }
             return text.join('');
 
@@ -335,15 +334,13 @@ var Element = {
                 node.innerText = text;
                 break;
             }
-            /* fallthrough */
-
+            /* falls through */
         case 11: /*DOCUMENT_FRAGMENT_NODE*/
             if ('textContent' in node) {
                 node.textContent = text;
                 break;
             }
-            /* fallthrough */
-
+            /* falls through */
         case 9: /*DOCUMENT_NODE*/
             while(node.firstChild) {
                 node.removeChild(node.firstChild);
@@ -379,6 +376,7 @@ var Element = {
      * @return {Boolean}
      */
     isAncestorOf: function(ancestor, node){
+        /*jshint boss:true */
         if (!node || !ancestor) {
             return false;
         }
@@ -570,9 +568,10 @@ var Element = {
      * @param ellipsis  Optional. String to append to the chopped text.
      */
     ellipsizeText: function(element, ellipsis){
+        /*jshint boss:true */
         if (element = Ink.i(element)){
             while (element && element.scrollHeight > (element.offsetHeight + 8)) {
-                element.textContent = element.textContent.replace(/(\s+\S+)\s*$/, replace || '\u2026');
+                element.textContent = element.textContent.replace(/(\s+\S+)\s*$/, ellipsis || '\u2026');
             }
         }
     },
@@ -783,7 +782,7 @@ var Element = {
         if (!opts.data) { throw 'opts.data is a requirement!';    }
         opts = Ink.extendObj(defs, opts);
 
-        var optionEl, optGroupEl, d;
+        var optionEl, d;
 
         var optGroupValuesEl = document.createElement('optgroup');
         optGroupValuesEl.setAttribute('label', opts.optionsGroupLabel);
@@ -870,10 +869,10 @@ var Element = {
             afterEl = afterEl.nextSibling;
         }
         var containerEl = document.createElement('span');
-        if (afterEl) {  
-            afterEl.parentNode.insertBefore(containerEl, afterEl);  
-        } else {          
-            Ink.i(insertAfterEl).appendChild(containerEl);             
+        if (afterEl) {
+            afterEl.parentNode.insertBefore(containerEl, afterEl);
+        } else {
+            Ink.i(insertAfterEl).appendChild(containerEl);
         }
 
         data = this._normalizeData(data);
@@ -930,10 +929,10 @@ var Element = {
             afterEl = afterEl.nextSibling;
         }
         var containerEl = document.createElement('span');
-        if (afterEl) {  
-            afterEl.parentNode.insertBefore(containerEl, afterEl);  
-        } else {          
-            Ink.i(insertAfterEl).appendChild(containerEl);             
+        if (afterEl) {
+            afterEl.parentNode.insertBefore(containerEl, afterEl);
+        } else {
+            Ink.i(insertAfterEl).appendChild(containerEl);
         }
 
         data = this._normalizeData(data);
@@ -1105,6 +1104,8 @@ var Element = {
      * @return {DocumentFragment}       DocumentFragment containing all of the elements from the html string
      */
     htmlToFragment: function(html){
+        /*jshint boss:true */
+        /*global Range:false */
         if(typeof document.createRange === 'function' && typeof Range.prototype.createContextualFragment === 'function'){
             this.htmlToFragment = function(html){
                 var range;

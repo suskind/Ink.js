@@ -1,6 +1,3 @@
-/*jshint browser:true, eqeqeq:true, undef:true, curly:true, laxbreak:true, forin:true, smarttabs:true */
-/*global Ink:false */
-
 /**
  * @author inkdev AT sapo.pt
  */
@@ -61,8 +58,8 @@ Ink.createModule('Ink.Util.Swipe', '1', ['Ink.Dom.Event_1'], function(Event) {
         _init: function() {
             var db = document.body;
             Event.observe(db, 'touchstart', this._handlers.down);
-            if (this._options.storeGesture) { 
-                Event.observe(db, 'touchmove', this._handlers.move); 
+            if (this._options.storeGesture) {
+                Event.observe(db, 'touchmove', this._handlers.move);
             }
             Event.observe(db, 'touchend', this._handlers.up);
             this._isOn = false;
@@ -73,8 +70,8 @@ Ink.createModule('Ink.Util.Swipe', '1', ['Ink.Dom.Event_1'], function(Event) {
                 return;
             }
             do {
-                if (el === parentEl) { 
-                    return true; 
+                if (el === parentEl) {
+                    return true;
                 }
                 el = el.parentNode;
             } while (el);

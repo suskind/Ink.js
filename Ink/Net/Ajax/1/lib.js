@@ -1,6 +1,3 @@
-/*jshint browser:true, eqeqeq:true, undef:true, curly:true, laxbreak:true, forin:true, smarttabs:true */
-/*global Ink:false */
-
 /**
  * @author inkdev AT sapo.pt
  */
@@ -463,7 +460,7 @@ Ajax.prototype = {
      * @function ? Safely calls a callback function. Verifies that
      *             the callback is well defined and traps errors
      */
-    safeCall: function(listener, first, second) {
+    safeCall: function(listener, first/*, second*/) {
         function rethrow(exception){
             setTimeout(function() {
                 // Rethrow exception so it'll land in
