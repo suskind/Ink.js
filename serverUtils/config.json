@@ -1,3 +1,7 @@
 {
-	"roots": ["Ink", "CloudPT"]
+	"roots": ["Ink"],
+	"tests": {
+		"browsers":     "ch ff",
+		"runLocalGrid": true
+	}
 }

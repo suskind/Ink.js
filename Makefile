@@ -33,6 +33,21 @@ extractTree:
 	@node serverUtils/extractTree.js
 	
 
+extractTestsTree:
+	@echo "\nextracting tests tree..."
+	@node serverUtils/extractTestsTree.js
+
+
+deleteTestResults:
+	@echo "\ndeleting previous test results..."
+	@node serverUtils/deleteTestResults.js
+
+
+runTests: extractTestsTree deleteTestResults
+	@echo "\nrunning tests..."
+	@node serverUtils/runTests.js
+
+
 updateSymLinks:
 	@echo "\nupdating sym links..."
 	@node serverUtils/manageSymLinks.js update
