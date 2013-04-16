@@ -16,7 +16,11 @@
     var filesToBundle;
 
     var op = process.argv[2];
-    if (op && op === 'min') {
+    var minify = (op && op === 'min');
+    var bundleFile = (minify ? cfg.bundleMinFile : cfg.bundleFile);
+
+
+    if (minify) {
 
         // files -> minFiles
         filesToBundle = [];
@@ -36,7 +40,7 @@
 
 
     // concatenate
-    var ws = fs.createWriteStream( cfg.bundleFile );
+    var ws = fs.createWriteStream(bundleFile);
     var left = filesToBundle.length;
 
     async.forEachSeries(
