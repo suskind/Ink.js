@@ -45,7 +45,7 @@
 
     async.forEachSeries(
         filesToBundle,
-        function(f, innerCb) {    // for each
+        function(f, innerCb) { // for each
             //ws.write('\n// ' + f + '\n'); // uncomment if you want to prefix each file with its comment
             ws.write('\n'); // one file per line
             --left;
@@ -54,7 +54,7 @@
             rs.pipe(ws, {end: left === 0});
         },
         function(err) { // on all done or error...
-            console.log(err ? err : 'Created bundle on ' + cfg.bundleFile);
+            console.log(err ? err : 'Created bundle on ' + bundleFile);
         }
     );
 
