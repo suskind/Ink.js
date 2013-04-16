@@ -1,7 +1,10 @@
+VERSION = "`cat VERSION`"
+
+
 
 help:
 	@echo Relevant tasks are:
-	@echo "    all               (extractTree min updateSymLinks docs)"
+	@echo "    all               (extractTree min updateSymLinks docs updateBuilds)"
 	@echo "    clean             (deleteSymLinks deleteMinFiles removeDirs)"
 	@echo "    report"
 	@echo "    docs"
@@ -16,7 +19,7 @@ help:
 
 
 
-all: extractTree min updateSymLinks docs done
+all: extractTree min updateSymLinks docs updateBuilds
 
 
 report: deleteSymLinks deleteMinFiles
@@ -25,12 +28,12 @@ report: deleteSymLinks deleteMinFiles
 	@google-chrome report/index.html
 
 
-clean: deleteSymLinks deleteMinFiles removeDirs done
+clean: deleteSymLinks deleteMinFiles removeDirs
 	@rm -rf ./inkjs.js
 	@echo "clean."
 
 
-.PHONY: docs report deleteSymLinks deleteMinFiles removeDirs done
+.PHONY: docs report deleteSymLinks deleteMinFiles removeDirs
 
 
 extractTree:
@@ -103,5 +106,6 @@ importPreCommitHook:
 	@ln -s ../../pre-commit.sh .git/hooks/pre-commit
 
 
-done:
-	@echo "\nDONE!"
+updateBuilds: bundle bundleMin
+	@cp inkjs.js     "builds/inkjs-$(VERSION).js"
+	@cp inkjs.min.js "builds/inkjs-$(VERSION).min.js"
