@@ -7,6 +7,8 @@ help:
 	@echo "    docs"
 	@echo "    showDocs"
 	@echo "    min"
+	@echo "    bundle"
+	@echo "    bundleMin"
 	@echo "    extractTree"
 	@echo "    updateSymLinks"
 	@echo "    deleteSymLinks"
@@ -69,14 +71,19 @@ showDocs: docs
 	@google-chrome docs/index.html
 
 
-min:
+min: extractTree
 	@echo "\nminifying code..."
 	@node serverUtils/minFiles.js
 
 
-bundle:
+bundle: extractTree
 	@echo "\nbundling..."
 	@node serverUtils/bundle.js
+
+
+bundleMin: min
+	@echo "\nbundling minified..."
+	@node serverUtils/bundle.js min
 
 
 deleteMinFiles:

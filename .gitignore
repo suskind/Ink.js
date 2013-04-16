@@ -3,3 +3,5 @@ node_modules
 report
 serverUtils/moduleDirs.json
 serverUtils/moduleFiles.json
+inkjs.js
+*.min.js
