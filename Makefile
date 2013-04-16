@@ -23,9 +23,11 @@ report: deleteSymLinks deleteMinFiles
 
 
 clean: deleteSymLinks deleteMinFiles removeDirs done
+	@rm -rf ./inkjs.js
+	@echo "clean."
 
 
-.PHONY: docs report
+.PHONY: docs report deleteSymLinks deleteMinFiles removeDirs done
 
 
 extractTree:
@@ -70,6 +72,11 @@ showDocs: docs
 min:
 	@echo "\nminifying code..."
 	@node serverUtils/minFiles.js
+
+
+bundle:
+	@echo "\nbundling..."
+	@node serverUtils/bundle.js
 
 
 deleteMinFiles:
