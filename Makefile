@@ -9,6 +9,7 @@ help:
 	@echo "    min"
 	@echo "    bundle"
 	@echo "    bundleMin"
+	@echo "    importPreCommitHook"
 	@echo "    extractTree"
 	@echo "    updateSymLinks"
 	@echo "    deleteSymLinks"
@@ -95,6 +96,11 @@ removeDirs:
 	@echo "\nremoving docs and reports directories..."
 	@rm -rf docs
 	@rm -rf report
+
+
+importPreCommitHook:
+	@echo '\ncreating symbolic link of pre-commit.sh to your git internals'
+	@ln -s pre-commit.sh .git/hooks/pre-commit
 
 
 done:
