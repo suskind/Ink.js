@@ -1,7 +1,8 @@
 {
-	"roots": ["Ink"],
-	"tests": {
-		"browsers":     "ch ff",
-		"runLocalGrid": true
-	}
+    "roots": ["Ink"],
+    "bundleFile": "./inkjs.js",
+    "tests": {
+        "browsers":     "ch ff",
+        "runLocalGrid": true
+    }
 }
