@@ -99,8 +99,8 @@ removeDirs:
 
 
 importPreCommitHook:
-	@echo '\ncreating symbolic link of pre-commit.sh to your git internals'
-	@ln -s pre-commit.sh .git/hooks/pre-commit
+	@echo "\ncreating symbolic link of pre-commit.sh to your git internals"
+	@ln -s ../../pre-commit.sh .git/hooks/pre-commit
 
 
 done:
