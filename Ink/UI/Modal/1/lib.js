@@ -1,5 +1,5 @@
 
-Ink.createModule('Ink.UI.Modal', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Dom.Css_1','Ink.Dom.Element_1','Ink.Dom.Selector_1'], function(Aux, Event, Css, Element, Selector ) {
+Ink.createModule('Ink.UI.Modal', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Dom.Css_1','Ink.Dom.Element_1','Ink.Dom.Selector_1','Ink.Util.Array_1'], function(Aux, Event, Css, Element, Selector, InkArray ) {
     'use strict';
 
     /**
@@ -7,7 +7,7 @@ Ink.createModule('Ink.UI.Modal', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Dom
      *
      * @since October 2012
      * @author jose.p.dias AT co.sapo.pt
-     * @version 0.1
+     * @version 1
      *
      * <pre>
      * Displays a "window-like" container over the page and waits for dismiss.
@@ -21,12 +21,17 @@ Ink.createModule('Ink.UI.Modal', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Dom
      * @constructor Ink.UI.Modal.?
      * @param {String|DOMElement} selector
      * @param {Object}            options
-     * @... {optional Number}   width          modal width in pixels. defaults to 600
-     * @... {optional Number}   height         modal height in pixels. defaults to 400
-     * @... {optional Number}   markup         HTML markup string. if passed, populates the modal, otherwise the selector is used to fetch the content.
-     * @... {optional Function} onShow         callback to call when the modal is shown
-     * @... {optional Function} onDismiss      callback to call when the modal is dismissed
-     * @... {optional Boolean}  closeOnClick   defaults to false. if trueish, a click anywhere dismissed the modal.
+     * @... {optional Number}               width           modal width in pixels. defaults to 600
+     * @... {optional Number}               height          modal height in pixels. defaults to 400
+     * @... {optional String}               shadeClass      Classes to be added to the .ink-shade div
+     * @... {optional String}               shadeClass      Classes to be added to the .ink-modal div
+     * @... {optional String}               trigger         CSS selector that represents one or more elements that will trigger the display 
+     * @... {optional String}               triggerEvent    Event that will be observed on the trigger
+     * @... {optional Number}               markup          HTML markup string. if passed, populates the modal, otherwise the selector is used to fetch the content.
+     * @... {optional Function}             onShow          callback to call when the modal is shown
+     * @... {optional Function}             onDismiss       callback to call when the modal is dismissed
+     * @... {optional Boolean}              closeOnClick    defaults to false. if trueish, a click anywhere dismissed the modal.
+     * @... {optional Boolean}              disableScroll   defaults to true. if trueish, it will disable (or try to) the scroll of the rest of the page (not in the Modal).
      */
     var Modal = function(selector, options) {
 
@@ -55,6 +60,12 @@ Ink.createModule('Ink.UI.Modal', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Dom
              */
             width:        undefined,
             height:       undefined,
+
+            /**
+             * To add extra classes
+             */
+            shadeClass: undefined,
+            modalClass: undefined,
 
             /**
              * Optional trigger properties
@@ -148,6 +159,19 @@ Ink.createModule('Ink.UI.Modal', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Dom
 
         if( !this._markupMode ){
             this.setContentMarkup(this._options.markup);
+        }
+
+        if( typeof this._options.shadeClass === 'string' ){
+
+            InkArray.each( this._options.shadeClass.split(' '), Ink.bind(function( item ){
+                Css.addClassName( this._modalShadow, item.trim() );
+            }, this));
+        }
+
+        if( typeof this._options.modalClass === 'string' ){
+            InkArray.each( this._options.modalClass.split(' '), Ink.bind(function( item ){
+                Css.addClassName( this._modalDiv, item.trim() );
+            }, this));
         }
 
         if( ("trigger" in this._options) && ( typeof this._options.trigger !== 'undefined' ) ){

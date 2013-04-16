@@ -5,8 +5,8 @@
 
         <title>InkJS - Modal samples</title>
 
-        <link rel="stylesheet" href="http://siteink.local/assets/css/ink.css" />
-        <link rel="stylesheet" href="http://siteink.local/assets/css/docs.css" />
+        <link rel="stylesheet" href="/samples/assets/css/ink.css" />
+        <link rel="stylesheet" href="/samples/assets/css/docs.css" />
 
         <script type="text/javascript" src="/Ink/1/"></script>
         <script type="text/javascript" src="/Ink/Dom/Loaded/1/"></script>
@@ -15,7 +15,7 @@
         <script type="text/javascript" src="http://imgs.sapo.pt/ink/assets/js/prettify.js"></script>
         <style>
             pre.prettyprint{
-                width:70%;
+                font-size: 0.75em;
             }
         </style>
     </head>
@@ -29,7 +29,7 @@
                 <li><a href="#">Item</a></li>
             </ul>
         </nav>
-        <div class="ink-container">
+        <div class="ink-container ink-grid">
             <h1>Modal Samples - InkJS</h1>
 
             <section>
@@ -37,34 +37,32 @@
                     <h2>Open the modal on page load</h2>
                 </header>
                 <p>
-                    <pre class="prettyprint linenums">
-                        &lt;div id="displayOnStart" class="ink-modal fade" data-width="800px" data-height="400px"&gt;
-                            &lt;div class="modal-header"&gt;
-                                &lt;button class="modal-close ink-dismiss"&gt;&lt;/button&gt;
-                                &lt;h5&gt;This Modal is dislayed as soon as the page is fully available&lt;/h5&gt;
-                            &lt;/div&gt;
-                            &lt;div class="modal-body" id="modalContent"&gt;
-                                &lt;h3&gt;Please confirm your previous choice&lt;/h3&gt;
-                                &lt;p&gt;"No," said Peleg, "and he hasn't been baptized right either, or it would have washed some of that devil's blue off his face."&lt;/p&gt;
-                                &lt;p&gt;
-                                    &lt;img src="http://placehold.it/800x400" style="width: 100%;" alt=""&gt;
-                                &lt;/p&gt;
-                                &lt;p&gt;"Do tell, now," cried Bildad, "is this Philistine a regular member of Deacon Deuteronomy's meeting? I never saw him going there, and I pass it every Lord's day."&lt;/p&gt;
-                                &lt;p&gt;"I don't know anything about Deacon Deuteronomy or his meeting," said I; "all I know is, that Queequeg here is a born member of the First Congregational Church. He is a deacon himself, Queequeg is."&lt;/p&gt;
-                            &lt;/div&gt;
-                            &lt;div class="modal-footer"&gt;
-                                &lt;div class="push-right"&gt;
-                                    &lt;button class="ink-button info"&gt;Confirm&lt;/button&gt;
-                                    &lt;button class="ink-button caution ink-dismiss"&gt;Cancel&lt;/button&gt;
-                                &lt;/div&gt;
-                            &lt;/div&gt;
-                        &lt;/div&gt;
-                        &lt;script&gt;
-                            Ink.Dom.Loaded.run(function(){
-                                var myFirstModal = new Ink.UI.Modal('#displayOnStart');
-                            });
-                        &lt;/script&gt;
-                    </pre>
+                    <pre class="prettyprint linenums">&lt;div id="displayOnStart" class="ink-modal fade" data-width="800px" data-height="400px"&gt;
+    &lt;div class="modal-header"&gt;
+        &lt;button class="modal-close ink-dismiss"&gt;&lt;/button&gt;
+        &lt;h5&gt;This Modal is dislayed as soon as the page is fully available&lt;/h5&gt;
+    &lt;/div&gt;
+    &lt;div class="modal-body" id="modalContent"&gt;
+        &lt;h3&gt;Please confirm your previous choice&lt;/h3&gt;
+        &lt;p&gt;"No," said Peleg, "and he hasn't been baptized right either, or it would have washed some of that devil's blue off his face."&lt;/p&gt;
+        &lt;p&gt;
+            &lt;img src="http://placehold.it/800x400" style="width: 100%;" alt=""&gt;
+        &lt;/p&gt;
+        &lt;p&gt;"Do tell, now," cried Bildad, "is this Philistine a regular member of Deacon Deuteronomy's meeting? I never saw him going there, and I pass it every Lord's day."&lt;/p&gt;
+        &lt;p&gt;"I don't know anything about Deacon Deuteronomy or his meeting," said I; "all I know is, that Queequeg here is a born member of the First Congregational Church. He is a deacon himself, Queequeg is."&lt;/p&gt;
+    &lt;/div&gt;
+    &lt;div class="modal-footer"&gt;
+        &lt;div class="push-right"&gt;
+            &lt;button class="ink-button info"&gt;Confirm&lt;/button&gt;
+            &lt;button class="ink-button caution ink-dismiss"&gt;Cancel&lt;/button&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+&lt;script&gt;
+    Ink.Dom.Loaded.run(function(){
+        var myFirstModal = new Ink.UI.Modal('#displayOnStart');
+    });
+&lt;/script&gt;</pre>
                 </p>
             </section>
 
@@ -74,25 +72,23 @@
                 </header>
                 <p>
                     <button id="myTrigger">Open Modal</button>
-                    <pre class="prettyprint linenums">
-                        &lt;div class="ink-shade fade"&gt;
-                            &lt;div id="displayOnBtnClick" class="ink-modal fade" data-trigger="#myTrigger" data-width="800px" data-height="400px"&gt;
-                                &lt;div class="modal-header"&gt;
-                                    &lt;button class="modal-close ink-dismiss"&gt;&lt;/button&gt;
-                                    &lt;h5&gt;This is a different modal&lt;/h5&gt;
-                                &lt;/div&gt;
-                                &lt;div class="modal-body" id="modalContent"&gt;
-                                    Different!!! Opened by a button
-                                &lt;/div&gt;
-                            &lt;/div&gt;
-                        &lt;/div&gt;
+                    <pre class="prettyprint linenums">&lt;div class="ink-shade fade"&gt;
+    &lt;div id="displayOnBtnClick" class="ink-modal fade" data-trigger="#myTrigger" data-width="800px" data-height="400px"&gt;
+        &lt;div class="modal-header"&gt;
+            &lt;button class="modal-close ink-dismiss"&gt;&lt;/button&gt;
+            &lt;h5&gt;This is a different modal&lt;/h5&gt;
+        &lt;/div&gt;
+        &lt;div class="modal-body" id="modalContent"&gt;
+            Different!!! Opened by a button
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
 
-                        &lt;script&gt;
-                            Ink.Dom.Loaded.run(function(){
-                                var mySecondModal = new Ink.UI.Modal('#displayOnBtnClick');
-                            });
-                        &lt;/script&gt;
-                    </pre>
+&lt;script&gt;
+    Ink.Dom.Loaded.run(function(){
+        var mySecondModal = new Ink.UI.Modal('#displayOnBtnClick');
+    });
+&lt;/script&gt;</pre>
                 </p>
             </section>
 
@@ -102,20 +98,18 @@
                 </header>
                 <p>
                     <button id="codeTrigger">Open Modal</button>
-                    <pre class="prettyprint linenums">
-                        &lt;script&gt;
-                            Ink.Dom.Loaded.run(function(){
-                                Ink.Dom.Event.observe( Ink.s('#codeTrigger'), 'click', function( event ){
-                                    Ink.Dom.Event.stop(event);
-                                    var myThirdModal = new Ink.UI.Modal(null,{
-                                        width: '600px',
-                                        height: '400px',
-                                        markup: '&lt;div class="modal-header"&gt;&lt;button class="modal-close ink-dismiss"&gt;&lt;/button&gt;&lt;/div&gt;&lt;div class="modal-body"&gt;Stuff&lt;/div&gt;'
-                                    });
-                                });
-                            });
-                        &lt;/script&gt;
-                    </pre>
+                    <pre class="prettyprint linenums">&lt;script&gt;
+    Ink.Dom.Loaded.run(function(){
+        Ink.Dom.Event.observe( Ink.s('#codeTrigger'), 'click', function( event ){
+            Ink.Dom.Event.stop(event);
+            var myThirdModal = new Ink.UI.Modal(null,{
+                width: '600px',
+                height: '400px',
+                markup: '&lt;div class="modal-header"&gt;&lt;button class="modal-close ink-dismiss"&gt;&lt;/button&gt;&lt;/div&gt;&lt;div class="modal-body"&gt;Stuff&lt;/div&gt;'
+            });
+        });
+    });
+&lt;/script&gt;</pre>
                 </p>
             </section>
 
@@ -168,6 +162,8 @@
                         var myThirdModal = new Ink.UI.Modal(null,{
                             width: '600px',
                             height: '400px',
+                            shadeClass: 'myShadeClass myOtherShadeClass',
+                            modalClass: 'myModalClass myOtherModalClass',
                             markup: '<div class="modal-header"><button class="modal-close ink-dismiss"></button></div><div class="modal-body">Stuff</div>'
                         });
 
