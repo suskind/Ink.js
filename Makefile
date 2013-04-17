@@ -1,19 +1,25 @@
+VERSION = "`cat VERSION`"
+
+
 
 help:
 	@echo Relevant tasks are:
-	@echo "    all               (extractTree min updateSymLinks docs)"
+	@echo "    all               (extractTree min updateSymLinks docs updateBuilds)"
 	@echo "    clean             (deleteSymLinks deleteMinFiles removeDirs)"
 	@echo "    report"
 	@echo "    docs"
 	@echo "    showDocs"
 	@echo "    min"
+	@echo "    bundle"
+	@echo "    bundleMin"
+	@echo "    importPreCommitHook"
 	@echo "    extractTree"
 	@echo "    updateSymLinks"
 	@echo "    deleteSymLinks"
 
 
 
-all: extractTree min updateSymLinks docs done
+all: extractTree min updateSymLinks docs updateBuilds
 
 
 report: deleteSymLinks deleteMinFiles
@@ -22,10 +28,12 @@ report: deleteSymLinks deleteMinFiles
 	@google-chrome report/index.html
 
 
-clean: deleteSymLinks deleteMinFiles removeDirs done
+clean: deleteSymLinks deleteMinFiles removeDirs
+	@rm -rf ./inkjs.js
+	@echo "clean."
 
 
-.PHONY: docs report
+.PHONY: docs report deleteSymLinks deleteMinFiles removeDirs
 
 
 extractTree:
@@ -67,9 +75,19 @@ showDocs: docs
 	@google-chrome docs/index.html
 
 
-min:
+min: extractTree
 	@echo "\nminifying code..."
 	@node serverUtils/minFiles.js
+
+
+bundle: extractTree
+	@echo "\nbundling..."
+	@node serverUtils/bundle.js
+
+
+bundleMin: min
+	@echo "\nbundling minified..."
+	@node serverUtils/bundle.js min
 
 
 deleteMinFiles:
@@ -83,5 +101,11 @@ removeDirs:
 	@rm -rf report
 
 
-done:
-	@echo "\nDONE!"
+importPreCommitHook:
+	@echo "\ncreating symbolic link of pre-commit.sh to your git internals"
+	@ln -s ../../pre-commit.sh .git/hooks/pre-commit
+
+
+updateBuilds: bundle bundleMin
+	@cp inkjs.js     "builds/inkjs-$(VERSION).js"
+	@cp inkjs.min.js "builds/inkjs-$(VERSION).min.js"

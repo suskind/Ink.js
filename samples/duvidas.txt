@@ -41,6 +41,8 @@ Ink.Util.Swipe - migrado (verificar se faz sentido ir para o Ink.Dom)
 
 Ink.Util.Validator - migrado 
 
+Ink.Util.Cookie - migrado - removido feature webview
+
 
 Ink.Net.Ajax - migrado 
     - TODO - remover eval e usar json.parse do crockford 

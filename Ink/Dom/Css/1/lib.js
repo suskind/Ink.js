@@ -735,33 +735,29 @@ Ink.createModule( 'Ink.Dom.Css', 1, [], function() {
          * @param {optional Number}  minVal    if result gets smaller than minVal, change does not occurr
          * @param {optional Number}  maxVal    if result gets bigger  than maxVal, change does not occurr
          */
-        changeFontSize: function(selector, delta, op, minVal, maxVal)
-        {
-            var InkDomSelector = this.getModule('Ink.Dom.Selector', 1);
-            if(typeof(InkDomSelector) === 'undefined') {
-                throw 'This method requires Ink.Dom.Selector - v1';
-            }
+        changeFontSize: function(selector, delta, op, minVal, maxVal) {
+            var that = this;
+            Ink.requireModules(['Ink.Dom.Selector_1'], function(Selector) {
+                var e;
+                if      (typeof selector !== 'string') { e = '1st argument must be a CSS selector rule.'; }
+                else if (typeof delta    !== 'number') { e = '2nd argument must be a number.'; }
+                else if (op !== undefined && op !== '+' && op !== '*') { e = '3rd argument must be one of "+", "*".'; }
+                else if (minVal !== undefined && (typeof minVal !== 'number' || minVal <= 0)) { e = '4th argument must be a positive number.'; }
+                else if (maxVal !== undefined && (typeof maxVal !== 'number' || maxVal < maxVal)) { e = '5th argument must be a positive number greater than minValue.'; }
+                if (e) { throw new TypeError(e); }
 
-            var e;
-            if      (typeof selector !== 'string') { e = '1st argument must be a CSS selector rule.'; }
-            else if (typeof delta    !== 'number') { e = '2nd argument must be a number.'; }
-            else if (op !== undefined && op !== '+' && op !== '*') { e = '3rd argument must be one of "+", "*".'; }
-            else if (minVal !== undefined && (typeof minVal !== 'number' || minVal <= 0)) { e = '4th argument must be a positive number.'; }
-            else if (maxVal !== undefined && (typeof maxVal !== 'number' || maxVal < maxVal)) { e = '5th argument must be a positive number greater than minValue.'; }
-            if (e) { throw new TypeError(e); }
-
-            var val, el, els = InkDomSelector.select(selector);
-            //els = Array.prototype.slice.call(els);
-            if (minVal === undefined) { minVal = 1; }
-            op = (op === '*') ? function(a,b){return a*b;} : function(a,b){return a+b;};
-            for (var i = 0, f = els.length; i < f; ++i) {
-                el = els[i];
-                val = parseFloat( this.getStyle(el, 'fontSize'));
-                val = op(val, delta);
-                if (val < minVal) { continue; }
-                if (typeof maxVal === 'number' && val > maxVal) { continue; }
-                el.style.fontSize = val + 'px';
-            }
+                var val, el, els = Selector.select(selector);
+                if (minVal === undefined) { minVal = 1; }
+                op = (op === '*') ? function(a,b){return a*b;} : function(a,b){return a+b;};
+                for (var i = 0, f = els.length; i < f; ++i) {
+                    el = els[i];
+                    val = parseFloat( that.getStyle(el, 'fontSize'));
+                    val = op(val, delta);
+                    if (val < minVal) { continue; }
+                    if (typeof maxVal === 'number' && val > maxVal) { continue; }
+                    el.style.fontSize = val + 'px';
+                }
+            });
         }
 
     };
