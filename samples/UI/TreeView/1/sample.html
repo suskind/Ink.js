@@ -176,12 +176,11 @@
             </section>
         </div>
         <script>
-            Ink.requireModules(['Ink.UI.TreeView_1'], function() {
-                Ink.Util.Array.each(Ink.ss('.ink-tree-view'),function(item){
-                    var treeView = new Ink.UI.TreeView(item);
+            Ink.requireModules(['Ink.Util.Array_1','Ink.UI.TreeView_1'], function(InkArray, TreeView) {
+                InkArray.each(Ink.ss('.ink-tree-view'),function(item){
+                    var treeView = new TreeView(item);
                 });
             });
-            
         </script>
     </body>
 </html>

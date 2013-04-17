@@ -9,8 +9,6 @@
         <link rel="stylesheet" href="/samples/assets/css/docs.css" />
 
         <script type="text/javascript" src="/Ink/1/"></script>
-        <script type="text/javascript" src="/Ink/Dom/Loaded/1/"></script>
-        <script type="text/javascript" src="/Ink/UI/Modal/1/"></script>
 
         <script type="text/javascript" src="http://imgs.sapo.pt/ink/assets/js/prettify.js"></script>
         <style>
@@ -150,16 +148,16 @@
             </div>
 
             <script>
-                Ink.Dom.Loaded.run(function(){
-                    var myFirstModal = new Ink.UI.Modal('#displayOnStart');
+                Ink.requireModules(['Ink.Dom.Event_1','Ink.UI.Modal_1'],function(Event,Modal){
+                    var myFirstModal = new Modal('#displayOnStart');
 
-                    var mySecondModal = new Ink.UI.Modal('#displayOnBtnClick');
+                    var mySecondModal = new Modal('#displayOnBtnClick');
 
-                    Ink.Dom.Event.observe( Ink.s('#codeTrigger'), 'click', function( event ){
+                    Event.observe( Ink.s('#codeTrigger'), 'click', function( event ){
 
-                        Ink.Dom.Event.stop(event);
+                        Event.stop(event);
 
-                        var myThirdModal = new Ink.UI.Modal(null,{
+                        var myThirdModal = new Modal(null,{
                             width: '600px',
                             height: '400px',
                             shadeClass: 'myShadeClass myOtherShadeClass',
