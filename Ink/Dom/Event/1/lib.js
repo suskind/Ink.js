@@ -150,7 +150,7 @@ var Event = {
         }
 
 
-        if(element !== null){
+        if(element !== null && element !== undefined){
             if (element === document && document.createEvent && !element.dispatchEvent) {
                 element = document.documentElement;
             }
@@ -202,7 +202,7 @@ var Event = {
     observe: function(element, eventName, callBack, useCapture)
     {
         element = Ink.i(element);
-        if(element !== null) {
+        if(element !== null && element !== undefined) {
             if(eventName.indexOf(':') !== -1 ||
                 (eventName === "hashchange" && element.attachEvent && !window.onhashchange)
                 ) {
@@ -258,7 +258,7 @@ var Event = {
     {
         element = Ink.i(element);
 
-        if(element !== null) {
+        if(element !== null && element !== undefined) {
             if(element.removeEventListener) {
                 element.removeEventListener(eventName, callBack, !!useCapture);
             } else {
@@ -366,8 +366,7 @@ var Event = {
      * @return True if there is a right click on the event
      */
     isRightClick: function(ev) {
-        if(ev.button === 2){ return true; }
-        return false;
+        return (ev.button === 2);
     },
 
     /**
@@ -377,10 +376,10 @@ var Event = {
      */
     isMiddleClick: function(ev) {
         if (window.addEventListener) {
-            if(ev.button === 1){ return true; }
+            return (ev.button === 1);
         }
         else {
-            if(ev.button === 4){ return true; }
+            return (ev.button === 4);
         }
         return false;
     },
