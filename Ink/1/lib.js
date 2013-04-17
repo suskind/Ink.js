@@ -20,6 +20,7 @@
      */
     var paths = {
         Ink: '/Ink/' // TODO as soon as a production site exists, replace this default!
+	//Ink: ( ('INK_PATH' in window) ? window.INK_PATH :'http://inkjs.gamblap/Ink/' )
     };
     var modules = {};
     var modulesLoadOrder = [];
