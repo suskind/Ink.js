@@ -6,7 +6,7 @@
         <meta charset="utf-8">
 
         <script type="text/javascript" src="/Ink/1/"></script>
-        <script type="text/javascript">Ink.setPath('Ink', '/Ink/');</script>
+        <!--<script type="text/javascript">Ink.setPath('Ink', '/Ink/');</script>-->
 
         <style type="text/css">
             body {
@@ -100,15 +100,14 @@
                                 format:     'json'
                             },
                             onComplete: function(data) {
-                                return;
                                 var h = [];
 
                                 data.items.forEach(function(item) {
-                                    h = h.concat(['<img src="', item.media.m, '">']);
+                                    h = h.concat(['<a title="', item.title, '" href="', item.link, '"><img src="', item.media.m, '"><','/a>']);
                                 });
 
                                 document.body.insertAdjacentHTML('beforeend', h.join(''));
-                                //console.log('JsonP', data);
+                                console.log('JsonP', data);
                             }
                         }
                     );

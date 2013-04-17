@@ -13,10 +13,11 @@
 
 
     // internal data
-    //
-    // NOTE:
-    // define window.INK_PATH can be set before the first bundle which defines Ink core **
-    // otherwise do something like: Ink.setPath('Ink', '/Ink/'); before requiring local modules
+
+    /**
+     * NOTE:
+     * invoke Ink.setPath('Ink', '/Ink/'); before requiring local modules
+     */
     var paths = {
         Ink: '/Ink/' // TODO as soon as a production site exists, replace this default!
         //Ink: ( ('INK_PATH' in window) ? window.INK_PATH :'http://inkjs.gamblap/Ink/' )
