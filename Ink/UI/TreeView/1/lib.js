@@ -2,7 +2,7 @@
 Ink.createModule('Ink.UI.TreeView', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Dom.Css_1','Ink.Dom.Element_1','Ink.Dom.Selector_1','Ink.Util.Array_1'], function(Aux, Event, Css, Element, Selector, InkArray ) {
     'use strict';
     /**
-     * @class Ink.UI.Table
+     * @class Ink.UI.TreeView
      *
      * @since April 2013
      * @author ricardo.s.machado AT telecom.pt
