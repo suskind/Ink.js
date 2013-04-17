@@ -9,11 +9,6 @@
         <link rel="stylesheet" href="/samples/assets/css/docs.css" />
 
         <script type="text/javascript" src="/Ink/1/"></script>
-        <script type="text/javascript" src="/Ink/Dom/Loaded/1/"></script>
-        <script type="text/javascript" src="/Ink/Dom/Selector/1/"></script>
-        <script type="text/javascript" src="/Ink/Util/Array/1/"></script>
-        <script type="text/javascript" src="/Ink/UI/TreeView/1/"></script>
-
         <script type="text/javascript" src="http://imgs.sapo.pt/ink/assets/js/prettify.js"></script>
         <style>
             pre.prettyprint{
@@ -181,15 +176,7 @@
             </section>
         </div>
         <script>
-            // Ink.Dom.Loaded.run(function(){
-                // Ink.Util.Array.each(Ink.ss('.ink-tree-view'),function(item){
-                //     debugger;
-                //     var treeView = new Ink.UI.TreeView(item);
-                // });
-            // })
-            
-            
-            Ink.requireModules(['Ink.Util.Array_1','Ink.UI.TreeView_1'], function() {
+            Ink.requireModules(['Ink.UI.TreeView_1'], function() {
                 Ink.Util.Array.each(Ink.ss('.ink-tree-view'),function(item){
                     var treeView = new Ink.UI.TreeView(item);
                 });
