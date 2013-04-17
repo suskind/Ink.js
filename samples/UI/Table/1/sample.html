@@ -1,0 +1,109 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+
+        <title>InkJS - Table samples</title>
+
+        <link rel="stylesheet" href="/samples/assets/css/ink.css" />
+        <link rel="stylesheet" href="/samples/assets/css/docs.css" />
+
+        <script type="text/javascript" src="/Ink/1/"></script>
+        <script type="text/javascript" src="/Ink/Dom/Loaded/1/"></script>
+        <script type="text/javascript" src="/Ink/UI/Table/1/"></script>
+
+        <script type="text/javascript" src="http://imgs.sapo.pt/ink/assets/js/prettify.js"></script>
+        <style>
+            pre.prettyprint{
+                font-size: 0.75em;
+            }
+        </style>
+    </head>
+
+    <body onload="prettyPrint()">
+        <nav class="ink-navigation ink-container">
+            <ul class="menu horizontal black flat">
+                <li><a href="#">Item</a></li>
+                <li><a href="#">Item</a></li>
+                <li><a href="#">Item</a></li>
+                <li><a href="#">Item</a></li>
+            </ul>
+        </nav>
+        <div class="ink-container ink-grid">
+            <h1>Table Samples - InkJS</h1>
+
+            <section>
+                <header>
+                    <h2>Table #1 - Markup with the configuration via data attributes</h2>
+                </header>
+                <table id="table1" class="ink-table" data-page-size="2">
+                    <thead>
+                        <tr>
+                            <th width="75%">Pepper</th>
+                            <th width="25%">Scoville Rating</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Trinidad Moruga Scorpion</td>
+                            <td>1500000</td>
+                        </tr>
+                        <tr>
+                            <td>Bhut Jolokia</td>
+                            <td>1000000</td>
+                        </tr>
+                        <tr>
+                            <td>Naga Viper</td>
+                            <td>1463700</td>
+                        </tr>
+                        <tr>
+                            <td>Red Savina Habanero</td>
+                            <td>580000</td>
+                        </tr>
+                        <tr>
+                            <td>Habanero</td>
+                            <td>350000</td>
+                        </tr>
+                        <tr>
+                            <td>Scotch Bonnet</td>
+                            <td>180000</td>
+                        </tr>
+                        <tr>
+                            <td>Malagueta</td>
+                            <td>50000</td>
+                        </tr>
+                        <tr>
+                            <td>Tabasco</td>
+                            <td>35000</td>
+                        </tr>
+                        <tr>
+                            <td>Serrano Chili</td>
+                            <td>27000</td>
+                        </tr>
+                        <tr>
+                            <td>Jalapeño</td>
+                            <td>8000</td>
+                        </tr>
+                        <tr>
+                            <td>Poblano</td>
+                            <td>1500</td>
+                        </tr>
+                        <tr>
+                            <td>Peperoncino</td>
+                            <td>500</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <nav class="ink-navigation"></nav>
+                <p>
+                    <pre class="prettyprint linenums"></pre>
+                </p>
+            </section>
+        </div>
+        <script>
+            Ink.Dom.Loaded.run(function(){
+                var table1 = new Ink.UI.Table('#table1');
+            });
+        </script>
+    </body>
+</html>
