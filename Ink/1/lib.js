@@ -13,9 +13,13 @@
 
 
     // internal data
+    //
+    // NOTE:
+    // define window.INK_PATH can be set before the first bundle which defines Ink core **
+    // otherwise do something like: Ink.setPath('Ink', '/Ink/'); before requiring local modules
     var paths = {
-        //Ink: 'http://127.0.0.1:8000/Ink/'
-        Ink: 'http://inkjs.gamblap/Ink/'
+        Ink: '/Ink/' // TODO as soon as a production site exists, replace this default!
+        //Ink: ( ('INK_PATH' in window) ? window.INK_PATH :'http://inkjs.gamblap/Ink/' )
     };
     var modules = {};
     var modulesLoadOrder = [];
@@ -103,12 +107,13 @@
             scriptEl.setAttribute('type', 'text/javascript');
             scriptEl.setAttribute('src', this._modNameToUri(uri));
 
-            if (document.readyState !== 'complete') {
+            //
+            /*if (document.readyState !== 'complete' && !document.body) {
                 document.write( scriptEl.outerHTML );
             }
-            else {
+            else {*/
                 document.head.appendChild(scriptEl);
-            }
+            //}
         },
 
         /**
@@ -332,12 +337,12 @@
         },
 
         /* Dom.Selector would override these methods for non-supporting browsers */
-        s: function(rule, from) 
+        s: function(rule, from)
         {
             if(typeof(Ink.Dom) === 'undefined' || typeof(Ink.Dom.Selector) === 'undefined') {
                 throw new Error('This method requires Ink.Dom.Selector');
             }
-            if(!document.querySelector) { 
+            if(!document.querySelector) {
                 var aRes = Ink.Dom.Selector.select(rule, (from || document));
                 if(aRes.length > 0) {
                     return aRes[0];
@@ -350,12 +355,12 @@
         },
 
         /* Dom.Selector would override these methods for non-supporting browsers */
-        ss: function(rule, from) 
+        ss: function(rule, from)
         {
             if(typeof(Ink.Dom) === 'undefined' || typeof(Ink.Dom.Selector) === 'undefined') {
                 throw new Error('This method requires Ink.Dom.Selector');
             }
-            if(!document.querySelectorAll) { 
+            if(!document.querySelectorAll) {
                 return Ink.Dom.Selector.select(rule, (from || document));
             } else {
                 var nodeList = (from || document).querySelectorAll(rule);

@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!doctype html>
 <html>
 <head>
 <title>...</title>
@@ -7,9 +7,11 @@
 <meta http-equiv="content-language" content="pt-pt" />
 
 <script type="text/javascript" src="/Ink/1/"></script>
+<script type="text/javascript">Ink.setPath('Ink', '/Ink/');</script>
+
 <script type="text/javascript" src="/Ink/Dom/Loaded/1/"></script>
 <script type="text/javascript" src="/Ink/Dom/Selector/1/"></script>
-<script type="text/javascript" src="/Ink/Dom/Css/1/"></script>
+<!--script type="text/javascript" src="/Ink/Dom/Css/1/"></script-->
 <script type="text/javascript" src="/Ink/Dom/Element/1/"></script>
 <script type="text/javascript" src="/Ink/Dom/Event/1/"></script>
 
@@ -21,7 +23,6 @@
 
 <script type="text/javascript" src="/Ink/Net/Ajax/1/"></script>
 <script type="text/javascript" src="/Ink/Net/JsonP/1/"></script>
-<script type="text/javascript" src="/Ink/Dom/Css/1/"></script>
 
 <style type="text/css">
 .foo{
@@ -37,10 +38,14 @@
 <script type="text/javascript">
 
 Ink.Dom.Loaded.run(function(){
-        Ink.requireModules(['Ink.Dom.Css_1'], function(Css) { 
-            Css.addClassName('h2', 'bar'); 
-            });
-        
+        Ink.requireModules(['Ink.Dom.Css_1'], function(Css) {
+            Css.addClassName('h2', 'bar');
+        });
+
+        Ink.requireModules(['Ink.Util.Dumper_1'], function(Dumper) {
+            //console.log('x', Dumper);
+        });
+
         var newDiv = Ink.Dom.Element.create('div', {id:'mydiv', "class":"foo"});
         Ink.Dom.Element.appendHTML(newDiv, '<p>Hello World - now click me</p>');
         document.body.appendChild(newDiv);
@@ -96,14 +101,14 @@ Ink.Dom.Loaded.run(function(){
                 },
             }
         );
-        
-        
+
+
 });
 
 </script>
 
 </head>
-<body> 
+<body>
 
 <h1 id="h1">Teste de coisas</h1>
 <h2 id="h2">Changed color to red after document loaded</h2>
