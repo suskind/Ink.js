@@ -173,8 +173,7 @@
 
                 // validate version correctness
                 if (typeof ver === 'number' || (typeof ver === 'string' && ver.length > 0)) {
-                }
-                else {
+                } else {
                     throw new Error('version must be passed!');
                 }
 
@@ -323,6 +322,9 @@
         },
 
         i: function(id) {
+            if(!id) {
+                throw new Error('Ink.i => id or element must be passed');
+            }
             if(typeof(id) === 'string') {
                 return document.getElementById(id);
             }
@@ -330,21 +332,35 @@
         },
 
         /* Dom.Selector would override these methods for non-supporting browsers */
-        s: function(rule, from) {
-               if(typeof(Ink.Dom.Selector) === 'undefined') {
-                   throw new Error('This method requires Ink.Dom.Selector');
-               }
-            var qs = document.querySelector;
-            if (!qs) { throw new Error('Your browser does not support document.querySelector(). Require the module "Ink.Dom.Selector".'); }
-            return qs.call(from || document, rule);
+        s: function(rule, from) 
+        {
+            if(typeof(Ink.Dom) === 'undefined' || typeof(Ink.Dom.Selector) === 'undefined') {
+                throw new Error('This method requires Ink.Dom.Selector');
+            }
+            if(!document.querySelector) { 
+                var aRes = Ink.Dom.Selector.select(rule, (from || document));
+                if(aRes.length > 0) {
+                    return aRes[0];
+                } else {
+                    return null;
+                }
+            } else {
+                return (from || document).querySelector(rule);
+            }
         },
 
         /* Dom.Selector would override these methods for non-supporting browsers */
-        ss: function(rule, from) {
-            var qsa = document.querySelectorAll;
-            if (!qsa) { throw new Error('Your browser does not support document.querySelectorAll(). Require the module "Ink.Dom.Selector".'); }
-            var nodeList = qsa.call(from || document, rule);
-            return Array.prototype.slice.call(nodeList); // to mimic selector, which returns an array
+        ss: function(rule, from) 
+        {
+            if(typeof(Ink.Dom) === 'undefined' || typeof(Ink.Dom.Selector) === 'undefined') {
+                throw new Error('This method requires Ink.Dom.Selector');
+            }
+            if(!document.querySelectorAll) { 
+                return Ink.Dom.Selector.select(rule, (from || document));
+            } else {
+                var nodeList = (from || document).querySelectorAll(rule);
+                return Array.prototype.slice.call(nodeList); // to mimic selector, which returns an array
+            }
         },
 
         extendObj: function(destination, source)
