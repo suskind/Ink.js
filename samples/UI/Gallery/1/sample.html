@@ -1,0 +1,236 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+
+        <title>InkJS - Gallery samples</title>
+
+        <link rel="stylesheet" href="/samples/assets/css/ink.css" />
+        <link rel="stylesheet" href="/samples/assets/css/docs.css" />
+
+        <script type="text/javascript" src="/Ink/1/"></script>
+        <script type="text/javascript" src="http://imgs.sapo.pt/ink/assets/js/prettify.js"></script>
+        <style>
+            pre.prettyprint{
+                font-size: 0.75em;
+            }
+        </style>
+    </head>
+
+    <body onload="prettyPrint()">
+        <nav class="ink-navigation ink-container">
+            <ul class="menu horizontal black flat">
+                <li><a href="#">Item</a></li>
+                <li><a href="#">Item</a></li>
+                <li><a href="#">Item</a></li>
+                <li><a href="#">Item</a></li>
+            </ul>
+        </nav>
+        <div class="ink-container ink-grid">
+            <h1>Gallery Samples - InkJS</h1>
+
+            <section>
+                <header>
+                    <h2>Gallery #1 - Default Markup</h2>
+                </header>
+                <ul class="ink-gallery-source">
+                    <li class="hentry hmedia">
+                        <a rel="enclosure" href="http://imgs.sapo.pt/ink/assets/imgs/ink-js-placeholders/1.1.png">
+                            <img alt="s1" src="http://imgs.sapo.pt/ink/assets/imgs/ink-js-placeholders/thumb1.png">
+                        </a>
+                        <a class="bookmark" href="http://imgs.sapo.pt/ink/assets/imgs/ink-js-placeholders/1.1.png">
+                            <span class="entry-title">s1</span>
+                        </a>
+                        <span class="entry-content"><p>hello world 1</p></span>
+                    </li>
+                    <li class="hentry hmedia">
+                        <a rel="enclosure" href="http://imgs.sapo.pt/ink/assets/imgs/ink-js-placeholders/1.2.png">
+                            <img alt="s2" src="http://imgs.sapo.pt/ink/assets/imgs/ink-js-placeholders/thumb2.png">
+                        </a>
+                        <a class="bookmark" href="http://imgs.sapo.pt/ink/assets/imgs/ink-js-placeholders/1.2.png">
+                            <span class="entry-title">s2</span>
+                        </a>
+                        <span class="entry-content"><p>hello world 2</p></span>
+                    </li>
+                    <li class="hentry hmedia">
+                        <a rel="enclosure" href="http://imgs.sapo.pt/ink/assets/imgs/ink-js-placeholders/1.3.png">
+                            <img alt="s3" src="http://imgs.sapo.pt/ink/assets/imgs/ink-js-placeholders/thumb3.png">
+                        </a>
+                        <a class="bookmark" href="http://imgs.sapo.pt/ink/assets/imgs/ink-js-placeholders/1.3.png">
+                            <span class="entry-title">s3</span>
+                        </a>
+                        <span class="entry-content"><p>hello world 3</p></span>
+                    </li>
+                    <li class="hentry hmedia">
+                        <a rel="enclosure" href="http://imgs.sapo.pt/ink/assets/imgs/ink-js-placeholders/1.4.png">
+                            <img alt="s4" src="http://imgs.sapo.pt/ink/assets/imgs/ink-js-placeholders/thumb4.png">
+                        </a>
+                        <a class="bookmark" href="http://imgs.sapo.pt/ink/assets/imgs/ink-js-placeholders/1.4.png">
+                            <span class="entry-title">s4</span>
+                        </a>
+                        <span class="entry-content"><p>hello world 4</p></span>
+                    </li>
+                </ul>
+                <p>
+                    <pre class="prettyprint linenums">&lt;div class="control-group"&gt;
+    &lt;label for="dPicker"&gt;A date field:&lt;/label&gt;
+    &lt;div class="control"&gt;
+        &lt;input id="dPicker" class="ink-datepicker" type="text" data-format="dd/mm/yyyy"&gt;&lt;/input&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+&lt;script&gt;
+    var dPicker = new Ink.UI.Gallery('.ink-datepicker');
+&lt;/script&gt;</pre>
+                </p>
+            </section>
+
+            <section>
+                <header>
+                    <h2>Gallery #2 - Default Markup</h2>
+                </header>
+                <ul class="ink-gallery-source" data-layout="1">
+                    <li class="hentry hmedia">
+                        <a rel="enclosure" href="http://imgs.sapo.pt/ink/assets/imgs/ink-js-placeholders/1.1.png">
+                            <img alt="s1" src="http://imgs.sapo.pt/ink/assets/imgs/ink-js-placeholders/thumb1.png">
+                        </a>
+                        <a class="bookmark" href="http://imgs.sapo.pt/ink/assets/imgs/ink-js-placeholders/1.1.png">
+                            <span class="entry-title">s1</span>
+                        </a>
+                        <span class="entry-content"><p>hello world 1</p></span>
+                    </li>
+                    <li class="hentry hmedia">
+                        <a rel="enclosure" href="http://imgs.sapo.pt/ink/assets/imgs/ink-js-placeholders/1.2.png">
+                            <img alt="s2" src="http://imgs.sapo.pt/ink/assets/imgs/ink-js-placeholders/thumb2.png">
+                        </a>
+                        <a class="bookmark" href="http://imgs.sapo.pt/ink/assets/imgs/ink-js-placeholders/1.2.png">
+                            <span class="entry-title">s2</span>
+                        </a>
+                        <span class="entry-content"><p>hello world 2</p></span>
+                    </li>
+                    <li class="hentry hmedia">
+                        <a rel="enclosure" href="http://imgs.sapo.pt/ink/assets/imgs/ink-js-placeholders/1.3.png">
+                            <img alt="s3" src="http://imgs.sapo.pt/ink/assets/imgs/ink-js-placeholders/thumb3.png">
+                        </a>
+                        <a class="bookmark" href="http://imgs.sapo.pt/ink/assets/imgs/ink-js-placeholders/1.3.png">
+                            <span class="entry-title">s3</span>
+                        </a>
+                        <span class="entry-content"><p>hello world 3</p></span>
+                    </li>
+                    <li class="hentry hmedia">
+                        <a rel="enclosure" href="http://imgs.sapo.pt/ink/assets/imgs/ink-js-placeholders/1.4.png">
+                            <img alt="s4" src="http://imgs.sapo.pt/ink/assets/imgs/ink-js-placeholders/thumb4.png">
+                        </a>
+                        <a class="bookmark" href="http://imgs.sapo.pt/ink/assets/imgs/ink-js-placeholders/1.4.png">
+                            <span class="entry-title">s4</span>
+                        </a>
+                        <span class="entry-content"><p>hello world 4</p></span>
+                    </li>
+                </ul>
+                <p>
+                    <pre class="prettyprint linenums"></pre>
+                </p>
+            </section>
+
+            <section>
+                <header>
+                    <h2>Gallery #3 - Default Markup</h2>
+                </header>
+                <ul class="ink-gallery-source" data-layout="2">
+                    <li class="hentry hmedia">
+                        <a rel="enclosure" href="http://imgs.sapo.pt/ink/assets/imgs/ink-js-placeholders/1.1.png">
+                            <img alt="s1" src="http://imgs.sapo.pt/ink/assets/imgs/ink-js-placeholders/thumb1.png">
+                        </a>
+                        <a class="bookmark" href="http://imgs.sapo.pt/ink/assets/imgs/ink-js-placeholders/1.1.png">
+                            <span class="entry-title">s1</span>
+                        </a>
+                        <span class="entry-content"><p>hello world 1</p></span>
+                    </li>
+                    <li class="hentry hmedia">
+                        <a rel="enclosure" href="http://imgs.sapo.pt/ink/assets/imgs/ink-js-placeholders/1.2.png">
+                            <img alt="s2" src="http://imgs.sapo.pt/ink/assets/imgs/ink-js-placeholders/thumb2.png">
+                        </a>
+                        <a class="bookmark" href="http://imgs.sapo.pt/ink/assets/imgs/ink-js-placeholders/1.2.png">
+                            <span class="entry-title">s2</span>
+                        </a>
+                        <span class="entry-content"><p>hello world 2</p></span>
+                    </li>
+                    <li class="hentry hmedia">
+                        <a rel="enclosure" href="http://imgs.sapo.pt/ink/assets/imgs/ink-js-placeholders/1.3.png">
+                            <img alt="s3" src="http://imgs.sapo.pt/ink/assets/imgs/ink-js-placeholders/thumb3.png">
+                        </a>
+                        <a class="bookmark" href="http://imgs.sapo.pt/ink/assets/imgs/ink-js-placeholders/1.3.png">
+                            <span class="entry-title">s3</span>
+                        </a>
+                        <span class="entry-content"><p>hello world 3</p></span>
+                    </li>
+                    <li class="hentry hmedia">
+                        <a rel="enclosure" href="http://imgs.sapo.pt/ink/assets/imgs/ink-js-placeholders/1.4.png">
+                            <img alt="s4" src="http://imgs.sapo.pt/ink/assets/imgs/ink-js-placeholders/thumb4.png">
+                        </a>
+                        <a class="bookmark" href="http://imgs.sapo.pt/ink/assets/imgs/ink-js-placeholders/1.4.png">
+                            <span class="entry-title">s4</span>
+                        </a>
+                        <span class="entry-content"><p>hello world 4</p></span>
+                    </li>
+                </ul>
+                <p>
+                    <pre class="prettyprint linenums"></pre>
+                </p>
+            </section>
+
+            <section>
+                <header>
+                    <h2>Gallery #4 - Default Markup</h2>
+                </header>
+                <ul class="ink-gallery-source" data-layout="3">
+                    <li class="hentry hmedia">
+                        <a rel="enclosure" href="http://imgs.sapo.pt/ink/assets/imgs/ink-js-placeholders/1.1.png">
+                            <img alt="s1" src="http://imgs.sapo.pt/ink/assets/imgs/ink-js-placeholders/thumb1.png">
+                        </a>
+                        <a class="bookmark" href="http://imgs.sapo.pt/ink/assets/imgs/ink-js-placeholders/1.1.png">
+                            <span class="entry-title">s1</span>
+                        </a>
+                        <span class="entry-content"><p>hello world 1</p></span>
+                    </li>
+                    <li class="hentry hmedia">
+                        <a rel="enclosure" href="http://imgs.sapo.pt/ink/assets/imgs/ink-js-placeholders/1.2.png">
+                            <img alt="s2" src="http://imgs.sapo.pt/ink/assets/imgs/ink-js-placeholders/thumb2.png">
+                        </a>
+                        <a class="bookmark" href="http://imgs.sapo.pt/ink/assets/imgs/ink-js-placeholders/1.2.png">
+                            <span class="entry-title">s2</span>
+                        </a>
+                        <span class="entry-content"><p>hello world 2</p></span>
+                    </li>
+                    <li class="hentry hmedia">
+                        <a rel="enclosure" href="http://imgs.sapo.pt/ink/assets/imgs/ink-js-placeholders/1.3.png">
+                            <img alt="s3" src="http://imgs.sapo.pt/ink/assets/imgs/ink-js-placeholders/thumb3.png">
+                        </a>
+                        <a class="bookmark" href="http://imgs.sapo.pt/ink/assets/imgs/ink-js-placeholders/1.3.png">
+                            <span class="entry-title">s3</span>
+                        </a>
+                        <span class="entry-content"><p>hello world 3</p></span>
+                    </li>
+                    <li class="hentry hmedia">
+                        <a rel="enclosure" href="http://imgs.sapo.pt/ink/assets/imgs/ink-js-placeholders/1.4.png">
+                            <img alt="s4" src="http://imgs.sapo.pt/ink/assets/imgs/ink-js-placeholders/thumb4.png">
+                        </a>
+                        <a class="bookmark" href="http://imgs.sapo.pt/ink/assets/imgs/ink-js-placeholders/1.4.png">
+                            <span class="entry-title">s4</span>
+                        </a>
+                        <span class="entry-content"><p>hello world 4</p></span>
+                    </li>
+                </ul>
+                <p>
+                    <pre class="prettyprint linenums"></pre>
+                </p>
+            </section>
+        </div>
+        <script>
+            Ink.requireModules(['Ink.Util.Array_1','Ink.UI.Gallery_1'], function(InkArray, Gallery) {
+                InkArray.each(Ink.ss('ul.ink-gallery-source'),function(item){
+                    new Gallery(item);
+                });
+            });
+        </script>
+    </body>
+</html>

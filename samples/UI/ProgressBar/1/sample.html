@@ -9,8 +9,6 @@
         <link rel="stylesheet" href="/samples/assets/css/docs.css" />
 
         <script type="text/javascript" src="/Ink/1/"></script>
-        <script type="text/javascript" src="/Ink/Dom/Loaded/1/"></script>
-        <script type="text/javascript" src="/Ink/UI/ProgressBar/1/"></script>
 
         <script type="text/javascript" src="http://imgs.sapo.pt/ink/assets/js/prettify.js"></script>
         <style>
@@ -46,8 +44,8 @@
     &lt;div class="bar grey"&gt;&lt;/div&gt;
 &lt;/div&gt;
 &lt;script&gt;
-    Ink.Dom.Loaded.run(function(){
-        var myFirstProgressBar = new Ink.UI.ProgressBar('#progressbar1');
+    Ink.requireModules(['Ink.UI.ProgressBar_1'],function(ProgressBar){
+        var myFirstProgressBar = new ProgressBar('#progressbar1');
         var myFirstInterval = setInterval(function(){
             var myPercentage = ((Math.random(0,1)*100)+1);
             myFirstProgressBar.setValue( myPercentage );
@@ -71,8 +69,8 @@
     &lt;div class="bar blue"&gt;&lt;/div&gt;
 &lt;/div&gt;
 &lt;script&gt;
-    Ink.Dom.Loaded.run(function(){
-        var mySecondProgressBar = new Ink.UI.ProgressBar('#progressbar2',{
+    Ink.requireModules(['Ink.UI.ProgressBar_1'],function(ProgressBar){
+        var mySecondProgressBar = new ProgressBar('#progressbar2',{
             startValue: 10,
             onStart: function( value ){
                 console.log( 'ProgressBar Value BEFORE change: ' + value + '%' );
@@ -91,14 +89,14 @@
                 </p>
             </section>
             <script>
-                Ink.Dom.Loaded.run(function(){
-                    var myFirstProgressBar = new Ink.UI.ProgressBar('#progressbar1');
+                Ink.requireModules(['Ink.UI.ProgressBar_1'],function(ProgressBar){
+                    var myFirstProgressBar = new ProgressBar('#progressbar1');
                     var myFirstInterval = setInterval(function(){
                         var myPercentage = ((Math.random(0,1)*100)+1);
                         myFirstProgressBar.setValue( myPercentage );
                     },3000);
 
-                    var mySecondProgressBar = new Ink.UI.ProgressBar('#progressbar2',{
+                    var mySecondProgressBar = new ProgressBar('#progressbar2',{
                         startValue: 10,
                         onStart: function( value ){
                             console.log( 'ProgressBar Value BEFORE change: ' + value + '%' );

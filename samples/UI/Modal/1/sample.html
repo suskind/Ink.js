@@ -57,8 +57,8 @@
     &lt;/div&gt;
 &lt;/div&gt;
 &lt;script&gt;
-    Ink.Dom.Loaded.run(function(){
-        var myFirstModal = new Ink.UI.Modal('#displayOnStart');
+    Ink.requireModules(['Ink.UI.Modal_1'],function(Modal){
+        var myFirstModal = new Modal('#displayOnStart');
     });
 &lt;/script&gt;</pre>
                 </p>
@@ -83,8 +83,8 @@
 &lt;/div&gt;
 
 &lt;script&gt;
-    Ink.Dom.Loaded.run(function(){
-        var mySecondModal = new Ink.UI.Modal('#displayOnBtnClick');
+    Ink.requireModules(['Ink.UI.Modal_1'],function(Modal){
+        var mySecondModal = new Modal('#displayOnBtnClick');
     });
 &lt;/script&gt;</pre>
                 </p>
@@ -97,10 +97,10 @@
                 <p>
                     <button id="codeTrigger">Open Modal</button>
                     <pre class="prettyprint linenums">&lt;script&gt;
-    Ink.Dom.Loaded.run(function(){
-        Ink.Dom.Event.observe( Ink.s('#codeTrigger'), 'click', function( event ){
-            Ink.Dom.Event.stop(event);
-            var myThirdModal = new Ink.UI.Modal(null,{
+    Ink.requireModules(['Ink.Dom.Event_1','Ink.UI.Modal_1'],function(Event,Modal){
+        Event.observe( Ink.s('#codeTrigger'), 'click', function( event ){
+            Event.stop(event);
+            var myThirdModal = new Modal(null,{
                 width: '600px',
                 height: '400px',
                 markup: '&lt;div class="modal-header"&gt;&lt;button class="modal-close ink-dismiss"&gt;&lt;/button&gt;&lt;/div&gt;&lt;div class="modal-body"&gt;Stuff&lt;/div&gt;'

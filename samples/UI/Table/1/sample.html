@@ -9,8 +9,6 @@
         <link rel="stylesheet" href="/samples/assets/css/docs.css" />
 
         <script type="text/javascript" src="/Ink/1/"></script>
-        <script type="text/javascript" src="/Ink/Dom/Loaded/1/"></script>
-        <script type="text/javascript" src="/Ink/UI/Table/1/"></script>
 
         <script type="text/javascript" src="http://imgs.sapo.pt/ink/assets/js/prettify.js"></script>
         <style>
@@ -91,8 +89,8 @@
     &lt;/tbody&gt;
 &lt;/table&gt;
 &lt;script&gt;
-    Ink.Dom.Loaded.run(function(){
-        var table1 = new Ink.UI.Table('#table1');
+    Ink.requireModules(['Ink.UI.Table_1'],function(Table){
+        var table1 = new Table('#table1');
     });
 &lt;/script&gt;</pre>
                 </p>
@@ -117,17 +115,17 @@
 &gt;
 &lt;/table&gt;
 &lt;script&gt;
-    Ink.Dom.Loaded.run(function(){
-        var table2 = new Ink.UI.Table('#table2');
+    Ink.requireModules(['Ink.UI.Table_1'],function(Table){
+        var table2 = new Table('#table2');
     });
 &lt;/script&gt;</pre>
                 </p>
             </section>
         </div>
         <script>
-            Ink.Dom.Loaded.run(function(){
-                var table1 = new Ink.UI.Table('#table1');
-                var table2 = new Ink.UI.Table('#table2');
+            Ink.requireModules(['Ink.UI.Table_1'],function(Table){
+                var table1 = new Table('#table1');
+                var table2 = new Table('#table2');
             });
         </script>
     </body>
