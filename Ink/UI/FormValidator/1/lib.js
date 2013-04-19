@@ -1,5 +1,12 @@
-Ink.createModule('Ink.UI.FormValidator', '1', ['Ink.Dom.Css_1','Ink.Util.Validator_1'], function( Css, InkValidator ) {
+Ink.createModule('Ink.UI.FormValidator', '1',
+    ['Ink.Dom.Css_1','Ink.Util.Validator_1'],
+    function( Css, InkValidator ) {
+
     'use strict';
+
+    /**
+     * @module Ink.UI.DatePicker_1
+     */
 
     /*
 
@@ -166,9 +173,9 @@ Ink.createModule('Ink.UI.FormValidator', '1', ['Ink.Dom.Css_1','Ink.Util.Validat
                 curElm = formElms[i];
 
                 if(curElm.getAttribute('type') !== null && curElm.getAttribute('type').toLowerCase() === 'radio') {
-                    if(this.elements[this.element.id].length === 0 || 
+                    if(this.elements[this.element.id].length === 0 ||
                             (
-                             curElm.getAttribute('type') !== this.elements[this.element.id][(this.elements[this.element.id].length - 1)].getAttribute('type') && 
+                             curElm.getAttribute('type') !== this.elements[this.element.id][(this.elements[this.element.id].length - 1)].getAttribute('type') &&
                             curElm.getAttribute('name') !== this.elements[this.element.id][(this.elements[this.element.id].length - 1)].getAttribute('name')
                             )) {
                         for(var flag in this._flagMap) {

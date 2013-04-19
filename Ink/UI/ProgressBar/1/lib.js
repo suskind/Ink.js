@@ -1,6 +1,13 @@
 
-Ink.createModule('Ink.UI.ProgressBar', '1', ['Ink.Dom.Selector_1','Ink.Dom.Element_1'], function( Selector, Element ) {
+Ink.createModule('Ink.UI.ProgressBar', '1',
+    ['Ink.Dom.Selector_1','Ink.Dom.Element_1'],
+    function(Selector, Element) {
+
     'use strict';
+
+    /**
+     * @module Ink.UI.ProgressBar_1
+     */
 
     /**
      * @class Ink.UI.ProgressBar

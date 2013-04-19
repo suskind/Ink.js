@@ -2,10 +2,13 @@
  * @author inkdev AT sapo.pt
  */
 
-
 Ink.createModule('Ink.Util.Swipe', '1', ['Ink.Dom.Event_1'], function(Event) {
 
     'use strict';
+
+    /**
+     * @module Ink.Util.Swipe_1
+     */
 
     /**
      * @class Ink.Util.Swipe

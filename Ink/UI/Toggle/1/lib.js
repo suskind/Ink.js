@@ -1,7 +1,14 @@
 
-Ink.createModule('Ink.UI.Toggle', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Dom.Css_1','Ink.Dom.Element_1','Ink.Dom.Selector_1'], function(Aux, Event, Css, Element, Selector ) {
+Ink.createModule('Ink.UI.Toggle', '1',
+    ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Dom.Css_1','Ink.Dom.Element_1','Ink.Dom.Selector_1'],
+    function(Aux, Event, Css, Element, Selector) {
+
     'use strict';
-    
+
+    /**
+     * @module Ink.UI.Toggle_1
+     */
+
     var Toggle = function( selector, options ){
 
         if( typeof selector !== 'string' && typeof selector !== 'object' ){

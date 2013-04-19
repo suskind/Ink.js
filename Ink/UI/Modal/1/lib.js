@@ -1,6 +1,13 @@
 
-Ink.createModule('Ink.UI.Modal', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Dom.Css_1','Ink.Dom.Element_1','Ink.Dom.Selector_1','Ink.Util.Array_1'], function(Aux, Event, Css, Element, Selector, InkArray ) {
+Ink.createModule('Ink.UI.Modal', '1',
+    ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Dom.Css_1','Ink.Dom.Element_1','Ink.Dom.Selector_1','Ink.Util.Array_1'],
+    function(Aux, Event, Css, Element, Selector, InkArray) {
+
     'use strict';
+
+    /**
+     * @module Ink.UI.Modal_1
+     */
 
     /**
      * @class Ink.UI.Modal
@@ -25,7 +32,7 @@ Ink.createModule('Ink.UI.Modal', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Dom
      * @... {optional Number}               height          modal height in pixels. defaults to 400
      * @... {optional String}               shadeClass      Classes to be added to the .ink-shade div
      * @... {optional String}               shadeClass      Classes to be added to the .ink-modal div
-     * @... {optional String}               trigger         CSS selector that represents one or more elements that will trigger the display 
+     * @... {optional String}               trigger         CSS selector that represents one or more elements that will trigger the display
      * @... {optional String}               triggerEvent    Event that will be observed on the trigger
      * @... {optional Number}               markup          HTML markup string. if passed, populates the modal, otherwise the selector is used to fetch the content.
      * @... {optional Function}             onShow          callback to call when the modal is shown
@@ -332,7 +339,7 @@ Ink.createModule('Ink.UI.Modal', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Dom
                 /**
                  * The viewport height has expanded
                  */
-                //this._modalDivStyle.maxHeight = 
+                //this._modalDivStyle.maxHeight =
                 this._modalDivStyle.height = this._modalDivStyle.maxHeight;
 
             } else {

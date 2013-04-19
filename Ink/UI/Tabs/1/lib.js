@@ -1,7 +1,14 @@
 
-Ink.createModule('Ink.UI.Tabs', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Dom.Css_1','Ink.Dom.Element_1','Ink.Dom.Selector_1','Ink.Util.Array_1'], function(Aux, Event, Css, Element, Selector, InkArray ) {
+Ink.createModule('Ink.UI.Tabs', '1',
+    ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Dom.Css_1','Ink.Dom.Element_1','Ink.Dom.Selector_1','Ink.Util.Array_1'],
+    function(Aux, Event, Css, Element, Selector, InkArray) {
+
     'use strict';
-    
+
+    /**
+     * @module Ink.UI.Tabs_1
+     */
+
     /**
      * @class Ink.UI.Tabs
      *
@@ -123,7 +130,7 @@ Ink.createModule('Ink.UI.Tabs', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Dom.
             Css.removeClassName(this._activeMenuTab, 'active');
             Css.removeClassName(this._activeContentTab, 'active');
             Css.addClassName(this._activeContentTab, 'hide-all');
-            
+
             this._activeMenuLink = link;
             this._activeMenuTab = this._activeMenuLink.parentNode;
             this._activeContentTab = Selector.select(selector.substr(selector.indexOf('#')), this._element)[0];

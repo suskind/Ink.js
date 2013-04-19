@@ -1,13 +1,20 @@
 
-Ink.createModule('Ink.UI.DatePicker', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Dom.Css_1','Ink.Dom.Element_1','Ink.Dom.Selector_1','Ink.Util.Array_1','Ink.Util.Date_1'], function(Aux, Event, Css, Element, Selector, InkArray, InkDate ) {
+Ink.createModule('Ink.UI.DatePicker', '1',
+    ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Dom.Css_1','Ink.Dom.Element_1','Ink.Dom.Selector_1','Ink.Util.Array_1','Ink.Util.Date_1'],
+    function(Aux, Event, Css, Element, Selector, InkArray, InkDate ) {
+
     'use strict';
-    
+
     /**
-     * @class SAPO.Ink.DatePicker
+     * @module Ink.UI.DatePicker_1
+     */
+
+    /**
+     * @class Ink.UI.DatePicker
      *
      * @since October 2012
      * @author jose.p.dias AT co.sapo.pt
-     * @version 0.1
+     * @version 1
      *
      * <pre>
      * This is a refactoring from Component.DatePicker 2.1:
@@ -499,17 +506,17 @@ Ink.createModule('Ink.UI.DatePicker', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','In
                     else if ( pattern.test( dates[ 0 ] ) )
                     {
                         auxDate = dates[ 0 ].split( '-' );
-    
+
                         this._yearMin   = Math.floor( auxDate[ 0 ] );
                         this._monthMin  = Math.floor( auxDate[ 1 ] ) || 1;
                         this._dayMin    = Math.floor( auxDate[ 2 ] ) || 1;
-    
+
                         if ( 1 < this._monthMin && this._monthMin > 12 )
                         {
                             this._monthMin = 1;
                             this._dayMin = 1;
                         }
-    
+
                         if ( 1 < this._monthMin && this._monthMin > this._daysInMonth( this._yearMin , this._monthMin ) )
                         {
                             this._dayMin = 1;
@@ -522,7 +529,7 @@ Ink.createModule('Ink.UI.DatePicker', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','In
                         this._dayMin    = 1;
                     }
                 }
-    
+
                 if ( dates[ 1 ] )
                 {
                     if ( dates[ 1 ] === 'NOW' )
@@ -534,17 +541,17 @@ Ink.createModule('Ink.UI.DatePicker', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','In
                     else if ( pattern.test( dates[ 1 ] ) )
                     {
                         auxDate = dates[ 1 ].split( '-' );
-    
+
                         this._yearMax   = Math.floor( auxDate[ 0 ] );
                         this._monthMax  = Math.floor( auxDate[ 1 ] ) || 12;
                         this._dayMax    = Math.floor( auxDate[ 2 ] ) || this._daysInMonth( this._yearMax , this._monthMax );
-    
+
                         if ( 1 < this._monthMax && this._monthMax > 12 )
                         {
                             this._monthMax = 12;
                             this._dayMax = 31;
                         }
-    
+
                         var MDay = this._daysInMonth( this._yearMax , this._monthMax );
                         if ( 1 < this._monthMax && this._monthMax > MDay )
                         {
@@ -558,13 +565,13 @@ Ink.createModule('Ink.UI.DatePicker', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','In
                         this._dayMaXx   = 31;
                     }
                 }
-    
+
                 if ( !( this._yearMax >= this._yearMin && this._monthMax >= this._monthMin && this._dayMax >= this._dayMin ) )
                 {
                     this._yearMin   = Number.MIN_VALUE;
                     this._monthMin  = 1;
                     this._dayMin    = 1;
-    
+
                     this._yearMax   = Number.MAX_VALUE;
                     this._monthMax  = 12;
                     this._dayMaXx   = 31;
@@ -575,7 +582,7 @@ Ink.createModule('Ink.UI.DatePicker', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','In
                 this._yearMin   = Number.MIN_VALUE;
                 this._monthMin  = 1;
                 this._dayMin    = 1;
-    
+
                 this._yearMax   = Number.MAX_VALUE;
                 this._monthMax  = 12;
                 this._dayMaXx   = 31;
@@ -1000,7 +1007,7 @@ Ink.createModule('Ink.UI.DatePicker', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','In
                     ano === this._yearMax && mes === this._monthMax && i > this._dayMax ||
                     ano === this._yearMin && mes < this._monthMin ||
                     ano === this._yearMax && mes > this._monthMax ||
-                    ano < this._yearMin || ano > this._yearMax || ( this._options.validDayFn && !this._options.validDayFn.call( this, new Date( ano , mes - 1 , i) ) ) ) ? " sapo_cal_off" : 
+                    ano < this._yearMin || ano > this._yearMax || ( this._options.validDayFn && !this._options.validDayFn.call( this, new Date( ano , mes - 1 , i) ) ) ) ? " sapo_cal_off" :
                     (this._data.getFullYear( ) === ano && this._data.getMonth( ) === mes - 1 && i === this._day) ? " sapo_cal_on" : "";
                 html+='<li><a href="#" class="' + idx + '">' + i + '</a></li>';
 

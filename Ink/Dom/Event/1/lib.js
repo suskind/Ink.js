@@ -1,14 +1,21 @@
 /**
- * @author: inkdev AT sapo.pt
+ * @author inkdev AT sapo.pt
  */
 
 Ink.createModule('Ink.Dom.Event', 1, [], function() {
 
-'use strict';
+    'use strict';
 
-/**
- */
-var Event = {
+    /**
+     * @module Ink.Dom.Event_1
+     */
+
+    /**
+     * @class Ink.Dom.Event
+     * @static
+     */
+
+    var Event = {
 
     KEY_BACKSPACE: 8,
     KEY_TAB:       9,

@@ -1,10 +1,21 @@
+Ink.createModule('Ink.Dom.Selector', 1, [], function() {
+
+    /**
+     * @module Ink.Dom.Selector_1
+     */
+
+    /**
+     * @class Ink.Dom.Selector
+     * @static
+     */
+
+
 /*!
  * Sizzle CSS Selector Engine
  * Copyright 2013 jQuery Foundation and other contributors
  * Released under the MIT license
  * http://sizzlejs.com/
  */
-Ink.createModule('Ink.Dom.Selector', 1, [], function() {
 
 var i,
 	cachedruns,

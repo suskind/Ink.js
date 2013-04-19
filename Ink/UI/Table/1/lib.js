@@ -1,6 +1,14 @@
 
-Ink.createModule('Ink.UI.Table', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Dom.Css_1','Ink.Dom.Element_1','Ink.Dom.Selector_1','Ink.Util.Array_1','Ink.UI.Pagination_1'], function(Aux, Event, Css, Element, Selector, InkArray, Pagination ) {
+Ink.createModule('Ink.UI.Table', '1',
+    ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Dom.Css_1','Ink.Dom.Element_1','Ink.Dom.Selector_1','Ink.Util.Array_1','Ink.UI.Pagination_1'],
+    function(Aux, Event, Css, Element, Selector, InkArray, Pagination) {
+
     'use strict';
+
+    /**
+     * @module Ink.UI.Table_1
+     */
+
     /**
      * @class Ink.UI.Table
      *

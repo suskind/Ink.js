@@ -1,7 +1,14 @@
 
-Ink.createModule('Ink.UI.Gallery', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Dom.Css_1','Ink.Dom.Element_1','Ink.Dom.Selector_1','Ink.Util.Array_1','Ink.Util.Swipe_1'], function(Aux, Event, Css, Element, Selector, InkArray, Swipe ) {
+Ink.createModule('Ink.UI.Gallery', '1',
+    ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Dom.Css_1','Ink.Dom.Element_1','Ink.Dom.Selector_1','Ink.Util.Array_1','Ink.Util.Swipe_1'],
+    function(Aux, Event, Css, Element, Selector, InkArray, Swipe) {
+
     'use strict';
-    
+
+    /**
+     * @module Ink.UI.Gallery_1
+     */
+
     var maximizeBox = function(maxSz, imageSz, forceMaximize) {
         var w = imageSz[0];
         var h = imageSz[1];
