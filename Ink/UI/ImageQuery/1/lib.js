@@ -1,14 +1,22 @@
 
-Ink.createModule('Ink.UI.ImageQuery', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Dom.Css_1','Ink.Dom.Element_1','Ink.Dom.Selector_1','Ink.Util.Array_1'], function(Aux, Event, Css, Element, Selector, InkArray ) {
+Ink.createModule('Ink.UI.ImageQuery', '1',
+    ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Dom.Css_1','Ink.Dom.Element_1','Ink.Dom.Selector_1','Ink.Util.Array_1'],
+    function(Aux, Event, Css, Element, Selector, InkArray) {
+
     'use strict';
-    
+
     /**
+     * @module Ink.UI.ImageQuery_1
+     */
+
+    /**
+     * @class Ink.UI.ImageQuery
+     *
      * ImageQuery is an Ink's component responsible for loading images based on the viewport width.
      * For that, the component accepts an array of (media) queries in the options.
-     * 
+     *
      * @param {string|DOMElement} selector CSS Selector or DOMElement
-     * @param {object} options  Options' object for configuring the instance. These options can also be set through
-     * data-attributes
+     * @param {object} options  Options' object for configuring the instance. These options can also be set through data-attributes
      */
     var ImageQuery = function(selector, options){
 
@@ -141,7 +149,7 @@ Ink.createModule('Ink.UI.ImageQuery', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','In
 
                 /**
                  * Choosing the right src. The rule is:
-                 * 
+                 *
                  *   "If there is specifically defined in the query object, use that. Otherwise uses the global src."
                  *
                  * The above rule applies to a retina src.
@@ -199,7 +207,7 @@ Ink.createModule('Ink.UI.ImageQuery', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','In
             this._options.onLoad.call(this);
         }
 
-    };    
+    };
 
     return ImageQuery;
 

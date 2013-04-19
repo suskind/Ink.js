@@ -1,6 +1,14 @@
 
-Ink.createModule('Ink.UI.TreeView', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Dom.Css_1','Ink.Dom.Element_1','Ink.Dom.Selector_1','Ink.Util.Array_1'], function(Aux, Event, Css, Element, Selector, InkArray ) {
+Ink.createModule('Ink.UI.TreeView', '1',
+    ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Dom.Css_1','Ink.Dom.Element_1','Ink.Dom.Selector_1','Ink.Util.Array_1'],
+    function(Aux, Event, Css, Element, Selector, InkArray) {
+
     'use strict';
+
+    /**
+     * @module Ink.UI.TreeView_1
+     */
+
     /**
      * @class Ink.UI.TreeView
      *
@@ -11,7 +19,7 @@ Ink.createModule('Ink.UI.TreeView', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.
      * <pre>
      * TreeView is an Ink's component responsible for presenting a defined set of elements in a tree-like hierarchical structure
      * </pre>
-     * 
+     *
      * @param {string|DOMElement} selector CSS Selector or DOMElement
      * @param {Object}            options
      * @... {optional String}               node        CSS selector that identifies the elements that are considered nodes.
@@ -99,7 +107,7 @@ Ink.createModule('Ink.UI.TreeView', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.
              * If the clicked element is a "node" as defined in the options, will check if it has any "child".
              * If so, will show it or hide it, depending on its current state. And will stop the event's default behavior.
              * If not, will execute the event's default behavior.
-             * 
+             *
              */
             var tgtEl = Event.element(event);
 

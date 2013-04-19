@@ -1,6 +1,14 @@
 
-Ink.createModule('Ink.UI.SortableList', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Dom.Css_1','Ink.Dom.Element_1','Ink.Dom.Selector_1','Ink.Util.Array_1'], function(Aux, Event, Css, Element, Selector, InkArray ) {
+Ink.createModule('Ink.UI.SortableList', '1',
+    ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Dom.Css_1','Ink.Dom.Element_1','Ink.Dom.Selector_1','Ink.Util.Array_1'],
+    function(Aux, Event, Css, Element, Selector, InkArray) {
+
     'use strict';
+
+    /**
+     * @module Ink.UI.SortableList_1
+     */
+
     /**
      * @class Ink.UI.SortableList
      *
@@ -81,7 +89,7 @@ Ink.createModule('Ink.UI.SortableList', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','
             }
 
             var isTouch = 'ontouchstart' in document.documentElement;
-            
+
             this._down = isTouch ? 'touchstart': 'mousedown';
             this._move = isTouch ? 'touchmove' : 'mousemove';
             this._up   = isTouch ? 'touchend'  : 'mouseup';

@@ -1,5 +1,11 @@
 (function() {
 
+    'use strict';
+
+    /**
+     * @module Ink_1
+     */
+
     /**
      * global object
      *
@@ -108,7 +114,7 @@
             scriptEl.setAttribute('type', 'text/javascript');
             scriptEl.setAttribute('src', this._modNameToUri(uri));
 
-            //
+            // CHECK ON ALL BROWSERS
             /*if (document.readyState !== 'complete' && !document.body) {
                 document.write( scriptEl.outerHTML );
             }
@@ -188,11 +194,7 @@
 
                 // make sure module in not loaded twice
                 if (modules[modAll]) {
-                    console.warn(['Ink.createModule ', modAll, ': module has been defined already.'].join(''));
-
-                    /*if (this) { // there may be pending requires expecting this module, check...
-                        Ink._checkPendingRequireModules();
-                    }*/
+                    //console.warn(['Ink.createModule ', modAll, ': module has been defined already.'].join(''));
                     return;
                 }
 

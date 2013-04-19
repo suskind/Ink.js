@@ -2,13 +2,21 @@
  * @author inkdev AT sapo.pt
  */
 
-
-/**
- * Auxiliar Utility functions to use with several components
- */
-Ink.createModule('Ink.UI.Aux', '1', ['Ink.Net.Ajax_1','Ink.Dom.Css_1','Ink.Dom.Selector_1','Ink.Util.Url_1'], function(Ajax,Css,Selector,Url) {
+Ink.createModule('Ink.UI.Aux', '1',
+    ['Ink.Net.Ajax_1','Ink.Dom.Css_1','Ink.Dom.Selector_1','Ink.Util.Url_1'],
+    function(Ajax, Css, Selector, Url) {
 
     'use strict';
+
+    /**
+     * @module Ink.UI.Aux_1
+     */
+
+    /**
+     * Auxiliar Utility functions to use with several components
+     *
+     * @namespace Ink.UI.Aux
+     */
 
     var instances = {};
     var lastIdNum = 0;

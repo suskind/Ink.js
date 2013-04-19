@@ -1,6 +1,14 @@
 
-Ink.createModule('Ink.UI.Pagination', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Dom.Css_1','Ink.Dom.Element_1','Ink.Dom.Selector_1'], function(Aux, Event, Css, Element, Selector ) {
+Ink.createModule('Ink.UI.Pagination', '1',
+    ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Dom.Css_1','Ink.Dom.Element_1','Ink.Dom.Selector_1'],
+    function(Aux, Event, Css, Element, Selector) {
+
     'use strict';
+
+    /**
+     * @module Ink.UI.Pagination_1
+     */
+
     /**
      * @class Ink.UI.Pagination
      *
