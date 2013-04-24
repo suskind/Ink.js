@@ -81,8 +81,8 @@ Ink.createModule('Ink.UI.SmoothScroller', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1'
                 a = a + (d - a) / SmoothScroller.speed;
             }
 
-            window.scrollTo(0, a+2.5);
-            if ((a+2.5) === d || SmoothScroller.offsetTop === a)
+            window.scrollTo(0, a);
+            if ((a) === d || SmoothScroller.offsetTop === a)
             {
                 clearInterval(SmoothScroller.interval);
             }
