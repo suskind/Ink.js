@@ -1,6 +1,37 @@
+/**
+ * @module Ink.UI.Sticky_1
+ * @author inkdev AT sapo.pt
+ * @version 1
+ */
 Ink.createModule('Ink.UI.Sticky', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Dom.Css_1','Ink.Dom.Element_1','Ink.Dom.Selector_1'], function(Aux, Event, Css, Element, Selector ) {
     'use strict';
 
+    /**
+     * The Sticky component takes an element and transforms it's behavior in order to, when the user scrolls he sets its position
+     * to fixed and maintain it until the user scrolls back to the same place.
+     * 
+     * @class Ink.UI.Sticky
+     * @constructor
+     * @version 1
+     * @uses Ink.UI.Aux
+     * @uses Ink.Dom.Event
+     * @uses Ink.Dom.Css
+     * @uses Ink.Dom.Element
+     * @uses Ink.Dom.Selector
+     * @param {String|DOMElement} selector
+     * @param {Object} [options] Options for the datepicker
+     *     @param {Number}     options.offsetBottom       Number of pixels of distance from the bottomElement.
+     *     @param {Number}     options.offsetTop          Number of pixels of distance from the topElement.
+     *     @param {String}     options.topElement         CSS Selector that specifies a top element with which the component could collide.
+     *     @param {String}     options.bottomElement      CSS Selector that specifies a bottom element with which the component could collide.
+     * @example
+     *      <script>
+     *          Ink.requireModules( ['Ink.Dom.Selector_1','Ink.UI.Sticky_1'], function( Selector, Sticky ){
+     *              var menuElement = Ink.s('#menu');
+     *              var stickyObj = new Sticky( menuElement );
+     *          });
+     *      </script>
+     */
     var Sticky = function( selector, options ){
 
         if( typeof selector !== 'object' && typeof selector !== 'string'){
@@ -50,7 +81,12 @@ Ink.createModule('Ink.UI.Sticky', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Do
 
     Sticky.prototype = {
 
-
+        /**
+         * Init function called by the constructor
+         * 
+         * @method _init
+         * @private
+         */
         _init: function(){
             Event.observe( document, 'scroll', Ink.bindEvent(this._onScroll,this) );
             Event.observe( window, 'resize', Ink.bindEvent(this._onResize,this) );
@@ -64,6 +100,12 @@ Ink.createModule('Ink.UI.Sticky', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Do
 
         },
 
+        /**
+         * Scroll handler.
+         * 
+         * @method _onScroll
+         * @private
+         */
         _onScroll: function(){
 
 
@@ -116,6 +158,12 @@ Ink.createModule('Ink.UI.Sticky', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Do
             },this),0);
         },
 
+        /**
+         * Resize handler
+         * 
+         * @method _onResize
+         * @private
+         */
         _onResize: function(){
 
             if( this._resizeTimeout ){
@@ -130,6 +178,13 @@ Ink.createModule('Ink.UI.Sticky', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Do
 
         },
 
+        /**
+         * On each resizing (and in the beginning) the component recalculates the offsets, since
+         * the top and bottom element heights might have changed.
+         * 
+         * @method _calculateOffsets
+         * @private
+         */
         _calculateOffsets: function(){
 
             /**
@@ -166,10 +221,6 @@ Ink.createModule('Ink.UI.Sticky', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Do
             }
 
             this._onScroll();
-
-        },
-
-        _destroy: function(){
 
         }
 

@@ -1,6 +1,7 @@
 /**
  * @module Ink.UI.Aux_1
  * @author inkdev AT sapo.pt
+ * @version 1
  */
 Ink.createModule('Ink.UI.Aux', '1', ['Ink.Net.Ajax_1','Ink.Dom.Css_1','Ink.Dom.Selector_1','Ink.Util.Url_1'], function(Ajax,Css,Selector,Url) {
 
@@ -13,10 +14,12 @@ Ink.createModule('Ink.UI.Aux', '1', ['Ink.Net.Ajax_1','Ink.Dom.Css_1','Ink.Dom.S
      * The Aux class provides auxiliar methods to ease some of the most common/repetitive UI tasks.
      *
      * @class Ink.UI.Aux
-     * @uses Ink.Net.Ajax_1
-     * @uses Ink.Dom.Css_1
-     * @uses Ink.Dom.Selector_1
-     * @uses Ink.Util.Url_1
+     * @version 1
+     * @uses Ink.Net.Ajax
+     * @uses Ink.Dom.Css
+     * @uses Ink.Dom.Selector
+     * @uses Ink.Util.Url
+     * @static
      */
     var Aux = {
 

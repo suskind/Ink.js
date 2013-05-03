@@ -1,14 +1,57 @@
-
+/**
+ * @module Ink.UI.ImageQuery_1
+ * @author inkdev AT sapo.pt
+ * @version 1
+ */
 Ink.createModule('Ink.UI.ImageQuery', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Dom.Css_1','Ink.Dom.Element_1','Ink.Dom.Selector_1','Ink.Util.Array_1'], function(Aux, Event, Css, Element, Selector, InkArray ) {
     'use strict';
-    
+
     /**
-     * ImageQuery is an Ink's component responsible for loading images based on the viewport width.
-     * For that, the component accepts an array of (media) queries in the options.
-     * 
-     * @param {string|DOMElement} selector CSS Selector or DOMElement
-     * @param {object} options  Options' object for configuring the instance. These options can also be set through
-     * data-attributes
+     * @class Ink.UI.ImageQuery
+     * @constructor
+     * @version 1
+     * @uses Ink.UI.Aux
+     * @uses Ink.Dom.Event
+     * @uses Ink.Dom.Css
+     * @uses Ink.Dom.Element
+     * @uses Ink.Dom.Selector
+     * @uses Ink.Util.Array
+     *
+     * @param {String|DOMElement} selector
+     * @param {Object} [options] Options for the datepicker
+     *      @param {String|Function}    [options.src]             String or Callback function (that returns a string) with the path to be used to get the images.
+     *      @param {String|Function}    [options.retina]          String or Callback function (that returns a string) with the path to be used to get RETINA specific images.
+     *      @param {Array}              [options.queries]         Array of queries
+     *          @param {String}              [options.queries.label]         Label of the query. Ex. 'small'
+     *          @param {Number}              [options.queries.width]         Min-width to use this query
+     *      @param {Function}           [options.onLoad]          Date format string
+     *
+     * @example
+     *      <div class="imageQueryExample large-100 medium-100 small-100 content-center clearfix vspace">
+     *          <img src="/assets/imgs/imagequery/small/image.jpg" />
+     *      </div>
+     *      <script type="text/javascript">
+     *      Ink.requireModules( ['Ink.Dom.Selector_1', 'Ink.UI.ImageQuery_1'], function( Selector, ImageQuery ){
+     *          var imageQueryElement = Ink.s('.imageQueryExample img');
+     *          var imageQueryObj = new ImageQuery('.imageQueryExample img',{
+     *              src: '/assets/imgs/imagequery/{:label}/{:file}',
+     *              queries: [
+     *                  {
+     *                      label: 'small',
+     *                      width: 480
+     *                  },
+     *                  {
+     *                      label: 'medium',
+     *                      width: 640
+     *                  },
+     *                  {
+     *                      label: 'large',
+     *                      width: 1024
+     *                  }   
+     *              ]
+     *          });
+     *      } );
+     *      </script>
      */
     var ImageQuery = function(selector, options){
 
@@ -64,6 +107,12 @@ Ink.createModule('Ink.UI.ImageQuery', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','In
 
     ImageQuery.prototype = {
 
+        /**
+         * Init function called by the constructor
+         * 
+         * @method _init
+         * @private
+         */
         _init: function(){
 
             /**
@@ -92,8 +141,10 @@ Ink.createModule('Ink.UI.ImageQuery', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','In
         },
 
         /**
-         * @function {void} ? Handles the resize event (as specified in the _init function)
-         * @return {void}
+         * Handles the resize event (as specified in the _init function)
+         *
+         * @method _onResize
+         * @private
          */
         _onResize: function(){
 
@@ -188,8 +239,10 @@ Ink.createModule('Ink.UI.ImageQuery', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','In
         },
 
         /**
-         * @function {void} ? Handles the element loading (img onload) event
-         * @return {void}
+         * Handles the element loading (img onload) event
+         *
+         * @method _onLoad
+         * @private
          */
         _onLoad: function(){
 

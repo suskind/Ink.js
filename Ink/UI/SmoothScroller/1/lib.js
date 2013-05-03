@@ -1,30 +1,40 @@
-
-Ink.createModule('Ink.UI.SmoothScroller', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Dom.Css_1','Ink.Dom.Element_1','Ink.Dom.Selector_1','Ink.Dom.Loaded_1'], function(Aux, Event, Css, Element, Selector, Loaded ) {
+/**
+ * @module Ink.UI.SmoothScroller_1
+ * @author inkdev AT sapo.pt
+ * @version 1
+ */
+Ink.createModule('Ink.UI.SmoothScroller', '1', ['Ink.Dom.Event_1','Ink.Dom.Selector_1','Ink.Dom.Loaded_1'], function(Event, Selector, Loaded ) {
     'use strict';
 
     /**
-     * @class SmoothScroller
-     *
-     * @since October 2012
-     * @author jose.p.dias AT co.sapo.pt
-     * @version 0.1
-     *
-     * <pre>
-     * </pre>
-     */
-
-    /**
-     * @constructor SAPO.Ink.SmoothScroller.?
-     * @param {String|DOMElement} selector
-     * @param {Object}            options
-     * @... {optional Number}               speed           By default is 10. Determines the speed of the scroll
+     * @class Ink.UI.SmoothScroller
+     * @version 1
+     * @uses Ink.Dom.Event
+     * @uses Ink.Dom.Selector
+     * @uses Ink.Dom.Loaded
+     * @static
      */
     var SmoothScroller = {
-        // control the speed of the scroller.
-        // dont change it here directly, please use Scroller.speed=50;
+
+        /**
+         * Sets the speed of the scrolling
+         *
+         * @property
+         * @type {Number}
+         * @readOnly
+         * @static
+         */
         speed: 10,
 
-        // returns the Y position of the div
+        /**
+         * Returns the Y position of the div
+         *
+         * @method gy
+         * @param  {DOMElement} d DOMElement to get the Y position from
+         * @return {Number}   Y position of div 'd'
+         * @public
+         * @static
+         */
         gy: function(d) {
             var gy;
             gy = d.offsetTop;
@@ -36,7 +46,15 @@ Ink.createModule('Ink.UI.SmoothScroller', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1'
             return gy;
         },
 
-        // returns the current scroll position
+
+        /**
+         * Returns the current scroll position
+         *
+         * @method scrollTop
+         * @return {Number}  Current scroll position
+         * @public
+         * @static
+         */
         scrollTop: function() {
             var
                 body = document.body,
@@ -55,13 +73,30 @@ Ink.createModule('Ink.UI.SmoothScroller', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1'
             return 0;
         },
 
-        // attach an event for an element
-        // (element, type, function)
-        add: function(event, body, d) {
-            Event.observe(event,body,d);
+        /**
+         * Attaches an event for an element
+         *
+         * @method add
+         * @param  {DOMElement} el DOMElement to make the listening of the event
+         * @param  {String} event Event name to be listened
+         * @param  {DOMElement} fn Callback function to run when the event is triggered.
+         * @public
+         * @static
+         */
+        add: function(el, event, fn) {
+            Event.observe(el,event,fn);
             return;
         },
 
+
+        /**
+         * Kill an event of an element
+         *
+         * @method end
+         * @param  {String} e Event to be killed/stopped
+         * @public
+         * @static
+         */
         // kill an event of an element
         end: function(e) {
             if (window.event) {
@@ -72,7 +107,15 @@ Ink.createModule('Ink.UI.SmoothScroller', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1'
             Event.stop(e);
         },
 
-        // move the scroll bar to the particular div.
+
+        /**
+         * Moves the scrollbar to the target element
+         *
+         * @method scroll
+         * @param  {Number} d Y coordinate value to stop
+         * @public
+         * @static
+         */
         scroll: function(d) {
             var a = SmoothScroller.scrollTop();
             if (d > a) {
@@ -88,12 +131,27 @@ Ink.createModule('Ink.UI.SmoothScroller', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1'
             }
             SmoothScroller.offsetTop = a;
         },
+
+
+        /**
+         * Initializer that adds the rendered to run when the page is ready
+         *
+         * @method init
+         * @public
+         * @static
+         */
         // initializer that adds the renderer to the onload function of the window
         init: function() {
             Loaded.run(SmoothScroller.render);
         },
 
-        // this method extracts all the anchors and validates then as # and attaches the events.
+        /**
+         * This method extracts all the anchors and validates thenm as # and attaches the events
+         *
+         * @method render
+         * @public
+         * @static
+         */
         render: function() {
             var a = Selector.select('a.scrollableLink');
 
@@ -108,6 +166,14 @@ Ink.createModule('Ink.UI.SmoothScroller', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1'
             }
         },
 
+
+        /**
+         * Click handler
+         *
+         * @method clickScroll
+         * @public
+         * @static
+         */
         clickScroll: function() {
             SmoothScroller.end(this);
             var hash = this.hash.substr(1);
@@ -130,11 +196,6 @@ Ink.createModule('Ink.UI.SmoothScroller', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1'
                 SmoothScroller.interval = setInterval('SmoothScroller.scroll(' + SmoothScroller.gy(elm[0]) + ')', 10);
 
             }
-            //document.getElementsByTagName('a');
-            // for (i=0;i<a.length;i++) {
-            //    if(a[i].name == l){
-            // }
-            // }
         }
     };
     SmoothScroller.init();

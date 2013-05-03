@@ -1,7 +1,21 @@
-
+/**
+ * @module Ink.UI.Gallery_1
+ * @author inkdev AT sapo.pt
+ * @version 1
+ */
 Ink.createModule('Ink.UI.Gallery', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Dom.Css_1','Ink.Dom.Element_1','Ink.Dom.Selector_1','Ink.Util.Array_1','Ink.Util.Swipe_1'], function(Aux, Event, Css, Element, Selector, InkArray, Swipe ) {
     'use strict';
     
+    /**
+     * Function to calculate the size based on a given max. size and image size.
+     * 
+     * @function maximizeBox
+     * @param  {Number} maxSz
+     * @param  {Number} imageSz
+     * @param  {Boolean} forceMaximize
+     * @return {Number}
+     * @private
+     */
     var maximizeBox = function(maxSz, imageSz, forceMaximize) {
         var w = imageSz[0];
         var h = imageSz[1];
@@ -15,7 +29,13 @@ Ink.createModule('Ink.UI.Gallery', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.D
 
         return imageSz;
     };
-
+    
+    /**
+     * @function maximizeBox
+     * @param  {Object} o
+     * @param  {Function} cb Callback function to run on each image loaded.
+     * @private
+     */
     var getDimsAsync = function(o, cb) {
         cb = Ink.bind(cb,o);
 
@@ -30,31 +50,49 @@ Ink.createModule('Ink.UI.Gallery', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.D
 
     /**
      * @class Ink.UI.Gallery
-     *
-     * @since October 2012
-     * @author jose.p.dias AT co.sapo.pt
-     * @version 0.1
-     *
-     * <pre>
-     * The gallery provides a way of displaying an array of images.
-     * It can be initialized by either the microformats-only ul-based DOM markup or a JSON model
-     *
-     * TODOs:
-     *   - reapply microformats to final markup
-     *
-     * Microformats consumed:
-     *   hentry - http://microformats.org/wiki/hentry
-     *   hmedia - http://microformats.org/wiki/hmedia
-     * </pre>
-     */
-
-    /**
-     * @constructor Ink.UI.Gallery.?
+     * @constructor
+     * @version 1
+     * @uses Ink.UI.Aux
+     * @uses Ink.Dom.Event
+     * @uses Ink.Dom.Css
+     * @uses Ink.Dom.Element
+     * @uses Ink.Dom.Selector
+     * @uses Ink.Util.Array
+     * @uses Ink.Util.Swipe
      * @param {String|DOMElement} selector
-     * @param {Object}            options
-     * @... {optional Boolean} circular       whether to allow wrapping the limits of the collection or stop at end/beginning. defaults to false
-     * @... {optional Number}  layout         0-3. defaults to 0
-     * @... {optional Boolean} fixImageSizes  if true, image sizes are inspected via preload or read from dims/width+height and made to respect the container dims (by default 600x400)
+     * @param {Object} [options] Options for the gallery
+     *      @param {Number}   [options.fullImageMaxWidth]       Default value is 400.
+     *      @param {Number}   [options.thumbnailMaxWidth]       Max. width of the thumbnail. Default value is 106.
+     *      @param {Number}   [options.layout]                  This determines what layout the gallery will have. Numeric value between 0 and 3.
+     *      @param {Boolean}  [options.circular]                Determines if the gallery behaves in a circular never ending cycle.
+     *      @param {Boolean}  [options.fixImageSizes]           Specifies if the images should be forced to have the gallery size.
+     * @example
+     *     <ul class="ink-gallery-source">
+     *         <li class="hentry hmedia">
+     *             <a rel="enclosure" href="http://imgs.sapo.pt/ink/assets/imgs_gal/1.1.png">
+     *                 <img alt="s1" src="http://imgs.sapo.pt/ink/assets/imgs_gal/thumb1.png">
+     *             </a>
+     *             <a class="bookmark" href="http://imgs.sapo.pt/ink/assets/imgs_gal/1.1.png">
+     *                 <span class="entry-title">s1</span>
+     *             </a>
+     *             <span class="entry-content"><p>hello world 1</p></span>
+     *         </li>
+     *         <li class="hentry hmedia">
+     *             <a rel="enclosure" href="http://imgs.sapo.pt/ink/assets/imgs_gal/1.2.png">
+     *                 <img alt="s1" src="http://imgs.sapo.pt/ink/assets/imgs_gal/thumb2.png">
+     *             </a>
+     *             <a class="bookmark" href="http://imgs.sapo.pt/ink/assets/imgs_gal/1.2.png">
+     *                 <span class="entry-title">s2</span>
+     *             </a>
+     *             <span class="entry-content"><p>hello world 2</p></span>
+     *         </li>
+     *     </ul>
+     *     <script>
+     *         Ink.requireModules(['Ink.Dom.Selector_1','Ink.UI.Gallery_1'],function( Selector, Gallery ){
+     *             var galleryElement = Ink.s('ul.ink-gallery-source');
+     *             var galleryObj = new Gallery( galleryElement );
+     *         });
+     *     </script>
      */
     var Gallery = function(selector, options) {
 
@@ -123,6 +161,12 @@ Ink.createModule('Ink.UI.Gallery', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.D
 
     Gallery.prototype = {
 
+        /**
+         * Init function called from the constructor.
+         *
+         * @method  _init
+         * @private
+         */
         _init: function() {
             // extract model
             if (this._createdFrom === 'DOM') {
@@ -160,7 +204,10 @@ Ink.createModule('Ink.UI.Gallery', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.D
         },
 
         /**
-         * @function ? updates the model from the UL representation
+         * Updates the model from the UL representation
+         *
+         * @method _extractModelFromDOM
+         * @private
          */
         _extractModelFromDOM: function() {
             /*global console:false */
@@ -221,7 +268,11 @@ Ink.createModule('Ink.UI.Gallery', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.D
         },
 
         /**
-         * @function {DOMElement} ? returns the top element for the gallery DOM representation
+         * Returns the top element for the gallery DOM representation
+         *
+         * @method _generateMarkup
+         * @private
+         * @return {DOMElement} Returns the Gallery element totally rendered.
          */
         _generateMarkup: function() {
             /*jshint maxstatements:80 */
@@ -431,6 +482,15 @@ Ink.createModule('Ink.UI.Gallery', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.D
             return el;
         },
 
+        /**
+         * Verifies if a given element is equals to its parent
+         *
+         * @method _isMeOrParent
+         * @param  {DOMElement}  el       Element to be compared with the parent element
+         * @param  {DOMElement}  parentEl Parent element to be compared with the element
+         * @return {Boolean|undefined}          In case the 'el' variable is not defined, it returns undefined. Otherwise, it will return true or false depending on the comparison.
+         * @private
+         */
         _isMeOrParent: function(el, parentEl) {
             if (!el) {return;}
             do {
@@ -441,8 +501,11 @@ Ink.createModule('Ink.UI.Gallery', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.D
         },
 
         /**
-         * @function ? navigation click handler
+         * Navigation click handler
+         *
+         * @method _onNavClick
          * @param {Event} ev
+         * @private
          */
         _onNavClick: function(ev) {
             var tgtEl = Event.element(ev);
@@ -456,8 +519,11 @@ Ink.createModule('Ink.UI.Gallery', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.D
         },
 
         /**
-         * @function ? pagination click handler
+         * Pagination click handler
+         *
+         * @method _onPaginationClick
          * @param {Event} ev
+         * @private
          */
         _onPaginationClick: function(ev) {
             var tgtEl = Event.element(ev);
@@ -474,8 +540,11 @@ Ink.createModule('Ink.UI.Gallery', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.D
         },
 
         /**
-         * @function ? thumbs click handler
+         * Thumbs click handler
+         *
+         * @method _onThumbsClick
          * @param {Event} ev
+         * @private
          */
         _onThumbsClick: function(ev) {
             var tgtEl = Event.element(ev);
@@ -491,16 +560,22 @@ Ink.createModule('Ink.UI.Gallery', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.D
         },
 
         /**
-         * @function ? focus handler
+         * Focus handler
+         *
+         * @method _onFocusBlur
          * @param  {Event} ev
+         * @private
          */
         _onFocusBlur: function(ev) {
             this._isFocused = (ev.type === 'mouseover');
         },
 
         /**
-         * @function ? key handler
+         * Key handler
+         *
+         * @method _onKeyDown
          * @param  {Event} ev
+         * @private
          */
         _onKeyDown: function(ev) {
             if (!this._isFocused) { return; }
@@ -511,6 +586,16 @@ Ink.createModule('Ink.UI.Gallery', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.D
             Event.stop(ev);
         },
 
+        /**
+         * Validates the number of the item against the gallery items.
+         *
+         * @method _validateValue
+         * @param  {Number}  i  The number of the item being validated
+         * @param  {Boolean} [isRelative]
+         * @param  {Boolean} [isThumb]
+         * @return {Number|Boolean}
+         * @private
+         */
         _validateValue: function(i, isRelative, isThumb) {
             // check arguments
             if (!Aux.isInteger(i)) {
@@ -545,23 +630,34 @@ Ink.createModule('Ink.UI.Gallery', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.D
          **************/
 
         /**
-         * @function {Number} ? returns the index of the current image
+         * Returns the index of the current image
+         *
+         * @method getIndex
+         * @return {Number} Index of the current image
+         * @public
          */
         getIndex: function() {
             return this._index;
         },
 
         /**
-         * @function {Number} ? returns the number of images in the gallery
+         * Returns the number of images in the gallery
+         *
+         * @method getLength
+         * @return {Number} Number of images in the gallery
+         * @public
          */
         getLength: function() {
             return this._model.length;
         },
 
         /**
-         * @function ? moves gallery to the nth - 1 image
-         * @param  {Number}           i          absolute or relative index
-         * @param  {optional Boolean} isRelative pass true for relative movement, otherwise absolute
+         * Moves gallery to the nth - 1 image
+         *
+         * @method goTo
+         * @param  {Number} i Absolute or relative index
+         * @param  {Boolean} [isRelative] pass true for relative movement, otherwise absolute
+         * @public
          */
         goTo: function(i, isRelative) {
             i = this._validateValue(i, isRelative, false);
@@ -589,9 +685,12 @@ Ink.createModule('Ink.UI.Gallery', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.D
         },
 
         /**
-         * @function ? moves gallery to the nth - 1 thumb
-         * @param  {Number}           i          absolute or relative index
-         * @param  {optional Boolean} isRelative pass true for relative movement, otherwise absolute
+         * Moves gallery to the nth - 1 thumb
+         *
+         * @method thumbGoTo
+         * @param  {Number} i Absolute or relative index
+         * @param  {Boolean} [isRelative] pass true for relative movement, otherwise absolute
+         * @public
          */
         thumbGoTo: function(i, isRelative) {
             i = this._validateValue(i, isRelative, true);
@@ -604,35 +703,50 @@ Ink.createModule('Ink.UI.Gallery', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.D
         },
 
         /**
-         * @function ? move to the previous image
+         * Move to the previous image
+         *
+         * @method previous
+         * @public
          */
         previous: function() {
             this.goTo(-1, true);
         },
 
         /**
-         * @function ? move to the next image
+         * Move to the next image
+         *
+         * @method next
+         * @public
          */
         next: function() {
             this.goTo(1, true);
         },
 
         /**
-         * @function ? move to the previous thumb
+         * Move to the previous thumb
+         *
+         * @method thumbPrevious
+         * @public
          */
         thumbPrevious: function() {
             this.thumbGoTo(-1, true);
         },
 
         /**
-         * @function ? move to the next thumb
+         * Move to the next thumb
+         *
+         * @method thumbNext
+         * @public
          */
         thumbNext: function() {
             this.thumbGoTo(1, true);
         },
 
         /**
-         * @function ? unregisters the component and removes its markup from the DOM
+         * Unregisters the component and removes its markup from the DOM
+         *
+         * @method destroy
+         * @public
          */
         destroy: Aux.destroyComponent
 

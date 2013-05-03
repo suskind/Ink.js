@@ -1,62 +1,57 @@
-
+/**
+ * @module Ink.UI.DatePicker_1
+ * @author inkdev AT sapo.pt
+ * @version 1
+ */
 Ink.createModule('Ink.UI.DatePicker', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Dom.Css_1','Ink.Dom.Element_1','Ink.Dom.Selector_1','Ink.Util.Array_1','Ink.Util.Date_1'], function(Aux, Event, Css, Element, Selector, InkArray, InkDate ) {
-    'use strict';
-    
-    /**
-     * @class SAPO.Ink.DatePicker
-     *
-     * @since October 2012
-     * @author jose.p.dias AT co.sapo.pt
-     * @version 0.1
-     *
-     * <pre>
-     * This is a refactoring from Component.DatePicker 2.1:
-     *
-     * option elementId changed from options to selector argument
-     * options dayId, monthId and yearId changed to *Field which support selector syntax|DOMElement
-     * moved stuff out of init() to constructor
-     * renamed init and render to _init and _render
-     * moved all attributes to _ prefix
-     * _isDate doesn't explode on bad input anymore
-     * made several fixes
-     * </pre>
-     */
+    'use strict';    
 
     /**
-     * @constructor SAPO.Ink.DatePicker.?
-     *
-     * <p><strong>requires</strong> {@link Css}</p>
-     * <p><strong>requires</strong> {@link Element}</p>
-     * <p><strong>requires</strong> {@link Event}</p>
-     * <p><strong>requires</strong> {@link Selector}</p>
-     *
-     * <p class="moduleDesc">Provides an easy to use datepicker for your form fields</p>
+     * @class Ink.UI.DatePicker
+     * @constructor
+     * @version 1
+     * @uses Ink.UI.Aux
+     * @uses Ink.Dom.Event
+     * @uses Ink.Dom.Css
+     * @uses Ink.Dom.Element
+     * @uses Ink.Dom.Selector
+     * @uses Ink.Util.Array
+     * @uses Ink.Util.Date
      *
      * @param {String|DOMElement} selector
-     * @param {Object} options Options for the datepicker
-     *      @... {optional string}   instance         unique id for the datepicker
-     *      @... {optional string}   format           Date format string
-     *      @... {optional string}   cssClass         CSS class to be applied to the datepicker
-     *      @... {optional string}   position         position the datepicker. Accept right or bottom, default is right
-     *      @... {optional boolean}  onFocus          if the datepicker should open when the target element is focused
-     *      @... {optional function} onYearSelected   callback function to execute when the year is selected
-     *      @... {optional function} onMonthSelected  callback function to execute when the month is selected
-     *      @... {optional function} validDayFn       callback function to execute when 'rendering' the day (in the month view)
-     *      @... {optional String}   startDate        Date to define init month. Must be in yyyy-mm-dd format
-     *      @... {optional function} onSetDate        callback to execute when set date
-     *      @... {optional Boolean}  displayInSelect  whether to display the component in a select. defaults to false.
-     *      @... {optional Boolean}  showClose        whether to display the close button or not. defaults to true.
-     *      @... {optional Boolean}  showClean        whether to display the clean button or not. defaults to true.
-     *      @... {optional String}   yearRange        enforce limits to year for the Date, ex: '1990:2020' (deprecated)
-     *      @... {optional String}   dateRange        enforce limits to year, month and day for the Date, ex: '1990-08-25:2020-11'
-     *      @... {optional Number}   startWeekDay     day to use as first column on the calendar view. Defaults to Monday (1)
-     *      @... {optional String}   closeText        text to display on close button. defaults to 'Fechar'
-     *      @... {optional String}   cleanText        text to display on clean button. defaults to 'Limpar'
-     *      @... {optional String}   prevLinkText     text to display on the previous button. defaults to '«'
-     *      @... {optional String}   nextLinkText     text to display on the previous button. defaults to '«'
-     *      @... {optional String}   ofText           text to display between month and year. defaults to ' de '
-     *      @... {optional Object}   month            Hash of month names. Defaults to portuguese month names. January is 1.
-     *      @... {optional Object}   wDay             Hash of weekdays. Defaults to portuguese month names. Sunday is 0.
+     * @param {Object} [options] Options for the datepicker
+     *      @param {String}   [options.instance]         unique id for the datepicker
+     *      @param {String}   [options.format]           Date format string
+     *      @param {String}   [options.cssClass]         CSS class to be applied to the datepicker
+     *      @param {String}   [options.position]         position the datepicker. Accept right or bottom, default is right
+     *      @param {Boolean}  [options.onFocus]          if the datepicker should open when the target element is focused
+     *      @param {Function} [options.onYearSelected]   callback function to execute when the year is selected
+     *      @param {Function} [options.onMonthSelected]  callback function to execute when the month is selected
+     *      @param {Function} [options.validDayFn]       callback function to execute when 'rendering' the day (in the month view)
+     *      @param {String}   [options.startDate]        Date to define init month. Must be in yyyy-mm-dd format
+     *      @param {Function} [options.onSetDate]        callback to execute when set date
+     *      @param {Boolean}  [options.displayInSelect]  whether to display the component in a select. defaults to false.
+     *      @param {Boolean}  [options.showClose]        whether to display the close button or not. defaults to true.
+     *      @param {Boolean}  [options.showClean]        whether to display the clean button or not. defaults to true.
+     *      @param {String}   [options.yearRange]        enforce limits to year for the Date, ex: '1990:2020' (deprecated)
+     *      @param {String}   [options.dateRange]        enforce limits to year, month and day for the Date, ex: '1990-08-25:2020-11'
+     *      @paran {Number}   [options.startWeekDay]     day to use as first column on the calendar view. Defaults to Monday (1)
+     *      @param {String}   [options.closeText]        text to display on close button. defaults to 'Fechar'
+     *      @param {String}   [options.cleanText]        text to display on clean button. defaults to 'Limpar'
+     *      @param {String}   [options.prevLinkText]     text to display on the previous button. defaults to '«'
+     *      @param {String}   [options.nextLinkText]     text to display on the previous button. defaults to '«'
+     *      @param {String}   [options.ofText]           text to display between month and year. defaults to ' de '
+     *      @param {Object}   [options.month]            Hash of month names. Defaults to portuguese month names. January is 1.
+     *      @param {Object}   [options.wDay]             Hash of weekdays. Defaults to portuguese month names. Sunday is 0.
+     *
+     * @example
+     *     <input type="text" id="dPicker" />
+     *     <script>
+     *         Ink.requireModules(['Ink.Dom.Selector_1','Ink.UI.DatePicker_1'],function( Selector, DatePicker ){
+     *             var datePickerElement = Ink.s('#dPicker');
+     *             var datePickerObj = new DatePicker( datePickerElement );
+     *         });
+     *     </script>
      */
     var DatePicker = function(selector, options) {
 
@@ -131,13 +126,8 @@ Ink.createModule('Ink.UI.DatePicker', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','In
         this._data = new Date( Date.UTC.apply( this , this._checkDateRange( this._year , this._month , this._day ) ) );
 
         if(this._options.startDate && typeof this._options.startDate === 'string' && /\d\d\d\d\-\d\d\-\d\d/.test(this._options.startDate)) {
-            // var parsed  = this._options.startDate.split( "-" );
-            // this._year  = parsed[ 0 ];
-            // this._month = parsed[ 1 ] - 1;
-            // this._day   = parsed[ 2 ];
             this.setDate( this._options.startDate );
         }
-
 
         this._init();
 
@@ -158,11 +148,20 @@ Ink.createModule('Ink.UI.DatePicker', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','In
         /**
          * Initialization function. Called by the constructor and
          * receives the same parameters.
+         *
+         * @method _init
+         * @private
          */
         _init: function(){
             Ink.extendObj(this._options,this._lang || {});
         },
 
+        /**
+         * Renders the DatePicker's markup
+         *
+         * @method _render
+         * @private
+         */
         _render: function() {
             /*jshint maxstatements:100, maxcomplexity:30 */
             this._containerObject = document.createElement('div');
@@ -482,6 +481,13 @@ Ink.createModule('Ink.UI.DatePicker', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','In
 
         },
 
+        /**
+         * Sets the range of dates allowed to be selected in the Date Picker
+         *
+         * @method _setMinMax
+         * @param {String} dateRange Two dates separated by a ':'. Example: 2013-01-01:2013-12-12
+         * @private
+         */
         _setMinMax : function( dateRange )
         {
             var auxDate;
@@ -583,6 +589,18 @@ Ink.createModule('Ink.UI.DatePicker', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','In
             }
         },
 
+        /**
+         * Checks if a date is between the valid range.
+         * Starts by checking if the date passed is valid. If not, will fallback to the 'today' date.
+         * Then checks if the all params are inside of the date range specified. If not, it will fallback to the nearest valid date (either Min or Max).
+         *
+         * @method _checkDateRange
+         * @param  {Number} year  Year with 4 digits (yyyy)
+         * @param  {Number} month Month
+         * @param  {Number} day   Day
+         * @return {Array}       Array with the final processed date.
+         * @private
+         */
         _checkDateRange : function( year , month , day )
         {
             if ( !this._isValidDate( year , month + 1 , day ) )
@@ -623,6 +641,13 @@ Ink.createModule('Ink.UI.DatePicker', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','In
             return [ year , month , day ];
         },
 
+        /**
+         * Sets the markup in the default view mode (showing the days).
+         * Also disables the previous and next buttons in case they don't meet the range requirements.
+         *
+         * @method _showDefaultView
+         * @private
+         */
         _showDefaultView: function(){
             this._yearSelector.style.display = 'none';
             this._monthSelector.style.display = 'none';
@@ -641,6 +666,9 @@ Ink.createModule('Ink.UI.DatePicker', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','In
 
         /**
          * Updates the date shown on the datepicker
+         *
+         * @method _updateDate
+         * @private
          */
         _updateDate: function(){
             var dataParsed;
@@ -691,6 +719,9 @@ Ink.createModule('Ink.UI.DatePicker', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','In
 
         /**
          * Updates the date description shown at the top of the datepicker
+         *
+         * @method  _updateDescription
+         * @private
          */
         _updateDescription: function(){
             this._monthChanger.innerHTML = this._options.month[ this._month + 1 ];
@@ -700,6 +731,9 @@ Ink.createModule('Ink.UI.DatePicker', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','In
 
         /**
          * Renders the year selector view of the datepicker
+         *
+         * @method _showYearSelector
+         * @private
          */
         _showYearSelector: function(){
             if (arguments.length){
@@ -747,8 +781,12 @@ Ink.createModule('Ink.UI.DatePicker', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','In
         },
 
         /**
-         * @param {string} dateStr A date on a string.
-         * @return The given date in array format
+         * This function returns the given date in an array format
+         *
+         * @method _getDataArrayParsed
+         * @param {String} dateStr A date on a string.
+         * @private
+         * @return {Array} The given date in an array format
          */
         _getDataArrayParsed: function(dateStr){
             var arrData = [];
@@ -760,11 +798,14 @@ Ink.createModule('Ink.UI.DatePicker', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','In
         },
 
         /**
-         * {boolean}
-         * @param {int} year
-         * @param {int} month
-         * @param {int} day
-         * @return True if the date is valid, false otherwise
+         * Checks if a date is valid
+         *
+         * @method _isValidDate
+         * @param {Number} year
+         * @param {Number} month
+         * @param {Number} day
+         * @private
+         * @return {Boolean} True if the date is valid, false otherwise
          */
         _isValidDate: function(year, month, day){
             var yearRegExp = /^\d{4}$/;
@@ -781,10 +822,13 @@ Ink.createModule('Ink.UI.DatePicker', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','In
         },
 
         /**
-         * {boolean}
-         * @param {string} format - A date format.
-         * @param {string} dateStr - A date on a string.
-         * @return True if the given date is valid according to the given format
+         * Checks if a given date is an valid format.
+         *
+         * @method _isDate
+         * @param {String} format A date format.
+         * @param {String} dateStr A date on a string.
+         * @private
+         * @return {Boolean} True if the given date is valid according to the given format
          */
         _isDate: function(format, dateStr){
             try {
@@ -802,14 +846,22 @@ Ink.createModule('Ink.UI.DatePicker', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','In
 
 
         /**
-         * @return The date written with the format specified on the options
+         * This method returns the date written with the format specified on the options
+         *
+         * @method _writeDateInFormat
+         * @private
+         * @return {String} Returns the current date of the object in the specified format
          */
        _writeDateInFormat:function(){
             return InkDate.get( this._options.format , this._data );
         },
 
         /**
-         * @param {string} dateString - A date string in yyyy-mm-dd format.
+         * This method allows the user to set the DatePicker's date on run-time.
+         *
+         * @method setDate
+         * @param {String} dateString A date string in yyyy-mm-dd format.
+         * @public
          */
         setDate : function( dateString )
         {
@@ -826,6 +878,10 @@ Ink.createModule('Ink.UI.DatePicker', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','In
 
         /**
          * Sets the chosen date on the target input field
+         *
+         * @method _setDate
+         * @param {DOMElement} objClicked Clicked object inside the DatePicker's calendar.
+         * @private
          */
         _setDate : function( objClicked ){
             if( typeof objClicked !== 'undefined' && objClicked.className && objClicked.className.indexOf('sapo_cal_') === 0 )
@@ -849,7 +905,10 @@ Ink.createModule('Ink.UI.DatePicker', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','In
         /**
          * Makes the necessary work to update the calendar
          * when choosing a different month
-         * @param {int} inc - indicates previous or next month
+         *
+         * @method _updateCal
+         * @param {Number} inc Indicates previous or next month
+         * @private
          */
         _updateCal: function(inc){
             this._updateMonth(inc);
@@ -857,9 +916,13 @@ Ink.createModule('Ink.UI.DatePicker', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','In
         },
 
         /**
-         * @param {int} _y - year
-         * @param {int} _m - month
-         * @return The number of days on a given month on a given year
+         * Function that returns the number of days on a given month on a given year
+         *
+         * @method _daysInMonth
+         * @param {Number} _y - year
+         * @param {Number} _m - month
+         * @private
+         * @return {Number} The number of days on a given month on a given year
          */
         _daysInMonth: function(_y,_m){
             var nDays = 31;
@@ -883,7 +946,10 @@ Ink.createModule('Ink.UI.DatePicker', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','In
 
         /**
          * Updates the calendar when a different month is chosen
-         * @param {int} incValue - indicates previous or next month
+         *
+         * @method _updateMonth
+         * @param {Number} incValue - indicates previous or next month
+         * @private
          */
         _updateMonth: function(incValue){
             if(typeof incValue === 'undefined') {
@@ -923,7 +989,10 @@ Ink.createModule('Ink.UI.DatePicker', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','In
         },
 
         /**
-         * {Object} Date parsing formats
+         * Key-value object that (for a given key) points to the correct parsing format for the DatePicker
+         * @property _dateParsers
+         * @type {Object}
+         * @readOnly
          */
         _dateParsers: {
             'yyyy-mm-dd' : 'Y-m-d' ,
@@ -939,7 +1008,10 @@ Ink.createModule('Ink.UI.DatePicker', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','In
         },
 
         /**
-         * renders the current month
+         * Renders the current month
+         *
+         * @method _showMonth
+         * @private
          */
         _showMonth: function(){
             /*jshint maxstatements:100, maxcomplexity:20 */
@@ -1023,6 +1095,13 @@ Ink.createModule('Ink.UI.DatePicker', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','In
 
         },
 
+        /**
+         * This method sets the active month
+         *
+         * @method _setActiveMonth
+         * @param {DOMElement} parent DOMElement where all the months are.
+         * @private
+         */
         _setActiveMonth: function(parent){
             if (typeof parent === 'undefined') {
                 parent = this._monthSelector;
@@ -1062,10 +1141,28 @@ Ink.createModule('Ink.UI.DatePicker', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','In
             }
         },
 
+        /**
+         * Prototype's method to allow the 'i18n files' to change all objects' language at once.
+         * @param  {Object} options Object with the texts' configuration.
+         *     @param {String} closeText Text of the close anchor
+         *     @param {String} cleanText Text of the clean text anchor
+         *     @param {String} prevLinkText "Previous" link's text
+         *     @param {String} nextLinkText "Next" link's text
+         *     @param {String} ofText The text "of", present in 'May of 2013'
+         *     @param {Object} month An object with keys from 1 to 12 that have the full months' names
+         *     @param {Object} wDay An object with keys from 0 to 6 that have the full weekdays' names
+         * @public
+         */
         lang: function( options ){
             this._lang = options;
         },
 
+        /**
+         * This calls the rendering of the selected month.
+         *
+         * @method showMonth
+         * @public
+         */
         showMonth: function(){
             this._showMonth();
         }

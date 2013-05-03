@@ -1,7 +1,59 @@
-
+/**
+ * @module Ink.UI.Toggle_1
+ * @author inkdev AT sapo.pt
+ * @version 1
+ */
 Ink.createModule('Ink.UI.Toggle', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Dom.Css_1','Ink.Dom.Element_1','Ink.Dom.Selector_1'], function(Aux, Event, Css, Element, Selector ) {
     'use strict';
-    
+
+    /**
+     * Toggle component
+     * 
+     * @class Ink.UI.Toggle
+     * @constructor
+     * @version 1
+     * @uses Ink.UI.Aux
+     * @uses Ink.Dom.Event
+     * @uses Ink.Dom.Css
+     * @uses Ink.Dom.Element
+     * @uses Ink.Dom.Selector
+     * @param {String|DOMElement} selector
+     * @param {Object} [options] Options for the datepicker
+     *     @param {String}       options.target                    CSS Selector that specifies the elements that will toggle
+     *     @param {String}       [options.triggerEvent]            Event that will trigger the toggling. Default is 'click'
+     * @example
+     *      <div class="ink-dropdown">
+     *          <button class="ink-button toggle" data-target="#dropdown">Dropdown <span class="icon-caret-down"></span></button>
+     *          <ul id="dropdown" class="dropdown-menu">
+     *              <li class="heading">Heading</li>
+     *              <li class="separator-above"><a href="#">Option</a></li>
+     *              <li><a href="#">Option</a></li>
+     *              <li class="separator-above disabled"><a href="#">Disabled option</a></li>
+     *              <li class="submenu">
+     *                  <a href="#" class="toggle" data-target="#submenu1">A longer option name</a>
+     *                  <ul id="submenu1" class="dropdown-menu">
+     *                      <li class="submenu">
+     *                          <a href="#" class="toggle" data-target="#ultrasubmenu">Sub option</a>
+     *                          <ul id="ultrasubmenu" class="dropdown-menu">
+     *                              <li><a href="#">Sub option</a></li>
+     *                              <li><a href="#" data-target="ultrasubmenu">Sub option</a></li>
+     *                              <li><a href="#">Sub option</a></li>
+     *                          </ul>
+     *                      </li>
+     *                      <li><a href="#">Sub option</a></li>
+     *                      <li><a href="#">Sub option</a></li>
+     *                  </ul>
+     *              </li>
+     *              <li><a href="#">Option</a></li>
+     *          </ul>
+     *      </div>
+     *      <script>
+     *          Ink.requireModules( ['Ink.Dom.Selector_1','Ink.UI.Toggle_1'], function( Selector, Toggle ){
+     *              var toggleElement = Ink.s('.toggle');
+     *              var toggleObj = new Toggle( toggleElement );
+     *          });
+     *      </script>
+     */
     var Toggle = function( selector, options ){
 
         if( typeof selector !== 'string' && typeof selector !== 'object' ){
@@ -50,8 +102,14 @@ Ink.createModule('Ink.UI.Toggle', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Do
 
     };
 
-
     Toggle.prototype = {
+
+        /**
+         * Init function called by the constructor
+         * 
+         * @method _init
+         * @private
+         */
         _init: function(){
 
             this._accordion = ( Css.hasClassName(this._rootElement.parentNode,'accordion') || Css.hasClassName(this._childElement.parentNode,'accordion') );
@@ -60,6 +118,14 @@ Ink.createModule('Ink.UI.Toggle', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Do
             Event.observe( document, 'click', Ink.bindEvent(this._onClick,this));
         },
 
+        /**
+         * Event handler. It's responsible for handling the <triggerEvent> defined in the options.
+         * This will trigger the toggle.
+         * 
+         * @method _onTriggerEvent
+         * @param {Event} event
+         * @private
+         */
         _onTriggerEvent: function( event ){
             Event.stop( event );
 
@@ -90,16 +156,29 @@ Ink.createModule('Ink.UI.Toggle', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Do
             this._childElement.style.display = finalDisplay;
         },
 
+        /**
+         * Click handler. Will handle clicks outside the toggle component.
+         * 
+         * @method _onClick
+         * @param {Event} event
+         * @private
+         */
         _onClick: function( event ){
             var tgtEl = Event.element(event);
 
-            if( Element.isAncestorOf( this._rootElement, tgtEl ) ){
+            if( Element.isAncestorOf( this._rootElement, tgtEl )|| Element.isAncestorOf( this._childElement, tgtEl ) ){
                 return;
             }
 
             this._dismiss( this._rootElement );
         },
 
+        /**
+         * Dismisses the toggling.
+         * 
+         * @method _dismiss
+         * @private
+         */
         _dismiss: function( ){
             if( ( Css.getStyle(this._childElement,'display') === 'none') ){
                 return;
