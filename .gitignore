@@ -5,3 +5,4 @@ serverUtils/moduleDirs.json
 serverUtils/moduleFiles.json
 inkjs.js
 *.min.js
+inkjs.sublime-workspace

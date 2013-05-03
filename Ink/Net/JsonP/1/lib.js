@@ -12,6 +12,16 @@ Ink.createModule('Ink.Net.JsonP', '1', [], function() {
 
     /**
      * @class Ink.Net.JsonP
+     * @constructor
+     * @param {String} uri
+     * @param {Object} options
+     * @param {Function}  [options.onComplete]        success callback
+     * @param {Function}  [options.onFailure]         failure callback
+     * @param {Object}    [options.failureObj]        object to be passed as argument to failure callback
+     * @param {Number}    [options.timeout]           timeout for request fail, in seconds. defaults to 10
+     * @param {Object}    [options.params]            object with the parameters and respective values to unfold
+     * @param {String}    [options.callbackParam]     parameter to use as callback. defaults to 'jsoncallback'
+     * @param {String}    [options.internalCallback]  x
      */
 
 
@@ -22,18 +32,6 @@ Ink.createModule('Ink.Net.JsonP', '1', [], function() {
 
     JsonP.prototype = {
 
-        /**
-         * @constructor Ink.Net.JsonP.?
-         * @param {String} uri
-         * @param {Object} options
-         * @... {Function}      onComplete          - success callback
-         * @... {Function}      onFailure           - failure callback
-         * @... {Object}        failureObj          - object to be passed as argument to failure callback
-         * @... {Integer}       timeout             - timeout for request fail
-         * @... {Object}        params              -
-         * @... {String}        callbackParam       -
-         * @... {String}        internalCallback    -
-         */
         init: function(uri, options) {
             this.options = Ink.extendObj( {
                 onSuccess:         undefined,
@@ -145,4 +143,3 @@ Ink.createModule('Ink.Net.JsonP', '1', [], function() {
     return JsonP;
 
 });
-
