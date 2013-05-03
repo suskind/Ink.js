@@ -6,7 +6,6 @@ Ink.createModule('Ink.Dom.Selector', 1, [], function() {
 
     /**
      * @class Ink.Dom.Selector
-     * @static
      */
 
 

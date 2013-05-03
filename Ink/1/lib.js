@@ -10,7 +10,6 @@
      * global object
      *
      * @class Ink
-     * @static
      */
 
 
@@ -105,7 +104,7 @@
          * loads a javascript script in the head.
          *
          * @method loadScript
-         * @param  {String}   uri       can be an http URI or a module name
+         * @param  {String}   uri  can be an http URI or a module name
          */
         loadScript: function(uri) {
             /*jshint evil:true */
@@ -127,9 +126,9 @@
          * defines a namespace.
          *
          * @method namespace
-         * @param  {String}            ns
-         * @param  {optional Boolean}  returnParentAndKey
-         * @return if returnParentAndKey, returns [parent, lastPart], otherwise return the namespace directly
+         * @param  {String}   ns
+         * @param  {Boolean}  [returnParentAndKey]
+         * @return {Array|Object} if returnParentAndKey, returns [parent, lastPart], otherwise return the namespace directly
          */
         namespace: function(ns, returnParentAndKey) {
             if (!ns || !ns.length) { return null; }
@@ -158,8 +157,8 @@
          * synchronous. assumes module is loaded already!
          *
          * @method getModule
-         * @param  {String}           mod
-         * @param  {optional Number}  version
+         * @param  {String}  mod
+         * @param  {Number}  [version]
          * @return {Object|Function} module object / function
          */
         getModule: function(mod, version) {
@@ -171,10 +170,10 @@
          * must be the wrapper around each Ink lib module for require resolution
          *
          * @method createModule
-         * @param  {String}    mod    module name. parts are split with dots
+         * @param  {String}    mod      module name. parts are split with dots
          * @param  {Number}    version
-         * @param  {String[]}  deps   array of module names which are dependencies for the module being created
-         * @param  {Function}  modFn  its arguments are the resolved dependecies, once all of them are fetched. the body of this function should return the module.
+         * @param  {Array}     deps     array of module names which are dependencies for the module being created
+         * @param  {Function}  modFn    its arguments are the resolved dependecies, once all of them are fetched. the body of this function should return the module.
          */
         createModule: function(mod, ver, deps, modFn) { // define
             var cb = function() {
@@ -262,7 +261,7 @@
          * use this to get depencies, even if they're not loaded yet
          *
          * @method requireModules
-         * @param  {String[]}  deps  array of module names which are dependencies for the require function body
+         * @param  {Array}     deps  array of module names which are dependencies for the require function body
          * @param  {Function}  cbFn  its arguments are the resolved dependecies, once all of them are fetched
          */
         requireModules: function(deps, cbFn) { // require
@@ -305,12 +304,21 @@
          * list or module names, ordered by loaded time
          *
          * @method getModulesLoadOrder
-         * @return {String[]} returns the order in which modules were resolved and correctly loaded
+         * @return {Array} returns the order in which modules were resolved and correctly loaded
          */
         getModulesLoadOrder: function() {
             return modulesLoadOrder.slice();
         },
 
+        /**
+         * Object.bind alternative
+         *
+         * @function bind
+         * @param {Function}  fn
+         * @param {Object}    context
+         * @param {any}       args*
+         * @return {Function}
+         */
         bind: function(fn, context) {
             var args = Array.prototype.slice.call(arguments, 2);
             return function() {
@@ -320,6 +328,16 @@
             };
         },
 
+        /**
+         * Object.bind alternative
+         * same as bind but keeps first argument of the call the original event
+         *
+         * @function bindEvent
+         * @param {Function}  fn
+         * @param {Object}    context
+         * @param {any}       args*
+         * @return {Function}
+         */
         bindEvent: function(fn, context) {
             var args = Array.prototype.slice.call(arguments, 2);
             return function(event) {
@@ -329,6 +347,12 @@
             };
         },
 
+        /**
+         * alias to document.getElementById
+         *
+         * @function i
+         * @param {String} id
+         */
         i: function(id) {
             if(!id) {
                 throw new Error('Ink.i => id or element must be passed');
@@ -339,7 +363,14 @@
             return id;
         },
 
-        /* Dom.Selector would override these methods for non-supporting browsers */
+        /**
+         * alias to sizzle or querySelector
+         *
+         * @function s
+         * @param {String}     rule
+         * @param {DOMElement} [from]
+         * @return {DOMElement}
+         */
         s: function(rule, from)
         {
             if(typeof(Ink.Dom) === 'undefined' || typeof(Ink.Dom.Selector) === 'undefined') {
@@ -357,7 +388,14 @@
             }
         },
 
-        /* Dom.Selector would override these methods for non-supporting browsers */
+        /**
+         * alias to sizzle or querySelectorAll
+         *
+         * @function ss
+         * @param {String}     rule
+         * @param {DOMElement} [from]
+         * @return {Array} array of DOMElements
+         */
         ss: function(rule, from)
         {
             if(typeof(Ink.Dom) === 'undefined' || typeof(Ink.Dom.Selector) === 'undefined') {
@@ -371,6 +409,14 @@
             }
         },
 
+        /**
+         * Enriches the destination object with values from source object whenever the key is missing in destination
+         *
+         * @function extendObj
+         * @param {Object} destination
+         * @param {Object} source
+         * @return destination object, enriched with defaults from source
+         */
         extendObj: function(destination, source)
         {
             if (source) {
@@ -383,6 +429,9 @@
             return destination;
         },
 
+        /**
+         * TODO EH?!
+         */
         Browser: {
             IE: true,
             GECKO: true,
@@ -390,7 +439,7 @@
             OPERA: false,
             CHROME: true,
             KONQUEROR: true,
-            modle: '',
+            model: '',
             version: '',
             userAgent: ''
         }

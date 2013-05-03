@@ -12,7 +12,6 @@ Ink.createModule('Ink.Dom.Event', 1, [], function() {
 
     /**
      * @class Ink.Dom.Event
-     * @static
      */
 
     var Event = {
@@ -34,9 +33,11 @@ Ink.createModule('Ink.Dom.Event', 1, [], function() {
 
 
     /**
-     * @function {Node} ? - Returns the target of the event object
-     * @param {Object} ev - event object
-     * @return The target
+     * Returns the target of the event object
+     *
+     * @function element
+     * @param {Object} ev  event object
+     * @return {Node} The target
      */
     element: function(ev)
     {
@@ -52,9 +53,11 @@ Ink.createModule('Ink.Dom.Event', 1, [], function() {
     },
 
     /**
-     * @function {Node} ? - Returns the related target of the event object
-     * @param {Object} ev - event object
-     * @return The related target
+     * Returns the related target of the event object
+     *
+     * @function relatedTarget
+     * @param {Object} ev event object
+     * @return {Node} The related target
      */
     relatedTarget: function(ev){
         var node = ev.relatedTarget ||
@@ -68,13 +71,11 @@ Ink.createModule('Ink.Dom.Event', 1, [], function() {
     },
 
     /**
-     * @function {DOMElement} ?
-     * @param {Object} ev - event object
-     * @param {String} elmTagName - tag name to find
-     * @param {Boolean} force - force the return of the wanted type of tag,
-     * or false otherwise
-     * @return the first element which matches given tag name or the
-     * document element if the wanted tag is not found
+     * @function findElement
+     * @param {Object}  ev          event object
+     * @param {String}  elmTagName  tag name to find
+     * @param {Boolean} [force]     force the return of the wanted type of tag, or false otherwise
+     * @return {DOMElement} the first element which matches given tag name or the document element if the wanted tag is not found
      */
     findElement: function(ev, elmTagName, force)
     {
@@ -100,10 +101,12 @@ Ink.createModule('Ink.Dom.Event', 1, [], function() {
 
 
     /**
-     * @function ? Dispatch an event to element
-     * @param {DOMElement|String} element - element id or element
-     * @param {String} eventName - event name
-     * @param {Object} memo - metadata for the event
+     * Dispatches an event to element
+     *
+     * @function fire
+     * @param {DOMElement|String}  element    element id or element
+     * @param {String}             eventName  event name
+     * @param {Object}             [memo]     metadata for the event
      */
     fire: function(element, eventName, memo)
     {
@@ -197,14 +200,16 @@ Ink.createModule('Ink.Dom.Event', 1, [], function() {
     },
 
     /**
-     * @function ? Attach an event to element
-     * @param {DOMElement|String} element - element id or element
-     * @param {String} eventName - event name
-     * @param {Function} callBack - Receives event object as a
+     * Attaches an event to element
+     *
+     * @function observe
+     * @param {DOMElement|String}  element      element id or element
+     * @param {String}             eventName    event name
+     * @param {Function}           callBack     receives event object as a
      * parameter. If you're manually firing custom events, check the
      * eventName property of the event object to make sure you're handling
      * the right event.
-     * @param {Boolean} useCapture - set to true to change event listening from bubbling to capture.
+     * @param {Boolean}            [useCapture]  set to true to change event listening from bubbling to capture.
      */
     observe: function(element, eventName, callBack, useCapture)
     {
@@ -241,11 +246,6 @@ Ink.createModule('Ink.Dom.Event', 1, [], function() {
                 eventName = 'dataavailable';
             }
 
-
-
-
-
-
             if(element.addEventListener) {
                 element.addEventListener(eventName, callBack, !!useCapture);
             } else {
@@ -255,11 +255,13 @@ Ink.createModule('Ink.Dom.Event', 1, [], function() {
     },
 
     /**
-     * @function ? Remove an event attached to an element
-     * @param {DOMElement|String} element - element id or element
-     * @param {String} eventName - event name
-     * @param {Function} callBack - callback function
-     * @param {Boolean} useCapture - set to true if the event was being observed with useCapture set to true as well.
+     * Remove an event attached to an element
+     *
+     * @function stopObserving
+     * @param {DOMElement|String}  element       element id or element
+     * @param {String}             eventName     event name
+     * @param {Function}           callBack      callback function
+     * @param {Boolean}            [useCapture]  set to true if the event was being observed with useCapture set to true as well.
      */
     stopObserving: function(element, eventName, callBack, useCapture)
     {
@@ -275,8 +277,10 @@ Ink.createModule('Ink.Dom.Event', 1, [], function() {
     },
 
     /**
-     * @function ? stops event propagation and bubbling
-     * @param {Object} event - event handle
+     * Stops event propagation and bubbling
+     *
+     * @function stop
+     * @param {Object} event  event handle
      */
     stop: function(event)
     {
@@ -298,8 +302,10 @@ Ink.createModule('Ink.Dom.Event', 1, [], function() {
     },
 
     /**
-     * @function ? stops event default behaviour
-     * @param {Object} event - event handle
+     * Stops event default behaviour
+     *
+     * @function stopDefault
+     * @param {Object} event  event handle
      */
     stopDefault: function(event)
     {
@@ -315,42 +321,42 @@ Ink.createModule('Ink.Dom.Event', 1, [], function() {
     },
 
     /**
-     * @function {Object} ?
-     * @param {Object} ev - event object
-     * @return an object with the mouse X and Y position
+     * @function pointer
+     * @param {Object} ev event object
+     * @return {Object} an object with the mouse X and Y position
      */
     pointer: function(ev)
     {
         return {
-                x: ev.pageX || (ev.clientX + (document.documentElement.scrollLeft || document.body.scrollLeft)),
-                y: ev.pageY || (ev.clientY + (document.documentElement.scrollTop || document.body.scrollTop))
+            x: ev.pageX || (ev.clientX + (document.documentElement.scrollLeft || document.body.scrollLeft)),
+            y: ev.pageY || (ev.clientY + (document.documentElement.scrollTop || document.body.scrollTop))
         };
     },
 
     /**
-     * @function {Number} ?
-     * @param {Object} ev - event object
-     * @return mouse X position
+     * @function pointerX
+     * @param {Object} ev event object
+     * @return {Number} mouse X position
      */
     pointerX: function(ev)
     {
-        return this.pointer(ev).x;
+        return ev.pageX || (ev.clientX + (document.documentElement.scrollLeft || document.body.scrollLeft));
     },
 
     /**
-     * @function {Number} ?
-     * @param {Object} ev - event object
-     * @return mouse Y position
+     * @function pointerY
+     * @param {Object} ev event object
+     * @return {Number} mouse Y position
      */
     pointerY: function(ev)
     {
-        return this.pointer(ev).y;
+        return ev.pageY || (ev.clientY + (document.documentElement.scrollTop || document.body.scrollTop));
     },
 
     /**
-     * @function {Boolean} ?
-     * @param {Object} ev - event object
-     * @return True if there is a left click on the event
+     * @function isLeftClick
+     * @param {Object} ev  event object
+     * @return {Boolea} True if there is a left click on the event
      */
     isLeftClick: function(ev) {
         if (window.addEventListener) {
@@ -368,18 +374,18 @@ Ink.createModule('Ink.Dom.Event', 1, [], function() {
     },
 
     /**
-     * @function {Boolean} ?
-     * @param {Object} ev - event object
-     * @return True if there is a right click on the event
+     * @function isRightClick
+     * @param {Object} ev  event object
+     * @return {Boolean} True if there is a right click on the event
      */
     isRightClick: function(ev) {
         return (ev.button === 2);
     },
 
     /**
-     * @function {Boolean} ?
-     * @param {Object} ev - event object
-     * @return True if there is a middle click on the event
+     * @function isMiddleClick
+     * @param {Object} ev  event object
+     * @return {Boolean} True if there is a middle click on the event
      */
     isMiddleClick: function(ev) {
         if (window.addEventListener) {
@@ -394,10 +400,11 @@ Ink.createModule('Ink.Dom.Event', 1, [], function() {
     /**
      * Work in Progress.
      * Used in SAPO.Component.MaskedInput
-     * @function {String} ?
-     * @param {KeyboardEvent}       event           - keyboard event
-     * @param {optional Boolean}    changeCasing    - if true uppercases, if false lowercases, otherwise keeps casing
-     * @return character representation of pressed key combination
+     *
+     * @function getCharFromKeyboardEvent
+     * @param {KeyboardEvent}     event           keyboard event
+     * @param {optional Boolean}  [changeCasing]  if true uppercases, if false lowercases, otherwise keeps casing
+     * @return {String} character representation of pressed key combination
      */
     getCharFromKeyboardEvent: function(event, changeCasing) {
         var k = event.keyCode;

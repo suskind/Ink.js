@@ -12,7 +12,6 @@ Ink.createModule('Ink.Dom.Loaded', 1, [], function() {
 
     /**
      * @class Ink.Dom.Loaded
-     * @static
      */
 
     var Loaded = {
@@ -20,14 +19,11 @@ Ink.createModule('Ink.Dom.Loaded', 1, [], function() {
         _cbQueue: [], // Callbacks' queue
 
         /**
-         * @function ? adds a new function that will be invoked once the window is ready
+         * adds a new function that will be invoked once the window is ready
          *
-         * @paramset
-         * @param {Object}   win Window object to attach/add the event
-         * @param {Function} fn  Callback function to be run after the page is loaded.
-         *
-         * @paramset
-         * @param {Function} fn   Callback function to be run after the page is loaded.
+         * @function run
+         * @param {Object}   [win] Window object to attach/add the event
+         * @param {Function} fn  Callback function to be run after the page is loaded
          */
         run: function(win, fn) {
             if (!fn) {
@@ -81,8 +77,10 @@ Ink.createModule('Ink.Dom.Loaded', 1, [], function() {
         },
 
        /**
-        * @function ? function that will be running the callbacks after the page is loaded.
-        * @param {Event} event Triggered event
+        * function that will be running the callbacks after the page is loaded
+        *
+        * function _checkState
+        * param {Event} event Triggered event
         */
         _checkState: function(event) {
             if ( !event || (event.type === 'readystatechange' && this._doc.readyState !== 'complete')) {
@@ -94,7 +92,9 @@ Ink.createModule('Ink.Dom.Loaded', 1, [], function() {
         },
 
         /**
-         * @function ? polls the load progress of the page to see if it has already loaded or not
+         * polls the load progress of the page to see if it has already loaded or not
+         *
+         * function _poll
          */
         _poll: function() {
             try {
@@ -106,7 +106,9 @@ Ink.createModule('Ink.Dom.Loaded', 1, [], function() {
         },
 
         /**
-         * @function ? this function will run the callbacks from the queue.
+         * this function will run the callbacks from the queue.
+         *
+         * function _ready
          */
         _ready: function() {
             if (!this._done) {
