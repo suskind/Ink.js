@@ -1,34 +1,37 @@
-
-Ink.createModule('Ink.UI.ProgressBar', '1',
-    ['Ink.Dom.Selector_1','Ink.Dom.Element_1'],
-    function(Selector, Element) {
-
+/**
+ * @module Ink.UI.ProgressBar_1
+ * @author inkdev AT sapo.pt
+ * @version 1
+ */
+Ink.createModule('Ink.UI.ProgressBar', '1', ['Ink.Dom.Selector_1','Ink.Dom.Element_1'], function( Selector, Element ) {
     'use strict';
 
     /**
-     * @module Ink.UI.ProgressBar_1
-     */
-
-    /**
-     * @class Ink.UI.ProgressBar
-     *
-     * @since April 2013
-     * @author ricardo.s.machado AT telecom.pt
-     * @version 1
-     *
-     * <pre>
      * Associated to a .ink-progress-bar element, it provides the necessary
      * method - setValue() - for the user to change the element's value.
-     * </pre>
-     */
-
-    /**
-     * @constructor Ink.UI.ProgressBar.?
+     * 
+     * @class Ink.UI.ProgressBar
+     * @constructor
+     * @version 1
+     * @uses Ink.Dom.Selector
+     * @uses Ink.Dom.Element
      * @param {String|DOMElement} selector
-     * @param {Object}            options
-     * @... {optional Number}     startValue          Percentage of the bar that is filled. Range between 0 and 100
-     * @... {optional Function}   onStart             Callback that is called when a change of value is started
-     * @... {optional Function}   onEnd               Callback that is called when a change of value ends
+     * @param {Object} [options] Options for the datepicker
+     *     @param {Number}     [options.startValue]          Percentage of the bar that is filled. Range between 0 and 100. Default: 0
+     *     @param {Function}   [options.onStart]             Callback that is called when a change of value is started
+     *     @param {Function}   [options.onEnd]               Callback that is called when a change of value ends
+     *
+     * @example
+     *      <div class="ink-progress-bar grey" data-start-value="70%">
+     *          <span class="caption">I am a grey progress bar</span>
+     *          <div class="bar grey"></div>
+     *      </div>
+     *      <script>
+     *          Ink.requireModules( ['Ink.Dom.Selector_1','Ink.UI.ProgressBar_1'], function( Selector, ProgressBar ){
+     *              var progressBarElement = Ink.s('.ink-progress-bar');
+     *              var progressBarObj = new ProgressBar( progressBarElement );
+     *          });
+     *      </script>
      */
     var ProgressBar = function( selector, options ){
 
@@ -60,6 +63,13 @@ Ink.createModule('Ink.UI.ProgressBar', '1',
     };
 
     ProgressBar.prototype = {
+
+        /**
+         * Init function called by the constructor
+         * 
+         * @method _init
+         * @private
+         */
         _init: function(){
             this._elementBar = Selector.select('.bar',this._element);
             if( this._elementBar.length < 1 ){
@@ -72,6 +82,13 @@ Ink.createModule('Ink.UI.ProgressBar', '1',
             this.setValue( this._options.startValue );
         },
 
+        /**
+         * Sets the value of the Progressbar
+         * 
+         * @method setValue
+         * @param {Number} newValue Numeric value, between 0 and 100, that represents the percentage of the bar.
+         * @public
+         */
         setValue: function( newValue ){
             this._options.onStart( this._value);
 

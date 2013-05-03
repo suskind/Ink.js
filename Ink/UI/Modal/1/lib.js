@@ -1,44 +1,67 @@
-
-Ink.createModule('Ink.UI.Modal', '1',
-    ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Dom.Css_1','Ink.Dom.Element_1','Ink.Dom.Selector_1','Ink.Util.Array_1'],
-    function(Aux, Event, Css, Element, Selector, InkArray) {
-
+/**
+ * @module Ink.UI.Modal_1
+ * @author inkdev AT sapo.pt
+ * @version 1
+ */
+Ink.createModule('Ink.UI.Modal', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Dom.Css_1','Ink.Dom.Element_1','Ink.Dom.Selector_1','Ink.Util.Array_1'], function(Aux, Event, Css, Element, Selector, InkArray ) {
     'use strict';
 
     /**
-     * @module Ink.UI.Modal_1
-     */
-
-    /**
      * @class Ink.UI.Modal
-     *
-     * @since October 2012
-     * @author jose.p.dias AT co.sapo.pt
+     * @constructor
      * @version 1
-     *
-     * <pre>
-     * Displays a "window-like" container over the page and waits for dismiss.
-     * Can grab its contents from the selector or the markup option.
-     * By default the modal measures 600x400, but these dimensions can be overridden by options too.
-     * Supports the escape key for dismissal too.
-     * </pre>
-     */
-
-    /**
-     * @constructor Ink.UI.Modal.?
+     * @uses Ink.UI.Aux
+     * @uses Ink.Dom.Event
+     * @uses Ink.Dom.Css
+     * @uses Ink.Dom.Element
+     * @uses Ink.Dom.Selector
+     * @uses Ink.Util.Array
      * @param {String|DOMElement} selector
-     * @param {Object}            options
-     * @... {optional Number}               width           modal width in pixels. defaults to 600
-     * @... {optional Number}               height          modal height in pixels. defaults to 400
-     * @... {optional String}               shadeClass      Classes to be added to the .ink-shade div
-     * @... {optional String}               shadeClass      Classes to be added to the .ink-modal div
-     * @... {optional String}               trigger         CSS selector that represents one or more elements that will trigger the display
-     * @... {optional String}               triggerEvent    Event that will be observed on the trigger
-     * @... {optional Number}               markup          HTML markup string. if passed, populates the modal, otherwise the selector is used to fetch the content.
-     * @... {optional Function}             onShow          callback to call when the modal is shown
-     * @... {optional Function}             onDismiss       callback to call when the modal is dismissed
-     * @... {optional Boolean}              closeOnClick    defaults to false. if trueish, a click anywhere dismissed the modal.
-     * @... {optional Boolean}              disableScroll   defaults to true. if trueish, it will disable (or try to) the scroll of the rest of the page (not in the Modal).
+     * @param {Object} [options] Options for the datepicker
+     *      @param {String}    [options.width]             Default/Initial width. Ex: '600px'
+     *      @param {String}    [options.height]            Default/Initial height. Ex: '400px'
+     *      @param {String}    [options.shadeClass]        Custom class to be added to the div.ink-shade
+     *      @param {String}    [options.modalClass]        Custom class to be added to the div.ink-modal
+     *      @param {String}    [options.trigger]           CSS Selector to target elements that will trigger the Modal.
+     *      @param {String}    [options.triggerEvent]      Trigger's event to be listened. 'click' is the default value. Ex: 'mouseover', 'touchstart'...
+     *      @param {String}    [options.markup]            Markup to be placed in the Modal when created
+     *      @param {Function}  [options.onShow]            Callback function to run when the Modal is opened.
+     *      @param {Function}  [options.onDismiss]         Callback function to run when the Modal is closed.
+     *      @param {Boolean}   [options.closeOnClick]      Determines if the Modal should close when clicked outside of it. 'false' by default.
+     *      @param {Boolean}   [options.responsive]        Determines if the Modal should behave responsively (adapt to smaller viewports).
+     *      @param {Boolean}   [options.disableScroll]     Determines if the Modal should 'disable' the page's scroll (not the Modal's body).
+     *
+     * @example
+     *      <div class="ink-shade fade">
+     *          <div id="test" class="ink-modal fade" data-trigger="bModal" data-width="800px" data-height="400px">
+     *              <div class="modal-header">
+     *                  <button class="modal-close ink-dismiss"></button>
+     *                  <h5>Modal windows can have headers</h5>
+     *              </div>
+     *              <div class="modal-body" id="modalContent">
+     *                  <h3>Please confirm your previous choice</h3>
+     *                  <p>"No," said Peleg, "and he hasn't been baptized right either, or it would have washed some of that devil's blue off his face."</p>
+     *                  <p>
+     *                      <img src="http://placehold.it/800x400" style="width: 100%;" alt="">
+     *                  </p>
+     *                  <p>"Do tell, now," cried Bildad, "is this Philistine a regular member of Deacon Deuteronomy's meeting? I never saw him going there, and I pass it every Lord's day."</p>
+     *                  <p>"I don't know anything about Deacon Deuteronomy or his meeting," said I; "all I know is, that Queequeg here is a born member of the First Congregational Church. He is a deacon himself, Queequeg is."</p>
+     *              </div>
+     *              <div class="modal-footer">
+     *                  <div class="push-right">
+     *                      <button class="ink-button info">Confirm</button>
+     *                      <button class="ink-button caution ink-dismiss">Cancel</button>
+     *                  </div>
+     *              </div>
+     *          </div>
+     *      </div>
+     *      <a href="#" id="bModal">Open modal</a>
+     *      <script>
+     *          Ink.requireModules( ['Ink.Dom.Selector_1','Ink.UI.Modal_1'], function( Selector, Modal ){
+     *              var modalElement = Ink.s('#bModal');
+     *              var modalObj = new Modal( modalElement );
+     *          });
+     *      </script>
      */
     var Modal = function(selector, options) {
 
@@ -198,6 +221,13 @@ Ink.createModule('Ink.UI.Modal', '1',
 
     Modal.prototype = {
 
+        /**
+         * Init function called by the constructor
+         * 
+         * @method _init
+         * @param {Event} [event] In case its fired by the trigger.
+         * @private
+         */
         _init: function(event) {
 
             if( event ){ Event.stop(event); }
@@ -283,8 +313,10 @@ Ink.createModule('Ink.UI.Modal', '1',
         },
 
         /**
-         * _reposition: function responsible for repositioning the modal
-         * @return void
+         * Responsible for repositioning the modal
+         * 
+         * @method _reposition
+         * @private
          */
         _reposition: function(){
 
@@ -295,8 +327,11 @@ Ink.createModule('Ink.UI.Modal', '1',
         },
 
         /**
-         * _resize: function responsible for resizing the modal
-         * @return void
+         * Responsible for resizing the modal
+         * 
+         * @method _onResize
+         * @param {Boolean|Event} runNow Its executed in the begining to resize/reposition accordingly to the viewport. But usually it's an event object.
+         * @private
          */
         _onResize: function( runNow ){
 
@@ -309,6 +344,9 @@ Ink.createModule('Ink.UI.Modal', '1',
 
         /**
          * Timeout Resize Function
+         * 
+         * @method _timeoutResizeFunction
+         * @private
          */
         _timeoutResizeFunction: function(){
             /**
@@ -355,8 +393,11 @@ Ink.createModule('Ink.UI.Modal', '1',
         },
 
         /**
-         * @function ? navigation click handler
+         * Navigation click handler
+         * 
+         * @method _onClick
          * @param {Event} ev
+         * @private
          */
         _onClick: function(ev) {
             var tgtEl = Event.element(ev);
@@ -371,15 +412,23 @@ Ink.createModule('Ink.UI.Modal', '1',
         },
 
         /**
-         * [_onKeyDown description]
-         * @param  {[type]} ev [description]
-         * @return {[type]}    [description]
+         * Responsible for handling the escape key pressing.
+         *
+         * @method _onKeyDown
+         * @param  {Event} ev
+         * @private
          */
         _onKeyDown: function(ev) {
             if (ev.keyCode !== 27 || this._wasDismissed) { return; }
             this.dismiss();
         },
 
+        /**
+         * Responsible for setting the size of the modal (and position) based on the viewport.
+         * 
+         * @method _resizeContainer
+         * @private
+         */
         _resizeContainer: function()
         {
 
@@ -410,6 +459,12 @@ Ink.createModule('Ink.UI.Modal', '1',
             this._contentElement.style.overflow = this._contentElement.style.overflowX = this._contentElement.style.overflowY = 'visible';
         },
 
+        /**
+         * Responsible for 'disabling' the page scroll
+         * 
+         * @method _disableScroll
+         * @private
+         */
         _disableScroll: function()
         {
             this._oldScrollPos = Element.scroll();
@@ -425,14 +480,15 @@ Ink.createModule('Ink.UI.Modal', '1',
             Event.observe(document, 'touchmove', this._onScrollBinded);
         },
 
-
-
         /**************
          * PUBLIC API *
          **************/
 
         /**
-         * @function ? dismisses the modal
+         * Dismisses the modal
+         * 
+         * @method dismiss
+         * @public
          */
         dismiss: function() {
             if (this._options.onDismiss) {
@@ -490,7 +546,10 @@ Ink.createModule('Ink.UI.Modal', '1',
         },
 
         /**
-         * @function ? removes the modal from the DOM
+         * Removes the modal from the DOM
+         * 
+         * @method destroy
+         * @public
          */
         destroy: function() {
             Aux.unregisterInstance(this._instanceId);
@@ -498,15 +557,22 @@ Ink.createModule('Ink.UI.Modal', '1',
         },
 
         /**
-         * @function {DOMElement} ? returns the content DOM element
+         * Returns the content DOM element
+         * 
+         * @method getContentElement
+         * @return {DOMElement} Modal main cointainer.
+         * @public
          */
         getContentElement: function() {
             return this._contentContainer;
         },
 
         /**
-         * @function ? replaces the content markup
+         * Replaces the content markup
+         * 
+         * @method setContentMarkup
          * @param {String} contentMarkup
+         * @public
          */
         setContentMarkup: function(contentMarkup) {
             if( !this._markupMode ){

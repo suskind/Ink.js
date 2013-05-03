@@ -1,29 +1,38 @@
-
-Ink.createModule('Ink.UI.SortableList', '1',
-    ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Dom.Css_1','Ink.Dom.Element_1','Ink.Dom.Selector_1','Ink.Util.Array_1'],
-    function(Aux, Event, Css, Element, Selector, InkArray) {
-
+/**
+ * @module Ink.UI.SortableList_1
+ * @author inkdev AT sapo.pt
+ * @version 1
+ */
+Ink.createModule('Ink.UI.SortableList', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Dom.Css_1','Ink.Dom.Element_1','Ink.Dom.Selector_1','Ink.Util.Array_1'], function(Aux, Event, Css, Element, Selector, InkArray ) {
     'use strict';
 
     /**
-     * @module Ink.UI.SortableList_1
-     */
-
-    /**
-     * @class Ink.UI.SortableList
-     *
-     * @since October 2012
-     * @author jose.p.dias AT co.sapo.pt
-     * @version 0.1
-     *
      * Adds sortable behaviour to any list!
-     */
-
-    /**
-     * @constructor Ink.UI.SortableList.?
+     * 
+     * @class Ink.UI.SortableList
+     * @constructor
+     * @version 1
+     * @uses Ink.UI.Aux
+     * @uses Ink.Dom.Event
+     * @uses Ink.Dom.Css
+     * @uses Ink.Dom.Element
+     * @uses Ink.Dom.Selector
+     * @uses Ink.Util.Array
      * @param {String|DOMElement} selector
-     * @param {Object}        options
-     * @... {optional String} dragLabel what to display on the label. defaults to 'drag here'
+     * @param {Object} [options] Options for the datepicker
+     *     @param {String} [options.dragObject] CSS Selector. The element that will trigger the dragging in the list. Default is 'li'.
+     * @example
+     *      <ul class="unstyled ink-sortable-list" id="slist" data-instance="sortableList9">
+     *          <li><span class="ink-label info"><i class="icon-reorder"></i>drag here</span>primeiro</li>
+     *          <li><span class="ink-label info"><i class="icon-reorder"></i>drag here</span>segundo</li>
+     *          <li><span class="ink-label info"><i class="icon-reorder"></i>drag here</span>terceiro</li>
+     *      </ul>
+     *      <script>
+     *          Ink.requireModules( ['Ink.Dom.Selector_1','Ink.UI.SortableList_1'], function( Selector, SortableList ){
+     *              var sortableListElement = Ink.s('.ink-sortable-list');
+     *              var sortableListObj = new SortableList( sortableListElement );
+     *          });
+     *      </script>
      */
     var SortableList = function(selector, options) {
 
@@ -81,6 +90,12 @@ Ink.createModule('Ink.UI.SortableList', '1',
 
     SortableList.prototype = {
 
+        /**
+         * Init function called by the constructor.
+         * 
+         * @method _init
+         * @private
+         */
         _init: function() {
             // extract model
             if (this._createdFrom === 'DOM') {
@@ -103,12 +118,21 @@ Ink.createModule('Ink.UI.SortableList', '1',
             Aux.registerInstance(this, this._element, 'sortableList');
         },
 
+        /**
+         * Sets the event handlers.
+         * 
+         * @method _observe
+         * @private
+         */
         _observe: function() {
             Event.observe(this._element, this._down, this._handlers.down);
         },
 
         /**
-         * @function ? updates the model from the UL representation
+         * Updates the model from the UL representation
+         * 
+         * @method _extractModelFromDOM
+         * @private
          */
         _extractModelFromDOM: function() {
             this._model = [];
@@ -124,7 +148,11 @@ Ink.createModule('Ink.UI.SortableList', '1',
         },
 
         /**
-         * @function {DOMElement} ? returns the top element for the gallery DOM representation
+         * Returns the top element for the gallery DOM representation
+         * 
+         * @method _generateMarkup
+         * @return {DOMElement}
+         * @private
          */
         _generateMarkup: function() {
             var el = document.createElement('ul');
@@ -147,8 +175,12 @@ Ink.createModule('Ink.UI.SortableList', '1',
         },
 
         /**
-         * @function {Number} ? extracts the Y coordinate of the mouse from the given MouseEvent
+         * Extracts the Y coordinate of the mouse from the given MouseEvent
+         * 
+         * @method _getY
          * @param  {Event} ev
+         * @return {Number}
+         * @private
          */
         _getY: function(ev) {
             if (ev.type.indexOf('touch') === 0) {
@@ -161,6 +193,13 @@ Ink.createModule('Ink.UI.SortableList', '1',
             return ev.clientY;
         },
 
+        /**
+         * Refreshes the markup.
+         * 
+         * @method _refresh
+         * @param {Boolean} skipObs True if needs to set the event handlers, false if not.
+         * @private
+         */
         _refresh: function(skipObs) {
             var el = this._generateMarkup();
             this._element.parentNode.replaceChild(el, this._element);
@@ -175,8 +214,12 @@ Ink.createModule('Ink.UI.SortableList', '1',
         },
 
         /**
-         * @function ? mouse down handler
+         * Mouse down handler
+         * 
+         * @method _onDown
          * @param {Event} ev
+         * @return {Boolean|undefined} [description]
+         * @private
          */
         _onDown: function(ev) {
             if (this._isMoving) { return; }
@@ -215,8 +258,11 @@ Ink.createModule('Ink.UI.SortableList', '1',
         },
 
         /**
-         * @function ? mouse move handler
+         * Mouse move handler
+         * 
+         * @method _onMove
          * @param {Event} ev
+         * @private
          */
         _onMove: function(ev) {
             if (!this._isMoving) { return; }
@@ -243,8 +289,11 @@ Ink.createModule('Ink.UI.SortableList', '1',
         },
 
         /**
-         * @function ? mouse up handler
+         * Mouse up handler
+         * 
+         * @method _onUp
          * @param {Event} ev
+         * @private
          */
         _onUp: function(ev) {
             if (!this._isMoving) { return; }
@@ -264,14 +313,21 @@ Ink.createModule('Ink.UI.SortableList', '1',
          **************/
 
         /**
-         * @function {String[]} ? returns a copy of the model
+         * Returns a copy of the model
+         * 
+         * @method getModel
+         * @return {Array} Copy of the model
+         * @public
          */
         getModel: function() {
             return this._model.slice();
         },
 
         /**
-         * @function ? unregisters the component and removes its markup from the DOM
+         * Unregisters the component and removes its markup from the DOM
+         * 
+         * @method destroy
+         * @public
          */
         destroy: Aux.destroyComponent
 

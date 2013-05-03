@@ -1,40 +1,39 @@
-Ink.createModule('Ink.UI.FormValidator', '1',
-    ['Ink.Dom.Css_1','Ink.Util.Validator_1'],
-    function( Css, InkValidator ) {
-
+/**
+ * @module Ink.UI.FormValidator_1
+ * @author inkdev AT sapo.pt
+ * @version 1
+ */
+Ink.createModule('Ink.UI.FormValidator', '1', ['Ink.Dom.Css_1','Ink.Util.Validator_1'], function( Css, InkValidator ) {
     'use strict';
 
     /**
-     * @module Ink.UI.DatePicker_1
-     */
-
-    /*
-
-        will return an array with error elements and flags
-
-        [
-            {elm: HTMLElement1, errors:['error_flag1', 'error_flag2', '...']},
-            {elm: HTMLElement2, errors:['error_flag1', 'error_flag2', '...']},
-            ...
-        ]
-
-    customFlag: [
-            {flag: 'custom-field1', callback: function(elm, errorMessage) { return true/false}, msg: 'error message'}
-        ]
-
-    */
-
-    /**
      * @class Ink.UI.FormValidator
-     *
-     * Utility class to validate forms
-     *
+     * @version 1
+     * @uses Ink.Dom.Css
+     * @uses Ink.Util.Validator
      */
     var FormValidator = {
 
-        version: '0.1',
+        /**
+         * Specifies the version of the component
+         *
+         * @property version
+         * @type {String}
+         * @readOnly
+         * @public
+         */
+        version: '1',
 
-        /* defines all flags to use in validation */
+        /**
+         * Available flags to use in the validation process.
+         * The keys are the 'rules', and their values are objects with the key 'msg', determining
+         * what is the error message.
+         *
+         * @property _flagMap
+         * @type {Object}
+         * @readOnly
+         * @private
+         */
         _flagMap: {
             //'ink-fv-required': {msg: 'Campo obrigat&oacute;rio'},
             'ink-fv-required': {msg: 'Required field'},
@@ -59,28 +58,78 @@ Ink.createModule('Ink.UI.FormValidator', '1',
             'ink-fv-custom': {msg: ''}
         },
 
-        /* hold all form elements */
+        /**
+         * This property holds all form elements for later validation
+         *
+         * @property elements
+         * @type {Object}
+         * @public
+         */
         elements: {},
 
+        /**
+         * This property holds the objects needed to cross-check for the 'confirm' rule
+         *
+         * @property confirmElms
+         * @type {Object}
+         * @public
+         */
         confirmElms: {},
 
+        /**
+         * This property holds the previous elements in the confirmElms property, but with a
+         * true/false specifying if it has the class ink-fv-confirm.
+         *
+         * @property hasConfirm
+         * @type {Object}
+         */
         hasConfirm: {},
 
-        /* defined class name to use in error messages label */
+        /**
+         * Defined class name to use in error messages label
+         *
+         * @property _errorClassName
+         * @type {String}
+         * @readOnly
+         * @private
+         */
         _errorClassName: 'tip',
 
+        /**
+         * @property _errorValidationClassName
+         * @type {String}
+         * @readOnly
+         * @private
+         */
         _errorValidationClassName: 'validaton',
+
+        /**
+         * @property _errorTypeWarningClassName
+         * @type {String}
+         * @readOnly
+         * @private
+         */
         _errorTypeWarningClassName: 'warning',
+
+        /**
+         * @property _errorTypeErrorClassName
+         * @type {String}
+         * @readOnly
+         * @private
+         */
         _errorTypeErrorClassName: 'error',
 
         /**
-         * @function {Boolean} ? Check if a form is valid or not
-         * @param {DOMElement|String} elm - DOM form element or form id
+         * Check if a form is valid or not
+         * 
+         * @method validate
+         * @param {DOMElement|String} elm DOM form element or form id
          * @param {Object} options Options for
-         *      @... {optional Function} onSuccess - function to run when form is valid
-         *      @... {optional Function} onError - function to run when form is not valid
-         *      @... {optional Array} customFlag - custom flags to use to validate form fields
-         * @return true or false if the form is valid or not
+         *      @param {Function} [options.onSuccess] function to run when form is valid
+         *      @param {Function} [options.onError] function to run when form is not valid
+         *      @param {Array} [options.customFlag] custom flags to use to validate form fields
+         * @public
+         * @return {Boolean}
          */
         validate: function(elm, options)
         {
@@ -133,7 +182,10 @@ Ink.createModule('Ink.UI.FormValidator', '1',
         },
 
         /**
-         * @function ? reset previously generated validation errors
+         * Reset previously generated validation errors
+         * 
+         * @method reset
+         * @public
          */
         reset: function()
         {
@@ -141,6 +193,12 @@ Ink.createModule('Ink.UI.FormValidator', '1',
             this._clearCache();
         },
 
+        /**
+         * Cleans the object
+         * 
+         * @method _free
+         * @private
+         */
         _free: function()
         {
             this.element = null;
@@ -149,6 +207,12 @@ Ink.createModule('Ink.UI.FormValidator', '1',
             this.confirmGroup = false;
         },
 
+        /**
+         * Cleans the properties responsible for caching
+         * 
+         * @method _clearCache
+         * @private
+         */
         _clearCache: function()
         {
             this.element = null;
@@ -157,6 +221,12 @@ Ink.createModule('Ink.UI.FormValidator', '1',
             this.confirmGroup = false;
         },
 
+        /**
+         * Gets the form elements and stores them in the caching properties
+         * 
+         * @method _getElements
+         * @private
+         */
         _getElements: function()
         {
             //this.elements = [];
@@ -207,6 +277,12 @@ Ink.createModule('Ink.UI.FormValidator', '1',
 
         },
 
+        /**
+         * Runs the validation for each element
+         * 
+         * @method _validateElements
+         * @private
+         */
         _validateElements: function()
         {
             var oGroups;
@@ -255,6 +331,15 @@ Ink.createModule('Ink.UI.FormValidator', '1',
             return errors;
         },
 
+        /**
+         * Runs the 'confirm' validation for each group of elements
+         * 
+         * @method _validateConfirmGroups
+         * @param {Array} oGroups Array/Object that contains the group of confirm objects
+         * @param {Array} errors Array that will store the errors
+         * @private
+         * @return {Array} Array of errors that was passed as 2nd parameter (either changed, or not, depending if errors were found).
+         */
         _validateConfirmGroups: function(oGroups, errors)
         {
             //console.log(oGroups);
@@ -270,6 +355,13 @@ Ink.createModule('Ink.UI.FormValidator', '1',
             return errors;
         },
 
+        /**
+         * Creates the groups of 'confirm' objects
+         * 
+         * @method _makeConfirmGroups
+         * @private
+         * @return {Array|Boolean} Returns the array of confirm elements or false on error.
+         */
         _makeConfirmGroups: function()
         {
             var oGroups;
@@ -306,6 +398,14 @@ Ink.createModule('Ink.UI.FormValidator', '1',
             return false;
         },
 
+        /**
+         * Validates an element with a custom validation
+         * 
+         * @method _isCustomValid
+         * @param {DOMElemenmt} elm Element to be validated
+         * @private
+         * @return {Array} Array of errors. If no errors are found, results in an empty array.
+         */
         _isCustomValid: function(elm)
         {
             var customErrors = [];
@@ -321,6 +421,15 @@ Ink.createModule('Ink.UI.FormValidator', '1',
             return customErrors;
         },
 
+        /**
+         * Runs the normal validation functions for a specific element
+         * 
+         * @method :_isValid
+         * @param {DOMElement} elm DOMElement that will be validated
+         * @param {String} fieldType Rule to be validated. This must be one of the keys present in the _flagMap property.
+         * @private
+         * @return {Boolean} The result of the validation.
+         */
         _isValid: function(elm, fieldType)
         {
             /*jshint maxstatements:50, maxcomplexity:50 */
@@ -456,7 +565,14 @@ Ink.createModule('Ink.UI.FormValidator', '1',
             return false;
         },
 
-
+        /**
+         * Makes the necessary changes to the markup to show the errors of a given element
+         * 
+         * @method _showError
+         * @param {DOMElement} formElm The form element to be changed to show the errors
+         * @param {Array} aFail An array with the errors found.
+         * @private
+         */
         _showError: function(formElm, aFail)
         {
             this._clearError(formElm);
@@ -507,6 +623,13 @@ Ink.createModule('Ink.UI.FormValidator', '1',
             }
         },
 
+        /**
+         * Clears the error of a given element. Normally executed before any validation, for all elements, as a reset.
+         * 
+         * @method _clearErrors
+         * @param {DOMElement} formElm Form element to be cleared.
+         * @private
+         */
         _clearError: function(formElm)
         {
             //return;
@@ -535,6 +658,14 @@ Ink.createModule('Ink.UI.FormValidator', '1',
             }
         },
 
+        /**
+         * Removes unnecessary spaces to the left or right of a string
+         * 
+         * @method _trim
+         * @param {String} stri String to be trimmed
+         * @private
+         * @return {String|undefined} String trimmed.
+         */
         _trim: function(str)
         {
             if(typeof(str) === 'string')

@@ -1,33 +1,95 @@
-
-Ink.createModule('Ink.UI.Table', '1',
-    ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Dom.Css_1','Ink.Dom.Element_1','Ink.Dom.Selector_1','Ink.Util.Array_1','Ink.UI.Pagination_1'],
-    function(Aux, Event, Css, Element, Selector, InkArray, Pagination) {
-
+/**
+ * @module Ink.UI.Table_1
+ * @author inkdev AT sapo.pt
+ * @version 1
+ */
+Ink.createModule('Ink.UI.Table', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Dom.Css_1','Ink.Dom.Element_1','Ink.Dom.Selector_1','Ink.Util.Array_1','Ink.UI.Pagination_1'], function(Aux, Event, Css, Element, Selector, InkArray, Pagination ) {
     'use strict';
 
     /**
-     * @module Ink.UI.Table_1
-     */
-
-    /**
-     * @class Ink.UI.Table
-     *
-     * @since April 2013
-     * @author ricardo.s.machado AT telecom.pt
-     * @version 1
-     *
-     * <pre>
      * The Table component transforms the native/DOM table element into a
      * sortable, paginated component.
-     * </pre>
-     */
-
-    /**
-     * @constructor Ink.UI.Table.?
+     * 
+     * @class Ink.UI.Table
+     * @constructor
+     * @version 1
+     * @uses Ink.UI.Aux
+     * @uses Ink.Dom.Event
+     * @uses Ink.Dom.Css
+     * @uses Ink.Dom.Element
+     * @uses Ink.Dom.Selector
+     * @uses Ink.Util.Array
+     * @uses Ink.UI.Pagination
      * @param {String|DOMElement} selector
-     * @param {Object}            options
-     * @... {optional Number}               pageSize        Number of rows per page.
-     * @... {optional String}               endpoint        Endpoint to get the records via AJAX
+     * @param {Object} [options] Options for the datepicker
+     *     @param {Number}     options.pageSize       Number of rows per page.
+     *     @param {String}     options.endpoint       Endpoint to get the records via AJAX
+     * @example
+     *      <table class="ink-table alternating" data-page-size="6">
+     *          <thead>
+     *              <tr>
+     *                  <th data-sortable="true" width="75%">Pepper</th>
+     *                  <th data-sortable="true" width="25%">Scoville Rating</th>
+     *              </tr>
+     *          </thead>
+     *          <tbody>
+     *              <tr>
+     *                  <td>Trinidad Moruga Scorpion</td>
+     *                  <td>1500000</td>
+     *              </tr>
+     *              <tr>
+     *                  <td>Bhut Jolokia</td>
+     *                  <td>1000000</td>
+     *              </tr>
+     *              <tr>
+     *                  <td>Naga Viper</td>
+     *                  <td>1463700</td>
+     *              </tr>
+     *              <tr>
+     *                  <td>Red Savina Habanero</td>
+     *                  <td>580000</td>
+     *              </tr>
+     *              <tr>
+     *                  <td>Habanero</td>
+     *                  <td>350000</td>
+     *              </tr>
+     *              <tr>
+     *                  <td>Scotch Bonnet</td>
+     *                  <td>180000</td>
+     *              </tr>
+     *              <tr>
+     *                  <td>Malagueta</td>
+     *                  <td>50000</td>
+     *              </tr>
+     *              <tr>
+     *                  <td>Tabasco</td>
+     *                  <td>35000</td>
+     *              </tr>
+     *              <tr>
+     *                  <td>Serrano Chili</td>
+     *                  <td>27000</td>
+     *              </tr>
+     *              <tr>
+     *                  <td>JalapeÃ±o</td>
+     *                  <td>8000</td>
+     *              </tr>
+     *              <tr>
+     *                  <td>Poblano</td>
+     *                  <td>1500</td>
+     *              </tr>
+     *              <tr>
+     *                  <td>Peperoncino</td>
+     *                  <td>500</td>
+     *              </tr>
+     *          </tbody>
+     *      </table>
+     *      <nav class="ink-navigation"><ul class="pagination"></ul></nav>
+     *      <script>
+     *          Ink.requireModules( ['Ink.Dom.Selector_1','Ink.UI.Table_1'], function( Selector, Table ){
+     *              var tableElement = Ink.s('.ink-table');
+     *              var tableObj = new Table( tableElement );
+     *          });
+     *      </script>
      */
     var Table = function( selector, options ){
 
@@ -63,6 +125,12 @@ Ink.createModule('Ink.UI.Table', '1',
 
     Table.prototype = {
 
+        /**
+         * Init function called by the constructor
+         * 
+         * @method _init
+         * @private
+         */
         _init: function(){
             /**
              * Setting the sortable columns and its event listeners
@@ -108,6 +176,13 @@ Ink.createModule('Ink.UI.Table', '1',
             }
         },
 
+        /**
+         * Click handler. This will mainly handle the sorting (when you click in the headers)
+         * 
+         * @method _onClick
+         * @param {Event} event Event obj
+         * @private
+         */
         _onClick: function( event ){
             Event.stop(event);
             var
@@ -177,6 +252,13 @@ Ink.createModule('Ink.UI.Table', '1',
             this._paginate(1);
         },
 
+        /**
+         * Applies and/or changes the CSS classes in order to show the right columns
+         * 
+         * @method _paginate
+         * @param {Number} page Current page
+         * @private
+         */
         _paginate: function( page ){
             InkArray.each(this._data,Ink.bind(function(item, index){
                 if( (index >= ((page-1)*parseInt(this._options.pageSize,10))) && (index < (((page-1)*parseInt(this._options.pageSize,10))+parseInt(this._options.pageSize,10)) ) ){
@@ -187,6 +269,13 @@ Ink.createModule('Ink.UI.Table', '1',
             },this));
         },
 
+        /**
+         * Sorts by a specific column.
+         * 
+         * @method _sort
+         * @param {Number} index Column number (starting at 0)
+         * @private
+         */
         _sort: function( index ){
             this._data.sort(Ink.bind(function(a,b){
                 var

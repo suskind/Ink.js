@@ -1,29 +1,53 @@
-
-Ink.createModule('Ink.UI.TreeView', '1',
-    ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Dom.Css_1','Ink.Dom.Element_1','Ink.Dom.Selector_1','Ink.Util.Array_1'],
-    function(Aux, Event, Css, Element, Selector, InkArray) {
-
+/**
+ * @module Ink.UI.TreeView_1
+ * @author inkdev AT sapo.pt
+ * @version 1
+ */
+Ink.createModule('Ink.UI.TreeView', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Dom.Css_1','Ink.Dom.Element_1','Ink.Dom.Selector_1','Ink.Util.Array_1'], function(Aux, Event, Css, Element, Selector, InkArray ) {
     'use strict';
 
     /**
-     * @module Ink.UI.TreeView_1
-     */
-
-    /**
-     * @class Ink.UI.TreeView
-     *
-     * @since April 2013
-     * @author ricardo.s.machado AT telecom.pt
-     * @version 1
-     *
-     * <pre>
      * TreeView is an Ink's component responsible for presenting a defined set of elements in a tree-like hierarchical structure
-     * </pre>
-     *
-     * @param {string|DOMElement} selector CSS Selector or DOMElement
-     * @param {Object}            options
-     * @... {optional String}               node        CSS selector that identifies the elements that are considered nodes.
-     * @... {optional String}               child       CSS selector that identifies the elements that are children of those nodes.
+     * 
+     * @class Ink.UI.TreeView
+     * @constructor
+     * @version 1
+     * @uses Ink.UI.Aux
+     * @uses Ink.Dom.Event
+     * @uses Ink.Dom.Css
+     * @uses Ink.Dom.Element
+     * @uses Ink.Dom.Selector
+     * @uses Ink.Util.Array
+     * @param {String|DOMElement} selector
+     * @param {Object} [options] Options for the datepicker
+     *     @param {String} options.node        CSS selector that identifies the elements that are considered nodes.
+     *     @param {String} options.child       CSS selector that identifies the elements that are children of those nodes.
+     * @example
+     *      <ul class="ink-tree-view">
+     *        <li class="open"><span></span><a href="#">root</a>
+     *          <ul>
+     *            <li><a href="">child 1</a></li>
+     *            <li><span></span><a href="">child 2</a>
+     *              <ul>
+     *                <li><a href="">grandchild 2a</a></li>
+     *                <li><span></span><a href="">grandchild 2b</a>
+     *                  <ul>
+     *                    <li><a href="">grandgrandchild 1bA</a></li>
+     *                    <li><a href="">grandgrandchild 1bB</a></li>
+     *                  </ul>
+     *                </li>
+     *              </ul>
+     *            </li>
+     *            <li><a href="">child 3</a></li>
+     *          </ul>
+     *        </li>
+     *      </ul>
+     *      <script>
+     *          Ink.requireModules( ['Ink.Dom.Selector_1','Ink.UI.TreeView_1'], function( Selector, TreeView ){
+     *              var treeViewElement = Ink.s('.ink-tree-view');
+     *              var treeViewObj = new TreeView( treeViewElement );
+     *          });
+     *      </script>
      */
     var TreeView = function(selector, options){
 
@@ -61,8 +85,10 @@ Ink.createModule('Ink.UI.TreeView', '1',
     TreeView.prototype = {
 
         /**
-         * @function {void} ? Sets the necessary event handlers.
-         * @return {void}
+         * Init function called by the constructor. Sets the necessary event handlers.
+         * 
+         * @method _init
+         * @private
          */
         _init: function(){
 
@@ -97,8 +123,11 @@ Ink.createModule('Ink.UI.TreeView', '1',
         },
 
         /**
-         * @function {void} ? Handles the click event (as specified in the _init function)
-         * @return {void}
+         * Handles the click event (as specified in the _init function).
+         * 
+         * @method _onClick
+         * @param {Event} event
+         * @private
          */
         _onClick: function(event){
 
