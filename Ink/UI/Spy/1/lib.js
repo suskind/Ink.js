@@ -104,9 +104,8 @@ Ink.createModule('Ink.UI.Spy', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Dom.C
                     this._options.target
                 ),Ink.bind(function(item){
 
-                    var comparisonValue = ( ("href" in this._rootElement) && this._rootElement.href ?
-                        this._rootElement.href.substr(this._rootElement.href.indexOf('#') )
-                        : '#' + this._rootElement.id
+                    var comparisonValue = ( ("name" in this._rootElement) && this._rootElement.name ?
+                        '#' + this._rootElement.name : '#' + this._rootElement.id
                     );
 
                     if( item.href.substr(item.href.indexOf('#')) === comparisonValue ){
