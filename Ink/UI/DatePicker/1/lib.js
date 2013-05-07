@@ -417,12 +417,12 @@ Ink.createModule('Ink.UI.DatePicker', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','In
                             var month=className.substr(14,2);
                             if(Number(month)){
                                 this._month = month - 1;
-                                if( typeof this._options.onMonthSelected === 'function' ){
-                                    this._options.onMonthSelected(this, {
-                                        'year': this._year,
-                                        'month' : this._month
-                                    });
-                                }
+                                // if( typeof this._options.onMonthSelected === 'function' ){
+                                //     this._options.onMonthSelected(this, {
+                                //         'year': this._year,
+                                //         'month' : this._month
+                                //     });
+                                // }
                                 this._monthSelector.style.display = 'none';
                                 this._monthPrev.childNodes[0].className = 'change_month_prev';
                                 this._monthNext.childNodes[0].className = 'change_month_next';
@@ -911,6 +911,13 @@ Ink.createModule('Ink.UI.DatePicker', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','In
          * @private
          */
         _updateCal: function(inc){
+            
+            if( typeof this._options.onMonthSelected === 'function' ){
+                this._options.onMonthSelected(this, {
+                    'year': this._year,
+                    'month' : this._month
+                });
+            }
             this._updateMonth(inc);
             this._showMonth();
         },
