@@ -91,10 +91,7 @@ Ink.createModule('Ink.UI.Sticky', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Do
             Event.observe( document, 'scroll', Ink.bindEvent(this._onScroll,this) );
             Event.observe( window, 'resize', Ink.bindEvent(this._onResize,this) );
 
-            this._options.originalOffsetTop = parseInt(this._options.offsetTop,10);
-            this._options.originalOffsetBottom = parseInt(this._options.offsetBottom,10);
-            this._options.originalTop = parseInt(this._rootElement.offsetTop,10);
-            this._options.originalWidth = parseInt(this._computedStyle.width,10);
+            this._calculateOriginalSizes();
 
             this._calculateOffsets();
 
@@ -119,11 +116,11 @@ Ink.createModule('Ink.UI.Sticky', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Do
             }
 
 
-            if( this._scrollTimeout ){
-                clearTimeout(this._scrollTimeout);
-            }
+            // if( this._scrollTimeout ){
+            //     clearTimeout(this._scrollTimeout);
+            // }
 
-            this._scrollTimeout = setTimeout(Ink.bind(function(){
+            // this._scrollTimeout = setTimeout(Ink.bind(function(){
 
                 if( Element.hasAttribute(this._rootElement,'style') ){
                     if( window.scrollY<=this._options.offsetTop){
@@ -154,8 +151,8 @@ Ink.createModule('Ink.UI.Sticky', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Do
                     this._rootElement.style.width = this._options.originalWidth + 'px';
                 }
 
-                this._scrollTimeout = undefined;
-            },this),0);
+            //     this._scrollTimeout = undefined;
+            // },this),0);
         },
 
         /**
@@ -166,15 +163,16 @@ Ink.createModule('Ink.UI.Sticky', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Do
          */
         _onResize: function(){
 
-            if( this._resizeTimeout ){
-                clearTimeout(this._resizeTimeout);
-            }
+            // if( this._resizeTimeout ){
+            //     clearTimeout(this._resizeTimeout);
+            // }
 
-            this._resizeTimeout = setTimeout(Ink.bind(function(){
-
+            // this._resizeTimeout = setTimeout(Ink.bind(function(){
+                this._rootElement.removeAttribute('style');
+                this._calculateOriginalSizes();
                 this._calculateOffsets();
 
-            },this),250);
+            // },this),250);
 
         },
 
@@ -222,6 +220,20 @@ Ink.createModule('Ink.UI.Sticky', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Do
 
             this._onScroll();
 
+        },
+
+        /**
+         * Function to calculate the 'original size' of the element.
+         * It's used in the begining (_init method) and when a scroll happens
+         *
+         * @method _calculateOriginalSizes
+         * @private
+         */
+        _calculateOriginalSizes: function(){
+            this._options.originalOffsetTop = parseInt(this._options.offsetTop,10);
+            this._options.originalOffsetBottom = parseInt(this._options.offsetBottom,10);
+            this._options.originalTop = parseInt(this._rootElement.offsetTop,10);
+            this._options.originalWidth = parseInt(this._computedStyle.width,10);
         }
 
     };
