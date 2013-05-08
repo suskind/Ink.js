@@ -31,9 +31,9 @@ Ink.createModule('Ink.UI.Aux', '1', ['Ink.Net.Ajax_1','Ink.Dom.Css_1','Ink.Dom.S
          * @readOnly
          */
         Layouts: {
-            SMALL:  's',
-            MEDIUM: 'm',
-            LARGE:  'l'
+            SMALL:  'small',
+            MEDIUM: 'medium',
+            LARGE:  'large'
         },
 
         /**
@@ -216,7 +216,7 @@ Ink.createModule('Ink.UI.Aux', '1', ['Ink.Net.Ajax_1','Ink.Dom.Css_1','Ink.Dom.S
                     if (this.Layouts.hasOwnProperty(k)) {
                         v = this.Layouts[k];
                         el = document.createElement('div');
-                        el.className = 'ink-for-' + v;
+                        el.className = 'show-' + v + ' hide-all';
                         el.setAttribute('data-ink-layout', v);
                         detectorEl.appendChild(el);
                     }
