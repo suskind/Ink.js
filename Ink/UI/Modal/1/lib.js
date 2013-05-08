@@ -403,9 +403,11 @@ Ink.createModule('Ink.UI.Modal', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Dom
             var tgtEl = Event.element(ev);
 
             if (Css.hasClassName(tgtEl, 'ink-close') || Css.hasClassName(tgtEl, 'ink-dismiss') ||
-                 (this._options.closeOnClick &&
-                  !Element.descendantOf(this._shadeElement, tgtEl)) ||
-                 (tgtEl === this._shadeElement)) {
+                (
+                    this._options.closeOnClick &&
+                    (!Element.descendantOf(this._shadeElement, tgtEl) || (tgtEl === this._shadeElement))
+                )
+            ) {
                 Event.stop(ev);
                 this.dismiss();
             }
