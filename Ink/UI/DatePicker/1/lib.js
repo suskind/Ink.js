@@ -1172,6 +1172,18 @@ Ink.createModule('Ink.UI.DatePicker', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','In
          */
         showMonth: function(){
             this._showMonth();
+        },
+
+        /**
+         * Returns true if the calendar sceen is in 'select day' mode
+         * 
+         * @return {Boolean} True if the calendar sceen is in 'select day' mode
+         * @public
+         */
+        isMonthRendered: function(){
+            var header = Selector.select('.sapo_cal_header',this._containerObject)[0];
+
+            return ( (Css.getStyle(header.parentNode,'display') !== 'none') && (Css.getStyle(header.parentNode.parentNode,'display') !== 'none') );
         }
     };
 
