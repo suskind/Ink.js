@@ -21,6 +21,7 @@ Ink.createModule('Ink.UI.Toggle', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Do
      * @param {Object} [options] Options for the datepicker
      *     @param {String}       options.target                    CSS Selector that specifies the elements that will toggle
      *     @param {String}       [options.triggerEvent]            Event that will trigger the toggling. Default is 'click'
+     *     @param {Boolean}      [options.closeOnClick]            Flag that determines if, when clicking outside of the toggled content, it should hide it. Default: true.
      * @example
      *      <div class="ink-dropdown">
      *          <button class="ink-button toggle" data-target="#dropdown">Dropdown <span class="icon-caret-down"></span></button>
@@ -73,7 +74,8 @@ Ink.createModule('Ink.UI.Toggle', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Do
 
         this._options = Ink.extendObj({
             target : undefined,
-            triggerEvent: 'click'
+            triggerEvent: 'click',
+            closeOnClick: true
         },Element.data(this._rootElement));
 
         this._options = Ink.extendObj(this._options,options || {});
@@ -115,7 +117,9 @@ Ink.createModule('Ink.UI.Toggle', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Do
             this._accordion = ( Css.hasClassName(this._rootElement.parentNode,'accordion') || Css.hasClassName(this._childElement.parentNode,'accordion') );
 
             Event.observe( this._rootElement, this._options.triggerEvent, Ink.bindEvent(this._onTriggerEvent,this) );
-            Event.observe( document, 'click', Ink.bindEvent(this._onClick,this));
+            if( this._options.closeOnClick.toString() === 'true' ){
+                Event.observe( document, 'click', Ink.bindEvent(this._onClick,this));
+            }
         },
 
         /**
