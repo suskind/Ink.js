@@ -1,27 +1,29 @@
 /**
+ * @module Ink.Util.String_1
  * @author inkdev AT sapo.pt
- */
-
-/**
- * String utility function
+ * @version 1
  */
 Ink.createModule('Ink.Util.String', '1', [], function() {
 
     'use strict';
 
     /**
-     * @module Ink.Util.String_1
-     */
-
-    /**
+     * String Manipulation Utilities
+     *
      * @class Ink.Util.String
+     * @version 1
      * @static
      */
-
     var InkUtilString = {
 
         /**
-         * @property {Array} ?
+         * List of special chars
+         * 
+         * @property _chars
+         * @type {Array}
+         * @private
+         * @readOnly
+         * @static
          */
         _chars: ['&','à','á','â','ã','ä','å','æ','ç','è','é',
                 'ê','ë','ì','í','î','ï','ð','ñ','ò','ó','ô',
@@ -34,7 +36,13 @@ Ink.createModule('Ink.Util.String', '1', [], function() {
                 '·','¸','¹','º','»','¼','½','¾'],
 
         /**
-         * @property {Array} ?
+         * List of the special characters' html entities
+         * 
+         * @property _entities
+         * @type {Array}
+         * @private
+         * @readOnly
+         * @static
          */
         _entities: ['amp','agrave','aacute','acirc','atilde','auml','aring',
                     'aelig','ccedil','egrave','eacute','ecirc','euml','igrave',
@@ -51,8 +59,13 @@ Ink.createModule('Ink.Util.String', '1', [], function() {
                     'ordm','raquo','frac14','frac12','frac34'],
 
         /**
-         * @property {Array} ?
-         *
+         * List of accented chars
+         * 
+         * @property _accentedChars
+         * @type {Array}
+         * @private
+         * @readOnly
+         * @static
          */
         _accentedChars:['à','á','â','ã','ä','å',
                         'è','é','ê','ë',
@@ -68,7 +81,13 @@ Ink.createModule('Ink.Util.String', '1', [], function() {
                         'Ç','Ñ'],
 
         /**
-         * @property {Array} ?
+         * List of the accented chars (above), but without the accents
+         * 
+         * @property _accentedRemovedChars
+         * @type {Array}
+         * @private
+         * @readOnly
+         * @static
          */
         _accentedRemovedChars:['a','a','a','a','a','a',
                                'e','e','e','e',
@@ -83,18 +102,25 @@ Ink.createModule('Ink.Util.String', '1', [], function() {
                                'U','U','U','U',
                                'C','N'],
         /**
-         * @property {Object} ?
-         * Chars that have sepcial meaning in html and should be escaped.
+         * Object that contains the basic HTML unsafe chars, as keys, and their HTML entities as values
+         * 
+         * @property _htmlUnsafeChars
+         * @type {Object}
+         * @private
+         * @readOnly
+         * @static
          */
         _htmlUnsafeChars:{'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',"'":'&apos;'},
 
         /**
-         * @function {String} ?
          * Convert first letter of a word to upper case <br />
          * If param as more than one word, it converts first letter of all words that have more than 2 letters
          *
+         * @method ucFirst
          * @param {String} string
-         * @return {String} string camel case
+         * @return {String} string camel cased
+         * @public
+         * @static
          */
         ucFirst: function(string)
         {
@@ -104,10 +130,13 @@ Ink.createModule('Ink.Util.String', '1', [], function() {
         },
 
         /**
-         * @function {String} ?
          * Remove spaces and new line from biggin and ends of string
+         *
+         * @method trim
          * @param {String} string
-         * @return string trimmed
+         * @return {String} string trimmed
+         * @public
+         * @static
          */
         trim: function(string)
         {
@@ -118,12 +147,19 @@ Ink.createModule('Ink.Util.String', '1', [], function() {
         },
 
         /**
-         * @function {String} ?
-         * Remove HTML tags of string
+         * Removes HTML tags of string
+         *
+         * @method stripTags
          * @param {String} string
-         * @param {optional String} strip tagNames separated by comma ","
-         * @return  without HTML tag
-     var myvar='isto e um texto <b>bold</b> com imagem <img src=""> e br <br /> um <p>paragrafo</p>'; SAPO.Utility.String.stripTags(myvar, 'b,u');
+         * @param {String} allowed
+         * @return {String} String stripped from HTML tags, leaving only the allowed ones (if any)
+         * @public
+         * @static
+         * @example
+         *     <script>
+         *          var myvar='isto e um texto <b>bold</b> com imagem <img src=""> e br <br /> um <p>paragrafo</p>';
+         *          SAPO.Utility.String.stripTags(myvar, 'b,u');
+         *     </script>
          */
         stripTags: function(string, allowed)
         {
@@ -132,7 +168,7 @@ Ink.createModule('Ink.Util.String', '1', [], function() {
                 var aNewAllowed = [];
                 var cleanedTag = false;
                 for(var i=0; i < aAllowed.length; i++) {
-                    if(this.trim(aAllowed[i]) != '') {
+                    if(this.trim(aAllowed[i]) !== '') {
                         cleanedTag = this.trim(aAllowed[i].replace(/(\<|\>)/g, '').replace(/\s/, ''));
                         aNewAllowed.push('(<'+cleanedTag+'\\s[^>]+>|<(\\s|\\/)?(\\s|\\/)?'+cleanedTag+'>)');
                     }
@@ -153,12 +189,14 @@ Ink.createModule('Ink.Util.String', '1', [], function() {
             }
         },
 
-
         /**
-         * @function {String} ?
          * Convert listed characters to HTML entities
+         *
+         * @method htmlEntitiesEncode
          * @param {String} string
-         * @return string encoded
+         * @return {String} string encoded
+         * @public
+         * @static
          */
         htmlEntitiesEncode: function(string)
         {
@@ -172,12 +210,14 @@ Ink.createModule('Ink.Util.String', '1', [], function() {
             return string;
         },
 
-
         /**
-         * @function {String} ?
          * Convert listed HTML entities to character
+         *
+         * @method htmlEntitiesDecode
          * @param {String} string
-         * @return string decoded
+         * @return {String} string decoded
+         * @public
+         * @static
          */
         htmlEntitiesDecode: function(string)
         {
@@ -200,10 +240,13 @@ Ink.createModule('Ink.Util.String', '1', [], function() {
         },
 
         /**
-         * @function ?
          * Encode a string to UTF8
+         *
+         * @method utf8Encode
          * @param {String} string
          * @return {String} string utf8 encoded
+         * @public
+         * @static
          */
         utf8Encode: function(string)
         {
@@ -232,11 +275,14 @@ Ink.createModule('Ink.Util.String', '1', [], function() {
         },
 
         /**
-         * @function {String} ?
          * Make a string shorter without cutting words
+         *
+         * @method shortString
          * @param {String} str
          * @param {Number} n - number of chars of the short string
-         * @return string shorted
+         * @return {String} string shortened
+         * @public
+         * @static
          */
         shortString: function(str,n) {
           var words = str.split(' ');
@@ -252,12 +298,15 @@ Ink.createModule('Ink.Util.String', '1', [], function() {
         },
 
         /**
-         * @function {String} ?
          * Truncates a string, breaking words and adding ... at the end
+         *
+         * @method truncateString
          * @param {String} str
          * @param {Number} length - length limit for the string. String will be
          *        at most this big, ellipsis included.
-         * @return short string
+         * @return {String} string truncated
+         * @public
+         * @static
          */
         truncateString: function(str, length) {
             if(str.length - 1 > length) {
@@ -268,10 +317,13 @@ Ink.createModule('Ink.Util.String', '1', [], function() {
         },
 
         /**
-         * @function {String} ?
          * Decode a string from UTF8
+         *
+         * @method utf8Decode
          * @param {String} string
-         * @return string utf8 decoded
+         * @return {String} string utf8 decoded
+         * @public
+         * @static
          */
         utf8Decode: function(utfstring)
         {
@@ -303,10 +355,13 @@ Ink.createModule('Ink.Util.String', '1', [], function() {
         },
 
         /**
-         * @function {String} ?
          * Convert all accented chars to char without accent.
+         *
+         * @method removeAccentedChars
          * @param {String} string
-         * @return string without accented chars
+         * @return {String} string without accented chars
+         * @public
+         * @static
          */
         removeAccentedChars: function(string)
         {
@@ -320,11 +375,14 @@ Ink.createModule('Ink.Util.String', '1', [], function() {
         },
 
         /**
-         * @function {String} ?
          * Count the number of occurrences of a specific needle in a haystack
+         *
+         * @method substrCount
          * @param {String} haystack
          * @param {String} needle
-         * @return int with number of occurrences
+         * @return {Number} Number of occurrences
+         * @public
+         * @static
          */
         substrCount: function(haystack,needle)
         {
@@ -332,14 +390,18 @@ Ink.createModule('Ink.Util.String', '1', [], function() {
         },
 
         /**
-         * @function {String} ?
-         * eval a JSON string to a JS object
-         * @param {String} JSON
-         * @return object JS Object
+         * Eval a JSON string to a JS object
+         *
+         * @method evalJSON
+         * @param {String} strJSON
+         * @param {Boolean} sanitize
+         * @return {Object} JS Object
+         * @public
+         * @static
          */
         evalJSON: function(strJSON, sanitize)
         {
-            if( (typeof sanitize === 'undefined' || sanitize == null) || this.isJSON(strJSON)) {
+            if( (typeof sanitize === 'undefined' || sanitize === null) || this.isJSON(strJSON)) {
                 try {
                     if(typeof(JSON) !== "undefined" && typeof(JSON.parse) !== 'undefined'){
                         return JSON.parse(strJSON);
@@ -351,6 +413,15 @@ Ink.createModule('Ink.Util.String', '1', [], function() {
             }
         },
 
+        /**
+         * Checks if a string is a valid JSON object (string encoded)
+         *
+         * @method isJSON
+         * @param {String} str
+         * @return {Boolean}
+         * @public
+         * @static
+         */
         isJSON: function(str)
         {
             str = str.replace(/\\./g, '@').replace(/"[^"\\\n\r]*"/g, '');
@@ -358,10 +429,13 @@ Ink.createModule('Ink.Util.String', '1', [], function() {
         },
 
         /**
-         * @function {String} ?
-         *           escapes unsafe html chars to their entities
-         * @param {String} string to escape
-         * @return new escaped string
+         * Escapes unsafe html chars to their entities
+         *
+         * @method htmlEscapeUnsafe
+         * @param {String} str String to escape
+         * @return {String} Escaped string
+         * @public
+         * @static
          */
         htmlEscapeUnsafe: function(str){
             var chars = this._htmlUnsafeChars;
@@ -369,16 +443,29 @@ Ink.createModule('Ink.Util.String', '1', [], function() {
         },
 
         /**
-         * @function {String} ? normalizes whitespace in string.
-         *           string is trimmed and sequences of many
-         *           whitespaces are collapsed.
-         * @param {String} string to normalize
-         * @return new normalized string
+         * Normalizes whitespace in string.
+         * String is trimmed and sequences of many
+         * Whitespaces are collapsed.
+         *
+         * @method normalizeWhitespace
+         * @param {String} str String to normalize
+         * @return {String} string normalized
+         * @public
+         * @static
          */
         normalizeWhitespace: function(str){
             return str != null ? this.trim(String(str).replace(/\s+/g,' ')) : str;
         },
 
+        /**
+         * Converts string to unicode
+         *
+         * @method toUnicode
+         * @param {String} str
+         * @return {String} string unicoded
+         * @public
+         * @static
+         */
         toUnicode: function(str)
         {
             if (typeof str === 'string') {
@@ -438,7 +525,16 @@ Ink.createModule('Ink.Util.String', '1', [], function() {
         },
 
         /**
-         * @function {String} ? escapes a unicode character. returns \xXX if hex smaller than 0x100, otherwise \uXXXX
+         * Escapes a unicode character. returns \xXX if hex smaller than 0x100, otherwise \uXXXX
+         *
+         * @method ucFirst
+         * @param {String} c Char
+         * @return {String} escaped char
+         * @public
+         * @static
+         */
+
+        /**
          * @param {String} c char
          */
         escape: function(c) {
@@ -457,8 +553,13 @@ Ink.createModule('Ink.Util.String', '1', [], function() {
         },
 
         /**
-         * @function {String} ? unescapes a unicode character escape sequence
-         * @param {String} es escape sequence
+         * Unescapes a unicode character escape sequence
+         *
+         * @method unescape
+         * @param {String} es Escape sequence
+         * @return {String} String des-unicoded
+         * @public
+         * @static
          */
         unescape: function(es) {
             var idx = es.lastIndexOf('0');
@@ -471,9 +572,14 @@ Ink.createModule('Ink.Util.String', '1', [], function() {
         },
 
         /**
-         * @function {String} ? escapes a string to unicode characters
+         * Escapes a string to unicode characters
+         *
+         * @method escapeText
          * @param {String} txt
-         * @param {optional String[]} whiteList
+         * @param {Array} [whiteList]
+         * @return {String} Escaped to Unicoded string
+         * @public
+         * @static
          */
         escapeText: function(txt, whiteList) {
             if (whiteList === undefined) {
@@ -492,11 +598,25 @@ Ink.createModule('Ink.Util.String', '1', [], function() {
             return txt2.join('');
         },
 
+        /**
+         * Regex to check escaped strings
+         *
+         * @property escapedCharRegex
+         * @type {Regex}
+         * @public
+         * @readOnly
+         * @static
+         */
         escapedCharRegex: /(\\x[0-9a-fA-F]{2})|(\\u[0-9a-fA-F]{4})/g,
 
         /**
-         * @function {String} ? unescapes a string
+         * Unescapes a string
+         *
+         * @method unescapeText
          * @param {String} txt
+         * @return {String} Unescaped string
+         * @public
+         * @static
          */
         unescapeText: function(txt) {
             /*jshint boss:true */
@@ -509,20 +629,30 @@ Ink.createModule('Ink.Util.String', '1', [], function() {
             return txt;
         },
 
-
         /**
-         * @function {Number} ? compares two strings
-         * @param {String} String to compare against
-         * @param {String} String to be compared
-        */
+         * Compares two strings
+         *
+         * @method strcmp
+         * @param {String} str1
+         * @param {String} str2
+         * @return {Number}
+         * @public
+         * @static
+         */
         strcmp: function(str1, str2) {
             return ((str1 === str2) ? 0 : ((str1 > str2) ? 1 : -1));
         },
 
         /**
-         * @function {String[]} splits long string into string of, at most, maxLen (that is, all but last have length maxLen, last can measure maxLen or less)
-         * @param  {String}  str     string to divide
-         * @param  {Number}  maxLen  packet size
+         * Splits long string into string of, at most, maxLen (that is, all but last have length maxLen,
+         * last can measure maxLen or less)
+         *
+         * @method packetize
+         * @param {String} string string to divide
+         * @param {Number} maxLen packet size
+         * @return {Array} string divided
+         * @public
+         * @static
          */
         packetize: function(str, maxLen) {
             var len = str.length;

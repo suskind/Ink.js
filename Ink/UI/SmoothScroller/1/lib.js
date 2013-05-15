@@ -117,19 +117,19 @@ Ink.createModule('Ink.UI.SmoothScroller', '1', ['Ink.Dom.Event_1','Ink.Dom.Selec
          * @static
          */
         scroll: function(d) {
-            var a = SmoothScroller.scrollTop();
+            var a = Ink.UI.SmoothScroller.scrollTop();
             if (d > a) {
-                a += Math.ceil((d - a) / SmoothScroller.speed);
+                a += Math.ceil((d - a) / Ink.UI.SmoothScroller.speed);
             } else {
-                a = a + (d - a) / SmoothScroller.speed;
+                a = a + (d - a) / Ink.UI.SmoothScroller.speed;
             }
 
             window.scrollTo(0, a);
-            if ((a) === d || SmoothScroller.offsetTop === a)
+            if ((a) === d || Ink.UI.SmoothScroller.offsetTop === a)
             {
-                clearInterval(SmoothScroller.interval);
+                clearInterval(Ink.UI.SmoothScroller.interval);
             }
-            SmoothScroller.offsetTop = a;
+            Ink.UI.SmoothScroller.offsetTop = a;
         },
 
 
@@ -142,7 +142,7 @@ Ink.createModule('Ink.UI.SmoothScroller', '1', ['Ink.Dom.Event_1','Ink.Dom.Selec
          */
         // initializer that adds the renderer to the onload function of the window
         init: function() {
-            Loaded.run(SmoothScroller.render);
+            Loaded.run(Ink.UI.SmoothScroller.render);
         },
 
         /**
@@ -155,13 +155,13 @@ Ink.createModule('Ink.UI.SmoothScroller', '1', ['Ink.Dom.Event_1','Ink.Dom.Selec
         render: function() {
             var a = Selector.select('a.scrollableLink');
 
-            SmoothScroller.end(this);
+            Ink.UI.SmoothScroller.end(this);
 
             for (var i = 0; i < a.length; i++) {
                 var l = a[i];
                 if (l.href && l.href.indexOf('#') !== -1 && ((l.pathname === location.pathname) || ('/' + l.pathname === location.pathname))) {
-                    SmoothScroller.add(l, 'click', SmoothScroller.end);
-                    Event.observe(l,'click',SmoothScroller.clickScroll);
+                    Ink.UI.SmoothScroller.add(l, 'click', Ink.UI.SmoothScroller.end);
+                    Event.observe(l,'click',Ink.UI.SmoothScroller.clickScroll);
                 }
             }
         },
@@ -175,7 +175,7 @@ Ink.createModule('Ink.UI.SmoothScroller', '1', ['Ink.Dom.Event_1','Ink.Dom.Selec
          * @static
          */
         clickScroll: function() {
-            SmoothScroller.end(this);
+            Ink.UI.SmoothScroller.end(this);
             var hash = this.hash.substr(1);
             var elm = Selector.select('a[name="' + hash + '"],#' + hash);
 
@@ -192,13 +192,12 @@ Ink.createModule('Ink.UI.SmoothScroller', '1', ['Ink.Dom.Event_1','Ink.Dom.Selec
                     } while ((li = li.nextSibling));
                     this.parentNode.className += " active";
                 }
-                clearInterval(SmoothScroller.interval);
-                SmoothScroller.interval = setInterval('SmoothScroller.scroll(' + SmoothScroller.gy(elm[0]) + ')', 10);
+                clearInterval(Ink.UI.SmoothScroller.interval);
+                Ink.UI.SmoothScroller.interval = setInterval('Ink.UI.SmoothScroller.scroll(' + Ink.UI.SmoothScroller.gy(elm[0]) + ')', 10);
 
             }
         }
     };
-    SmoothScroller.init();
 
     return SmoothScroller;
 

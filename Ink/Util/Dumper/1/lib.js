@@ -1,35 +1,41 @@
 /**
+ * @module Ink.Util.Dumper_1
  * @author inkdev AT sapo.pt
+ * @version 1
  */
-
 Ink.createModule('Ink.Util.Dumper', '1', [], function() {
 
     'use strict';
 
     /**
-     * @module Ink.Util.Dumper_1
-     */
-
-    /**
+     * Dump/Profiling Utilities
+     *
      * @class Ink.Util.Dumper
+     * @version 1
      * @static
      */
-
     var Dumper = {
 
         /**
-         * {String} _tab
+         * Hex code for the 'tab'
+         * 
+         * @property _tab
+         * @type {String}
+         * @private
+         * @readOnly
+         * @static
          *
          */
         _tab: '\xA0\xA0\xA0\xA0',
 
         /**
-         * {String} _formatParam
+         * Function that returns the argument passed formatted
          *
-         * @param {Any} param
-         *
-         * @return the argument passed formated
-         *
+         * @method _formatParam
+         * @param {Mixed} param
+         * @return {String} The argument passed formatted
+         * @private
+         * @static
          */
         _formatParam: function(param)
         {
@@ -64,10 +70,13 @@ Ink.createModule('Ink.Util.Dumper', '1', [], function() {
         },
 
         /**
-         * {String} _getTabs
+         * Function that returns the tabs concatenated
          *
-         * @param {Number} numberOfTabs
-         * @return the tabs concatenated
+         * @method _getTabs
+         * @param {Number} numberOfTabs Number of Tabs
+         * @return {String} Tabs concatenated
+         * @private
+         * @static
          */
         _getTabs: function(numberOfTabs)
         {
@@ -79,13 +88,14 @@ Ink.createModule('Ink.Util.Dumper', '1', [], function() {
         },
 
         /**
-         * {String} _outputFormat
+         * Function that formats the parameter to display
          *
-         * formats the param to display
-         *
+         * @method _outputFormat
          * @param {Any} param
          * @param {Number} dim
-         * @return the output format
+         * @return {String} The parameter passed formatted to displat
+         * @private
+         * @static
          */
         _outputFormat: function(param, dim)
         {
@@ -116,11 +126,13 @@ Ink.createModule('Ink.Util.Dumper', '1', [], function() {
         },
 
         /**
-         * @function ? print variable structure. Can be passed an output target
+         * Print variable structure. Can be passed an output target
          *
+         * @method printDump
          * @param {Object|String|Boolean} param
-         *
          * @param {optional String|Object} target (can be an element ID or an element)
+         * @public
+         * @static
          */
         printDump: function(param, target)
         {
@@ -138,9 +150,13 @@ Ink.createModule('Ink.Util.Dumper', '1', [], function() {
         },
 
         /**
-         * @function {String} ? return variable structure
+         * Function that returns the variable's structure
          *
+         * @method returnDump
          * @param {Object|String|Boolean} param
+         * @return {String} The variable structure
+         * @public
+         * @static
          */
         returnDump: function(param)
         {
@@ -148,9 +164,12 @@ Ink.createModule('Ink.Util.Dumper', '1', [], function() {
         },
 
         /**
-         * @function ? alert variable structure
+         * Function that alerts the variable structure
          *
+         * @method alertDump
          * @param {Object|String|Boolean} param
+         * @public
+         * @static
          */
         alertDump: function(param)
         {
@@ -158,9 +177,12 @@ Ink.createModule('Ink.Util.Dumper', '1', [], function() {
         },
 
         /**
-         * @function ? print to new window the variable structure
+         * Print to new window the variable structure
          *
+         * @method windowDump
          * @param {Object|String|Boolean} param
+         * @public
+         * @static
          */
         windowDump: function(param)
         {

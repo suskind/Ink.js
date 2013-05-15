@@ -1,34 +1,31 @@
 /**
+ * @module Ink.Util.Swipe_1
  * @author inkdev AT sapo.pt
+ * @version 1
  */
-
 Ink.createModule('Ink.Util.Swipe', '1', ['Ink.Dom.Event_1'], function(Event) {
 
     'use strict';
 
     /**
-     * @module Ink.Util.Swipe_1
-     */
-
-    /**
-     * @class Ink.Util.Swipe
-     *
-     * <pre>
      * Subscribe swipe gestures!
      * Supports filtering swipes be any combination of the criteria supported in the options.
-     * </Pre>
-     */
-
-    /**
-     * @constructor Ink.Util.Swipe.?
-     * @param {String|DOMElement} el
-     * @param {Object}            options
-     * @... {Function(Object)} callback    required callback function. It receives all the extracted information: elementId, duration, dr, dist, axis
-     * @... {optional Number}    minDist     minimum allowed distance, in pixels
-     * @... {optional Number}    maxDist     maximum allowed distance, in pixels
-     * @... {optional Number}    minDuration minimum allowed duration, in seconds
-     * @... {optional Number}    maxDuration maximum allowed duration, in seconds
-     * @... {optional String}    forceAxis   if either 'x' or 'y' is passed, only swipes where the dominant axis is the given one trigger the callback
+     *
+     * @class Ink.UI.Swipe
+     * @constructor
+     * @version 1
+     * @uses Ink.Dom.Event
+     *
+     * @param {String|DOMElement} selector
+     * @param {Object} [options] Options for the datepicker
+     *     @param {Function} options
+     *     @param {Number}    [options.minDist]         minimum allowed distance, in pixels
+     *     @param {Number}    [options.maxDist]         maximum allowed distance, in pixels
+     *     @param {Number}    [options.minDuration]     minimum allowed duration, in seconds
+     *     @param {Number}    [options.maxDuration]     maximum allowed duration, in seconds
+     *     @param {Number}    [options.forceAxis]       maximum allowed duration, in seconds
+     *     @param {Boolean}   [options.storeGesture]    maximum allowed duration, in seconds
+     *     @param {Boolean}   [options.stopEvents]      Flag that specifies if it should stop events. Default is true.
      */
     var Swipe = function(el, options) {
 

@@ -1,28 +1,31 @@
 /**
+ * @module Ink.Util.Date_1
  * @author inkdev AT sapo.pt
+ * @version 1
  */
-
 Ink.createModule('Ink.Util.Date', '1', [], function() {
 
     'use strict';
 
     /**
-     * @module Ink.Util.Date_1
-     */
-
-    /**
      * Class to provide the same features that php date does
      *
      * @class Ink.Util.Date
+     * @version 1
      * @static
      */
-
     var InkDate = {
 
         /**
-         * @function {String} ? function that returns the string representation of the month [PT only]
-         * @param {Number} index - month javascript (0 to 11)
-         * @return the month name
+         * Function that returns the string representation of the month [PT only]
+         *
+         * @method _months
+         * @param {Number} index Month javascript (0 to 11)
+         * @return {String} The month's name
+         * @private
+         * @static
+         * @example
+         *     console.log( InkDate._months(0) ); // Result: Janeiro
          */
         _months: function(index){
             var _m = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
@@ -30,10 +33,16 @@ Ink.createModule('Ink.Util.Date', '1', [], function() {
         },
 
         /**
-        * @function {Number} ? function that returns the month [PT only] ( 0 to 11 )
-        * @param {String} String representation of the month [PT only]
-        * @return the month int
-        */
+         * Function that returns the month [PT only] ( 0 to 11 )
+         *
+         * @method _iMonth
+         * @param {String} month Month javascript (0 to 11)
+         * @return {Number} The month's number
+         * @private
+         * @static
+         * @example
+         *     console.log( InkDate._iMonth('maio') ); // Result: 4
+         */
         _iMonth : function( month )
         {
             if ( Number( month ) ) { return +month - 1; }
@@ -66,13 +75,15 @@ Ink.createModule('Ink.Util.Date', '1', [], function() {
         } ,
 
         /**
-         * {String} ?
-         *
          * Function that returns the representation the day of the week [PT Only]
          *
-         * @param {Number} index - day of the week in javascript 0 to 6
-         *
-         * @return the week day description
+         * @method _wDays
+         * @param {Number} index Week's day index
+         * @return {String} The week's day name
+         * @private
+         * @static
+         * @example
+         *     console.log( InkDate._wDays(0) ); // Result: Domingo
          */
         _wDays: function(index){
             var _d = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
@@ -80,13 +91,15 @@ Ink.createModule('Ink.Util.Date', '1', [], function() {
         },
 
         /**
-         * {Number} ?
-         *
          * Function that returns day of the week in javascript 1 to 7
          *
-         * @param {String} the representation the day of the week [PT Only]
-         *
-         * @return the day of the week in javascript 1 to 7
+         * @method _iWeek
+         * @param {String} week Week's day name
+         * @return {Number} The week's day index
+         * @private
+         * @static
+         * @example
+         *     console.log( InkDate._iWeek('quarta') ); // Result: 3
          */
         _iWeek: function( week )
         {
@@ -109,12 +122,18 @@ Ink.createModule('Ink.Util.Date', '1', [], function() {
             }[ week.toLowerCase( ) ];
         },
 
-    /**
-     * @function {Number} ? function that returns the number of days of a given month (m) on a given year (y)
-     * @param {Number} _m - month
-     * @param {Number} _y - year
-     * @return the number of days
-     */
+        /**
+         * Function that returns the number of days of a given month (m) on a given year (y)
+         *
+         * @method _daysInMonth
+         * @param {Number} _m Month
+         * @param {Number} _y Year
+         * @return {Number} Number of days of a give month on a given year
+         * @private
+         * @static
+         * @example
+         *     console.log( InkDate._daysInMonth(2,2013) ); // Result: 28
+         */
         _daysInMonth: function(_m,_y){
             var nDays;
 
@@ -140,12 +159,23 @@ Ink.createModule('Ink.Util.Date', '1', [], function() {
             return nDays;
         },
 
-    /**
-     * @function {String} ? Functions that works exactly as php date() function - works like PHP 5.2.2 <a href="http://php.net/manual/en/function.date.php" target="_blank">PHP Date function</a>
-     * @param {String}        format - as the string in which the date it will be formatted - mandatory
-     * @param {optional Date} _date - the date to format. If undefined it will do it on now() date. Can receive unix timestamp or a date object
-     * @return the date formatted
-     */
+        /**
+         * Function that works exactly as php date() function
+         * Works like PHP 5.2.2 <a href="http://php.net/manual/en/function.date.php" target="_blank">PHP Date function</a>
+         *
+         * @method get
+         * @param {String}        format - as the string in which the date it will be formatted - mandatory
+         * @param {Date} [_date] - the date to format. If undefined it will do it on now() date. Can receive unix timestamp or a date object
+         * @return {String} Formatted date
+         * @public
+         * @static
+         * @example
+         *     <script>
+         *         Ink.requireModules( ['Ink.Util.Date_1'], function( InkDate ){
+         *             console.log( InkDate.get('Y-m-d') ); // Result (at the time of writing): 2013-05-07
+         *         });
+         *     </script>
+         */
         get: function(format, _date){
             /*jshint maxcomplexity:50 */
             if(typeof(format) === 'undefined' || format === ''){
@@ -374,12 +404,17 @@ Ink.createModule('Ink.Util.Date', '1', [], function() {
 
         },
 
-    /**
-     * @function {Date} ? functions that works like php date() function but return a date based on the formatted string
-     * @param {String} format - as the string in which the date it will be formatted - mandatory
-     * @param {String} str_date - the date formatted.
-     * @return the date
-     */
+        /**
+         * Functions that works like php date() function but return a date based on the formatted string
+         * Works like PHP 5.2.2 <a href="http://php.net/manual/en/function.date.php" target="_blank">PHP Date function</a>
+         *
+         * @method set
+         * @param {String} format As the string in which the date it will be formatted - mandatory
+         * @param {String} str_date The date formatted.
+         * @return {Date} Date object based on the formatted date
+         * @public
+         * @static
+         */
         set : function( format , str_date ) {
             if ( typeof str_date === 'undefined' ) { return ; }
             if ( typeof format === 'undefined' || format === '' ) { format = "Y-m-d"; }

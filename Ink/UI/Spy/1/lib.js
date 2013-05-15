@@ -87,7 +87,7 @@ Ink.createModule('Ink.UI.Spy', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Dom.C
         _onScroll: function(){
 
             if(
-                (window.scrollY <= this._rootElement.offsetTop)
+                (window.scrollY < this._rootElement.offsetTop)
             ){
                 return;
             } else {

@@ -104,7 +104,8 @@ Ink.createModule('Ink.UI.Table', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Dom
 
         this._options = Ink.extendObj({
             pageSize: undefined,
-            endpoint: undefined
+            endpoint: undefined,
+            allowResetSorting: false
         },Element.data(this._rootElement));
 
         this._options = Ink.extendObj( this._options, options || {});
@@ -208,7 +209,7 @@ Ink.createModule('Ink.UI.Table', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Dom
                 return;
             }
 
-            if( (this._sortableFields['col_'+index] === 'desc') && (this._options.allowResetSorting.toString() === 'true') )
+            if( (this._sortableFields['col_'+index] === 'desc') && (this._options.allowResetSorting && (this._options.allowResetSorting.toString() === 'true')) )
             {
                 this._headers[index].innerHTML = this._headers[index].innerText;
                 this._sortableFields['col_'+index] = 'none';
