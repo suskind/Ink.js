@@ -96,6 +96,10 @@
             return [uriPrefix, parts.join('/'), '/lib.js'].join('');
         },
 
+        getPath: function(key) {
+            return paths[key || 'Ink'];
+        },
+
         setPath: function(key, rootURI) {
             paths[key] = rootURI;
         },
@@ -308,6 +312,26 @@
          */
         getModulesLoadOrder: function() {
             return modulesLoadOrder.slice();
+        },
+
+        /**
+         * returns the markup you should have to bundle your JS resources yourself
+         * @return {String} scripts markup
+         */
+        getModuleScripts: function() {
+            var mlo = this.getModulesLoadOrder();
+            mlo.unshift('Ink_1');
+            console.log(mlo);
+            mlo = mlo.map(function(m) {
+                var cutAt = m.indexOf('.');
+                if (cutAt === -1) { cutAt = m.indexOf('_'); }
+                var root = m.substring(0, cutAt);
+                m = m.substring(cutAt + 1);
+                var rootPath = Ink.getPath(root);
+                return ['<script type="text/javascript" src="', rootPath, m.replace(/\./g, '/'), '/"></script>'].join('');
+            });
+
+            return mlo.join('\n');
         },
 
         /**
