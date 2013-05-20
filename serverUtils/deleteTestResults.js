@@ -2,15 +2,13 @@
 
     'use strict';
 
-    /*jshint node:true */
+    /*jshint browser:false, node:true */
 
 
 
     /* dependency modules */
     var ls      = require('./ls'),
-        myUtils = require('./utils'),
-        fs      = require('fs'),
-        util    = require('util');
+        fs      = require('fs');
 
 
 
@@ -23,7 +21,11 @@
             if (name.lastIndexOf('.xml') === -1) { return; }
             paths.push(o.path);
         },
-        onComplete: function(err, o) {
+        onComplete: function(err/*, o*/) {
+            if (err) {
+                return console.log(err);
+            }
+
             //console.log(paths);
             paths.forEach(function(path) {
                 fs.unlink(path);

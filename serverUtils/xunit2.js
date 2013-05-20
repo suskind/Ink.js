@@ -1,18 +1,20 @@
+/*jshint browser:false, node:true */
+
 /**
  * Based on:
  * https://raw.github.com/visionmedia/mocha/master/lib/reporters/xunit.js
  *
  *
- * 
+ *
  * Author: jose.pedro.dias@gmail.com
  *
- * 
- * 
+ *
+ *
  * Changes:
  * - instead of logging result XML to console, logs it to a stream
  * - allows setting the suite name
  *
- * 
+ *
  *
  * How to use:
  *
@@ -36,6 +38,8 @@
 /**
  * Module dependencies.
  */
+
+(function(global) {
 
 var Base   = require('mocha').reporters.Base,
     utils  = require('mocha').utils,
@@ -197,3 +201,4 @@ function cdata(str) {
 }
 
 
+})(this);

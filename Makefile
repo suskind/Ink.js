@@ -4,8 +4,8 @@ VERSION = "`cat VERSION`"
 
 help:
 	@echo Relevant tasks are:
-	@echo "    all               (extractTree min updateSymLinks docs updateBuilds)"
-	@echo "    clean             (deleteSymLinks deleteMinFiles removeDirs)"
+	@echo "    all"
+	@echo "    clean"
 	@echo "    report"
 	@echo "    docs"
 	@echo "    showDocs"
@@ -14,26 +14,22 @@ help:
 	@echo "    bundleMin"
 	@echo "    importPreCommitHook"
 	@echo "    extractTree"
-	@echo "    updateSymLinks"
-	@echo "    deleteSymLinks"
 
 
+all: extractTree docs min bundle bundleMin
 
-all: extractTree min updateSymLinks docs updateBuilds
 
-
-report: deleteSymLinks deleteMinFiles
+report: deleteMinFiles
 	@echo "\ngenerating report..."
 	@plato -r -l .jshintrc -d report Ink
 	@google-chrome report/index.html
 
 
-clean: deleteSymLinks deleteMinFiles removeDirs
-	@rm -rf ./inkjs.js
+clean: deleteMinFiles removeDirs
 	@echo "clean."
 
 
-.PHONY: docs report deleteSymLinks deleteMinFiles removeDirs
+.PHONY: docs report deleteMinFiles removeDirs
 
 
 extractTree:
@@ -56,16 +52,6 @@ runTests: extractTestsTree deleteTestResults
 	@node serverUtils/runTests.js
 
 
-updateSymLinks:
-	@echo "\nupdating sym links..."
-	@node serverUtils/manageSymLinks.js update
-
-
-deleteSymLinks:
-	@echo "\ndeleting sym links..."
-	@node serverUtils/manageSymLinks.js delete
-
-
 docs:
 	@echo "\ngenerating documentation..."
 	@yuidoc -c .yuidoc.json --no-code -T default -q ./Ink
@@ -82,12 +68,16 @@ min: extractTree
 
 bundle: extractTree
 	@echo "\nbundling..."
-	@node serverUtils/bundle.js
+	@node serverUtils/bundle.js ./builds/ink-all-$(VERSION).js
+	@node serverUtils/bundle.js ./builds/ink-ui-$(VERSION).js "/UI/"
+	@node serverUtils/bundle.js ./builds/ink-$(VERSION).js    "/UI/" negates
 
 
 bundleMin: min
 	@echo "\nbundling minified..."
-	@node serverUtils/bundle.js min
+	@node serverUtils/bundle.js ./builds/ink-all-$(VERSION).min.js minify
+	@node serverUtils/bundle.js ./builds/ink-ui-$(VERSION).min.js  minify "/UI/"
+	@node serverUtils/bundle.js ./builds/ink-$(VERSION).min.js     minify "/UI/" negates
 
 
 deleteMinFiles:
@@ -104,8 +94,3 @@ removeDirs:
 importPreCommitHook:
 	@echo "\ncreating symbolic link of pre-commit.sh to your git internals"
 	@ln -s ../../pre-commit.sh .git/hooks/pre-commit
-
-
-updateBuilds: bundle bundleMin
-	@cp inkjs.js     "builds/inkjs-$(VERSION).js"
-	@cp inkjs.min.js "builds/inkjs-$(VERSION).min.js"

@@ -1,10 +1,10 @@
 (function() {
-    
+
     'use strict';
 
-    /*jshint node:true */
-    
-    
+    /*jshint browser:false, node:true */
+
+
 
     var UglifyJS = require('uglify-js'),
         fs       = require('fs'),
@@ -22,5 +22,5 @@
         res = UglifyJS.minify(file);
         fs.writeFileSync(minFile, res.code);
     }
-    
+
 })();

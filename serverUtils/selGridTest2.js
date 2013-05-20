@@ -1,3 +1,7 @@
+'use strict';
+
+/*jshint browser:false, node:true */
+
 var webdriverjs = require('webdriverjs');
 
 
@@ -35,7 +39,7 @@ var selGridTest = function(fn, browsers, inLocalHost, qUnit) {
         'port:     ', PORT
     ].join(''));*/
 
-    browsers.forEach(function(brName, index) {
+    browsers.forEach(function(brName/*, index*/) {
         var prof = BROWSER_PROFILES[brName];
         if (!prof) {
             throw new Error('Do not have a profile for the browser "' + brName + '"!');

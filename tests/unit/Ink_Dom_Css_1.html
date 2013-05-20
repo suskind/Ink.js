@@ -26,13 +26,15 @@
             });
 
             test('sum 1 and 2', function() {
-                equal(brName === 'ch' ? 3 : 2, 1+2, '1 + 2 = 3');
+                //equal(brName === 'ch' ? 3 : 2, 1+2, '1 + 2 = 3'); // so only chrome passes
+                equal(3, 1+2, '1 + 2 = 3');
             });
 
             test('sum 1 and 3', function() {
             	//throw new Error('DAMN IT AN ERROR!');
             	equal(true, true, 'yay');
-            	notEqual(brName === 'ff', false, 'nay');
+            	//notEqual(brName === 'ff', false, 'nay'); // so only ff passes
+                notEqual(true, false, 'nay');
             });
         </script>
     </body>

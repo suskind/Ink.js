@@ -1,25 +1,35 @@
 (function() {
-    
+
     'use strict';
 
-    /*jshint node:true */
+    /*jshint browser:false, node:true */
 
-    
-    
+
+
     /* dependency modules */
     var ls      = require('./ls'),
         myUtils = require('./utils'),
         fs      = require('fs'),
         util    = require('util');
-        
+
 
 
     var cfg = myUtils.loadJSON('serverUtils/config.json');
 
 
+    var sortLevel1Order = '1 Net Dom Util UI'.split(' ');
+    var sortAux = function(path) {
+        var part = path.split('/')[2];
+        return sortLevel1Order.indexOf(part);
+    };
+    var sortFn = function(a, b) {
+        return sortAux(a) - sortAux(b);
+    };
+
+
 
     var roots = cfg.roots;
-    
+
 
     roots = roots.map(function(root) {
         return './' + root;
@@ -42,12 +52,16 @@
         path: '.',
         filterFn: function(o) {
             var p = o.path;
-            if (p === '.' ||
-                roots.indexOf(p) !== -1) { return true; }
+
+            if (p.indexOf('./Ink/Namespace') === 0) { return false; }
+
+            if (p === '.' || roots.indexOf(p) !== -1) { return true; }
+
             var found = false;
             roots.some(function(root) {
                 if (p.indexOf(root + '/') === 0) { found = true; return false; }
             });
+
             return found;
         },
         onDir: function(o) {
@@ -69,9 +83,12 @@
                 }
             });
 
+            dirs.sort(sortFn);
+            files.sort(sortFn);
+
             myUtils.saveJSON('serverUtils/moduleDirs.json',  dirs);
             myUtils.saveJSON('serverUtils/moduleFiles.json', files);
         }
     });
-    
+
 })();

@@ -2,7 +2,7 @@
 
     'use strict';
 
-    /*jshint node:true */
+    /*jshint browser:false, node:true */
 
 
 

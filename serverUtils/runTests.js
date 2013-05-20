@@ -1,3 +1,7 @@
+'use strict';
+
+/*jshint browser:false, node:true */
+
 var fs          = require('fs'),
     assert      = require('assert'),
     Mocha       = require('mocha'),
@@ -111,8 +115,9 @@ files.flow.forEach(function(f) { tests.push([f, 'f']); });
     console.log(['\nRUNNING ', n, ' TESTS ', (local ? 'LOCALLY' : 'USING GRID'), ' ON BROWSERS: ', browsers, '\n'].join(''));
 
     var processNextTest = function() {
+        console.log('processNextTest');
         var test = tests.shift();
-        if (!test) { return; }
+        if (!test) { return console.log('DONE'); }
 
         console.log( ['RUNNING TEST ', ++i, ' / ', n, ' (', (i/n * 100).toFixed(1), '%)\n'].join('') );
 
