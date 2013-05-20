@@ -1,8 +1,8 @@
+builds
 docs
 node_modules
 report
 serverUtils/moduleDirs.json
 serverUtils/moduleFiles.json
-inkjs.js
-*.min.js
 inkjs.sublime-workspace
+*min.js
