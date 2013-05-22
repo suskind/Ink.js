@@ -11,7 +11,7 @@ Ink.createModule('Ink.Util.Swipe', '1', ['Ink.Dom.Event_1'], function(Event) {
      * Subscribe swipe gestures!
      * Supports filtering swipes be any combination of the criteria supported in the options.
      *
-     * @class Ink.UI.Swipe
+     * @class Ink.Util.Swipe
      * @constructor
      * @version 1
      * @uses Ink.Dom.Event
@@ -55,6 +55,12 @@ Ink.createModule('Ink.Util.Swipe', '1', ['Ink.Dom.Event_1'], function(Event) {
 
     Swipe.prototype = {
 
+        /**
+         * Initialization function. Called by the constructor.
+         *
+         * @method _init
+         * @private
+         */
         _init: function() {
             var db = document.body;
             Event.observe(db, 'touchstart', this._handlers.down);
@@ -65,6 +71,15 @@ Ink.createModule('Ink.Util.Swipe', '1', ['Ink.Dom.Event_1'], function(Event) {
             this._isOn = false;
         },
 
+        /**
+         * Function to compare/get the parent of an element.
+         *
+         * @method _isMeOrParent
+         * @param {DOMElement} el Element to be compared with its parent
+         * @param {DOMElement} parentEl Element to be compared used as reference
+         * @return {DOMElement|Boolean} ParentElement of el or false in case it can't.
+         * @private
+         */
         _isMeOrParent: function(el, parentEl) {
             if (!el) {
                 return;
@@ -77,6 +92,14 @@ Ink.createModule('Ink.Util.Swipe', '1', ['Ink.Dom.Event_1'], function(Event) {
             } while (el);
             return false;
         },
+
+        /**
+         * MouseDown/TouchStart event handler
+         *
+         * @method _onDown
+         * @param {EventObject} ev window.event object
+         * @private
+         */
 
         _onDown: function(ev) {
             if (event.changedTouches.length !== 1) { return; }
@@ -100,6 +123,13 @@ Ink.createModule('Ink.Util.Swipe', '1', ['Ink.Dom.Event_1'], function(Event) {
 
         },
 
+        /**
+         * MouseMove/TouchMove event handler
+         *
+         * @method _onMove
+         * @param {EventObject} ev window.event object
+         * @private
+         */
         _onMove: function(ev) {
             if (!this._isOn || event.changedTouches.length !== 1) { return; }
             if( this._options.stopEvents === true ){
@@ -112,6 +142,13 @@ Ink.createModule('Ink.Util.Swipe', '1', ['Ink.Dom.Event_1'], function(Event) {
             this._time.push(dt);
         },
 
+        /**
+         * MouseUp/TouchEnd event handler
+         *
+         * @method _onUp
+         * @param {EventObject} ev window.event object
+         * @private
+         */
         _onUp: function(ev) {
             if (!this._isOn || event.changedTouches.length !== 1) { return; }
 

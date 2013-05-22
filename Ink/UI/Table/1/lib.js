@@ -3,7 +3,7 @@
  * @author inkdev AT sapo.pt
  * @version 1
  */
-Ink.createModule('Ink.UI.Table', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Dom.Css_1','Ink.Dom.Element_1','Ink.Dom.Selector_1','Ink.Util.Array_1','Ink.UI.Pagination_1'], function(Aux, Event, Css, Element, Selector, InkArray, Pagination ) {
+Ink.createModule('Ink.UI.Table', '1', ['Ink.Net.Ajax_1','Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Dom.Css_1','Ink.Dom.Element_1','Ink.Dom.Selector_1','Ink.Util.Array_1','Ink.UI.Pagination_1'], function(Ajax, Aux, Event, Css, Element, Selector, InkArray, Pagination ) {
     'use strict';
 
     /**
@@ -70,7 +70,7 @@ Ink.createModule('Ink.UI.Table', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Dom
      *                  <td>27000</td>
      *              </tr>
      *              <tr>
-     *                  <td>JalapeÃ±o</td>
+     *                  <td>Jalapeño</td>
      *                  <td>8000</td>
      *              </tr>
      *              <tr>
@@ -111,6 +111,11 @@ Ink.createModule('Ink.UI.Table', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Dom
         this._options = Ink.extendObj( this._options, options || {});
 
         /**
+         * Checking if it's in markup mode or endpoint mode
+         */
+        this._markupMode = ( typeof this._options.endpoint === 'undefined' );
+
+        /**
          * Initializing variables
          */
         this._handlers = {
@@ -133,6 +138,15 @@ Ink.createModule('Ink.UI.Table', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Dom
          * @private
          */
         _init: function(){
+
+            /**
+             * If not is in markup mode, we have to do the initial request
+             * to get the first data and the headers
+             */
+             if( !this._markupMode ){
+                this._getData( this._options.endpoint, true );
+             }
+
             /**
              * Setting the sortable columns and its event listeners
              */
@@ -310,6 +324,16 @@ Ink.createModule('Ink.UI.Table', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Dom
                     return ( ( aValue>bValue ) ? 1 : -1 );
                 }
             },this));
+        },
+
+        _getDataViaAjax: function( endpoint, firstRequest ){
+
+            
+
+            var req = new Ajax( endpoint, {
+                method: 'GET'
+            } );
+
         }
     };
 
