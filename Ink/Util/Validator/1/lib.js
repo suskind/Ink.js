@@ -1,31 +1,29 @@
 /**
+ * @module Ink.Util.Validator_1
  * @author inkdev AT sapo.pt
+ * @version 1
  */
-
 Ink.createModule('Ink.Util.Validator', '1', [], function() {
 
     'use strict';
 
     /**
-     * @module Ink.Util.Validator_1
-     */
-
-    /**
-     * set of functions to provide validation
+     * Set of functions to provide validation
      *
      * @class Ink.Util.Validator
+     * @version 1
      * @static
      */
-
-
-
     var Validator = {
 
         /**
-         * @property {private Array} ?
-         *
-         * list of country codes avaible for isPhone function
-         *
+         * List of country codes avaible for isPhone function
+         * 
+         * @property _countryCodes
+         * @type {Array}
+         * @private
+         * @static
+         * @readOnly
          */
         _countryCodes : [
                         'AO',
@@ -35,16 +33,26 @@ Ink.createModule('Ink.Util.Validator', '1', [], function() {
                     ],
 
         /**
-         * @property {private Number} ?
+         * International number for portugal
+         * 
+         * @property _internacionalPT
+         * @type {Number}
+         * @private
+         * @static
+         * @readOnly
          *
-         * international number for portugal
          */
         _internacionalPT: 351,
 
         /**
-         * @property {private Object} ?
+         * List of all portuguese number prefixes
+         * 
+         * @property _indicativosPT
+         * @type {Object}
+         * @private
+         * @static
+         * @readOnly
          *
-         * list of all portuguese number prefixes
          */
         _indicativosPT: {
                         21: 'lisboa',
@@ -115,15 +123,24 @@ Ink.createModule('Ink.Util.Validator', '1', [], function() {
                         30:  'voip'
                           },
         /**
-         * @property {private Number} ?
-         *
-         * international number for Cabo Verde
+         * International number for Cabo Verde
+         * 
+         * @property _internacionalCV
+         * @type {Number}
+         * @private
+         * @static
+         * @readOnly
          */
         _internacionalCV: 238,
 
         /**
-         * @property {private Object} ?
-         * list of all Cabo Verde number prefixes
+         * List of all Cabo Verde number prefixes
+         * 
+         * @property _indicativosCV
+         * @type {Object}
+         * @private
+         * @static
+         * @readOnly
          */
         _indicativosCV: {
                         2: 'fixo',
@@ -134,16 +151,24 @@ Ink.createModule('Ink.Util.Validator', '1', [], function() {
                         99: 'móvel 99'
                     },
         /**
-         * {Number}
+         * International number for angola
          *
-         * international number for angola
+         * @property _internacionalAO
+         * @type {Number}
+         * @private
+         * @static
+         * @readOnly
          */
         _internacionalAO: 244,
 
         /**
-         * @property {private Object} ?
+         * List of all Angola number prefixes
          *
-         * list of all Angola number prefixes
+         * @property _indicativosAO
+         * @type {Object}
+         * @private
+         * @static
+         * @readOnly
          */
         _indicativosAO: {
                         2: 'fixo',
@@ -151,16 +176,24 @@ Ink.createModule('Ink.Util.Validator', '1', [], function() {
                         92: 'móvel 92'
                     },
         /**
-         * @property {private Number} ?
+         * International number for mozambique
          *
-         * international number for mozambique
+         * @property _internacionalMZ
+         * @type {Number}
+         * @private
+         * @static
+         * @readOnly
          */
         _internacionalMZ: 258,
 
         /**
-         * @property {private Object} ?
+         * List of all Mozambique number prefixes
          *
-         * list of all Mozambique number prefixes
+         * @property _indicativosMZ
+         * @type {Object}
+         * @private
+         * @static
+         * @readOnly
          */
         _indicativosMZ: {
                         2: 'fixo',
@@ -169,16 +202,24 @@ Ink.createModule('Ink.Util.Validator', '1', [], function() {
                     },
 
         /**
-         * @property {private Number} ?
+         * International number for Timor
          *
-         * international number for Timor
+         * @property _internacionalTL
+         * @type {Number}
+         * @private
+         * @static
+         * @readOnly
          */
         _internacionalTL: 670,
 
         /**
-         * @property {private Object} ?
+         * List of all Timor number prefixes
          *
-         * list of all Timor number prefixes
+         * @property _indicativosTL
+         * @type {Object}
+         * @private
+         * @static
+         * @readOnly
          */
         _indicativosTL: {
                         3: 'fixo',
@@ -186,11 +227,18 @@ Ink.createModule('Ink.Util.Validator', '1', [], function() {
                     },
 
         /**
-         * @function {private Boolean} ?
+         * Checks if a year is Leap "Bissexto"
          *
-         * checks if a year is Leap "Bissexto"
-         * @param {Number} year
-         * @return true if is Leap "Bissexto"
+         * @method _isLeapYear
+         * @param {Number} year Year to be checked
+         * @return {Boolean} True if it is a leap year.
+         * @private
+         * @static
+         * @example
+         *     Ink.requireModules(['Ink.Util.Validator_1'], function( InkValidator ){
+         *         console.log( InkValidator._isLeapYear( 2004 ) ); // Result: true
+         *         console.log( InkValidator._isLeapYear( 2006 ) ); // Result: false
+         *     });
          */
         _isLeapYear: function(year){
 
@@ -204,9 +252,13 @@ Ink.createModule('Ink.Util.Validator', '1', [], function() {
         },
 
         /**
-         * @function {private Object} ?
-         *
-         * object with the date formats available for validation
+         * Object with the date formats available for validation
+         * 
+         * @property _dateParsers
+         * @type {Object}
+         * @private
+         * @static
+         * @readOnly
          */
         _dateParsers: {
             'yyyy-mm-dd': {day:5, month:3, year:1, sep: '-', parser: /^(\d{4})(\-)(\d{1,2})(\-)(\d{1,2})$/},
@@ -220,13 +272,19 @@ Ink.createModule('Ink.Util.Validator', '1', [], function() {
         },
 
         /**
-         * @function {private Number} ?
+         * Calculates the number of days in a given month of a given year
          *
-         * calculates the number of days in a given month of a given year
+         * @method _daysInMonth
          * @param {Number} _m - month (1 to 12)
          * @param {Number} _y - year
-         *
-         * @return the number of days
+         * @return {Number} Returns the number of days in a given month of a given year
+         * @private
+         * @static
+         * @example
+         *     Ink.requireModules(['Ink.Util.Validator_1'], function( InkValidator ){
+         *         console.log( InkValidator._daysInMonth( 2, 2004 ) ); // Result: 29
+         *         console.log( InkValidator._daysInMonth( 2, 2006 ) ); // Result: 28
+         *     });
          */
         _daysInMonth: function(_m,_y){
             var nDays=0;
@@ -255,17 +313,22 @@ Ink.createModule('Ink.Util.Validator', '1', [], function() {
         },
 
 
+
         /**
-         * @function {private Boolean} ?
+         * Checks if a date is valid
          *
-         * checks if a date is valid
-         *
+         * @method _isValidDate
          * @param {Number} year
          * @param {Number} month
          * @param {Number} day
-         *
-         * @return true if the date is valid
-         *
+         * @return {Boolean} True if it's a valid date
+         * @private
+         * @static
+         * @example
+         *     Ink.requireModules(['Ink.Util.Validator_1'], function( InkValidator ){
+         *         console.log( InkValidator._isValidDate( 2004, 2, 29 ) ); // Result: true
+         *         console.log( InkValidator._isValidDate( 2006, 2, 29 ) ); // Result: false
+         *     });
          */
         _isValidDate: function(year, month, day){
 
@@ -281,14 +344,18 @@ Ink.createModule('Ink.Util.Validator', '1', [], function() {
         },
 
         /**
-         * @function {Boolean} ?
+         * Checks if a email is valid
          *
-         * checks if a email is valid
-         *
+         * @method mail
          * @param {String} email
-         *
-         * @return true if the email is valid
-         *
+         * @return {Boolean} True if it's a valid e-mail
+         * @public
+         * @static
+         * @example
+         *     Ink.requireModules(['Ink.Util.Validator_1'], function( InkValidator ){
+         *         console.log( InkValidator.mail( 'agfsdfgfdsgdsf' ) ); // Result: false
+         *         console.log( InkValidator.mail( 'inkdev@sapo.pt' ) ); // Result: true
+         *     });
          */
         mail: function(email)
         {
@@ -301,15 +368,20 @@ Ink.createModule('Ink.Util.Validator', '1', [], function() {
         },
 
         /**
-         * @function {Boolean} ?
+         * Checks if a url is valid
          *
-         * checks if a url is valid
-         *
-         * @param {String} url
-         * @param {Boolean} full - if true, validates a full url (one which
-         * starts with http)
-         *
-         * @return true if the url is valid
+         * @method url
+         * @param {String} url URL to be checked
+         * @param {Boolean} [full] If true, validates a full URL (one that should start with 'http')
+         * @return {Boolean} True if the given URL is valid
+         * @public
+         * @static
+         * @example
+         *     Ink.requireModules(['Ink.Util.Validator_1'], function( InkValidator ){
+         *         console.log( InkValidator.url( 'www.sapo.pt' ) );                // Result: true
+         *         console.log( InkValidator.url( 'http://www.sapo.pt', true ) );   // Result: true
+         *         console.log( InkValidator.url( 'meh' ) );                        // Result: false
+         *     });
          */
         url: function(url, full)
         {
@@ -328,15 +400,21 @@ Ink.createModule('Ink.Util.Validator', '1', [], function() {
             }
         },
 
-
         /**
-         * @function {Boolean} ?
+         * Checks if a phone is valid in Portugal
          *
-         * checks if a phone is valid in Portugal
-         *
-         * @param {String} phone
-         *
-         * @return true if the number is valid
+         * @method isPTPhone
+         * @param {Number} phone Phone number to be checked
+         * @return {Boolean} True if it's a valid Portuguese Phone
+         * @public
+         * @static
+         * @example
+         *     Ink.requireModules(['Ink.Util.Validator_1'], function( InkValidator ){
+         *         console.log( InkValidator.isPTPhone( '213919264' ) );        // Result: true
+         *         console.log( InkValidator.isPTPhone( '00351213919264' ) );   // Result: true
+         *         console.log( InkValidator.isPTPhone( '+351213919264' ) );    // Result: true
+         *         console.log( InkValidator.isPTPhone( '1' ) );                // Result: false
+         *     });
          */
         isPTPhone: function(phone)
         {
@@ -370,9 +448,20 @@ Ink.createModule('Ink.Util.Validator', '1', [], function() {
         },
 
         /**
-         * @function {Boolean} ?
+         * Alias function for isPTPhone
          *
-         * alias function for isPTPhone
+         * @method isPortuguesePhone
+         * @param {Number} phone Phone number to be checked
+         * @return {Boolean} True if it's a valid Portuguese Phone
+         * @public
+         * @static
+         * @example
+         *     Ink.requireModules(['Ink.Util.Validator_1'], function( InkValidator ){
+         *         console.log( InkValidator.isPortuguesePhone( '213919264' ) );        // Result: true
+         *         console.log( InkValidator.isPortuguesePhone( '00351213919264' ) );   // Result: true
+         *         console.log( InkValidator.isPortuguesePhone( '+351213919264' ) );    // Result: true
+         *         console.log( InkValidator.isPortuguesePhone( '1' ) );                // Result: false
+         *     });
          */
         isPortuguesePhone: function(phone)
         {
@@ -380,13 +469,20 @@ Ink.createModule('Ink.Util.Validator', '1', [], function() {
         },
 
         /**
-         * @function {Boolean} ?
+         * Checks if a phone is valid in Cabo Verde
          *
-         * checks if a phone is valid in Cabo Verde
-         *
-         * @param {String} phone
-         *
-         * @return true if the number is valid
+         * @method isCVPhone
+         * @param {Number} phone Phone number to be checked
+         * @return {Boolean} True if it's a valid Cape Verdean Phone
+         * @public
+         * @static
+         * @example
+         *     Ink.requireModules(['Ink.Util.Validator_1'], function( InkValidator ){
+         *         console.log( InkValidator.isCVPhone( '2610303' ) );        // Result: true
+         *         console.log( InkValidator.isCVPhone( '002382610303' ) );   // Result: true
+         *         console.log( InkValidator.isCVPhone( '+2382610303' ) );    // Result: true
+         *         console.log( InkValidator.isCVPhone( '1' ) );              // Result: false
+         *     });
          */
         isCVPhone: function(phone)
         {
@@ -419,13 +515,20 @@ Ink.createModule('Ink.Util.Validator', '1', [], function() {
         },
 
         /**
-         * @function {Boolean} ?
+         * Checks if a phone is valid in Angola
          *
-         * checks if a phone is valid in Angola
-         *
-         * @param {String} phone
-         *
-         * @return true if the number is valid
+         * @method isAOPhone
+         * @param {Number} phone Phone number to be checked
+         * @return {Boolean} True if it's a valid Angolan Phone
+         * @public
+         * @static
+         * @example
+         *     Ink.requireModules(['Ink.Util.Validator_1'], function( InkValidator ){
+         *         console.log( InkValidator.isAOPhone( '244222396385' ) );     // Result: true
+         *         console.log( InkValidator.isAOPhone( '00244222396385' ) );   // Result: true
+         *         console.log( InkValidator.isAOPhone( '+244222396385' ) );    // Result: true
+         *         console.log( InkValidator.isAOPhone( '1' ) );                // Result: false
+         *     });
          */
         isAOPhone: function(phone)
         {
@@ -459,13 +562,20 @@ Ink.createModule('Ink.Util.Validator', '1', [], function() {
         },
 
         /**
-         * @function {Boolean} ?
+         * Checks if a phone is valid in Mozambique
          *
-         * checks if a phone is valid in Mozambique
-         *
-         * @param {String} phone
-         *
-         * @return true if the number is valid
+         * @method isMZPhone
+         * @param {Number} phone Phone number to be checked
+         * @return {Boolean} True if it's a valid Mozambican Phone
+         * @public
+         * @static
+         * @example
+         *     Ink.requireModules(['Ink.Util.Validator_1'], function( InkValidator ){
+         *         console.log( InkValidator.isMZPhone( '21426861' ) );        // Result: true
+         *         console.log( InkValidator.isMZPhone( '0025821426861' ) );   // Result: true
+         *         console.log( InkValidator.isMZPhone( '+25821426861' ) );    // Result: true
+         *         console.log( InkValidator.isMZPhone( '1' ) );              // Result: false
+         *     });
          */
         isMZPhone: function(phone)
         {
@@ -502,13 +612,20 @@ Ink.createModule('Ink.Util.Validator', '1', [], function() {
         },
 
         /**
-         * @function {Boolean} ?
+         * Checks if a phone is valid in Timor
          *
-         * checks if a phone is valid in Timor
-         *
-         * @param {String} phone
-         *
-         * @return true if the number is valid
+         * @method isTLPhone
+         * @param {Number} phone Phone number to be checked
+         * @return {Boolean} True if it's a valid phone from Timor-Leste
+         * @public
+         * @static
+         * @example
+         *     Ink.requireModules(['Ink.Util.Validator_1'], function( InkValidator ){
+         *         console.log( InkValidator.isTLPhone( '6703331234' ) );     // Result: true
+         *         console.log( InkValidator.isTLPhone( '006703331234' ) );   // Result: true
+         *         console.log( InkValidator.isTLPhone( '+6703331234' ) );    // Result: true
+         *         console.log( InkValidator.isTLPhone( '1' ) );              // Result: false
+         *     });
          */
         isTLPhone: function(phone)
         {
@@ -541,18 +658,19 @@ Ink.createModule('Ink.Util.Validator', '1', [], function() {
             return false;
         },
 
-
         /**
-         * @function {Boolean} ?
+         * Validates the function in all country codes available or in the ones set in the second param
          *
-         *  validates the function in all country codes available or in the ones set in the second param
-         *
+         * @method isPhone
          * @param {String} phone number
          * @param {optional String|Array}  country or array of countries to validate
-         *
-         * List of countries available set in _countryCodes
-         *
-         * @return true if is valid
+         * @return {Boolean} True if it's a valid phone in any country available
+         * @public
+         * @static
+         * @example
+         *     Ink.requireModules(['Ink.Util.Validator_1'], function( InkValidator ){
+         *         console.log( InkValidator.isPhone( '6703331234' ) );        // Result: true
+         *     });
          */
         isPhone: function(){
             var index;
@@ -591,23 +709,20 @@ Ink.createModule('Ink.Util.Validator', '1', [], function() {
         },
 
         /**
-         * @function {Boolean} ?
+         * Validates if a zip code is valid in Portugal
          *
-         * validates if a zip code is valid in Portugal
-         *
-         * can function in multiple ways
-         * Ex:<br />
-         *    cp1 = "2000"
-         *    cp1 = "2000-123"
-         *    cp1 = "2000 123"
-         *
-         *    cp1 = "2000" & cp2 = "123"
-         *
+         * @method codPostal
          * @param {Number|String} cp1
          * @param {optional Number|String} cp2
          * @param {optional Boolean} returnBothResults
-         *
-         * @return true if zip code is valid
+         * @return {Boolean} True if it's a valid zip code
+         * @public
+         * @static
+         * @example
+         *     Ink.requireModules(['Ink.Util.Validator_1'], function( InkValidator ){
+         *         console.log( InkValidator.codPostal( '1069', '300' ) );        // Result: true
+         *         console.log( InkValidator.codPostal( '1069', '300', true ) );  // Result: [true, true]
+         *     });
          *
          */
         codPostal: function(cp1,cp2,returnBothResults){
@@ -660,14 +775,18 @@ Ink.createModule('Ink.Util.Validator', '1', [], function() {
         },
 
         /**
-         * @function {Boolean} ?
-         *
          * Checks is a date is valid in a given format
          *
+         * @method isDate
          * @param {String} format - defined in _dateParsers
          * @param {String} dateStr - date string
-         *
-         * @return true if the date is valid in the format
+         * @return {Boolean} True if it's a valid date and in the specified format
+         * @public
+         * @static
+         * @example
+         *     Ink.requireModules(['Ink.Util.Validator_1'], function( InkValidator ){
+         *         console.log( InkValidator.isDate( 'yyyy-mm-dd', '2012-05-21' ) );        // Result: true
+         *     });
          */
         isDate: function(format, dateStr){
 
@@ -707,6 +826,20 @@ Ink.createModule('Ink.Util.Validator', '1', [], function() {
             return false;
         },
 
+        /**
+         * Checks if a string is a valid color
+         *
+         * @method isColor
+         * @param {String} str Color string to be checked
+         * @return {Boolean} True if it's a valid color string
+         * @public
+         * @static
+         * @example
+         *     Ink.requireModules(['Ink.Util.Validator_1'], function( InkValidator ){
+         *         console.log( InkValidator.isColor( '#FF00FF' ) );        // Result: true
+         *         console.log( InkValidator.isColor( 'amdafasfs' ) );      // Result: false
+         *     });
+         */
         isColor: function(str){
             var match, valid = false,
                 keyword = /^[a-zA-Z]+$/,
