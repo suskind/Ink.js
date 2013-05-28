@@ -2,7 +2,7 @@
  * @author inkdev AT sapo.pt
  */
 
-Ink.createModule('Ink.Dom.Element', 1, [], function() {
+Ink.createModule('Ink.Dom.Element', 1, ['Ink.Dom.Browser_1'], function( InkBrowser ) {
 
     'use strict';
 
@@ -128,20 +128,23 @@ Ink.createModule('Ink.Dom.Element', 1, [], function() {
          * @return {Number} Offset from the target element to the left of the document
          */
         offsetLeft: function(elm) {
-            elm = this.get(elm);
+            /*
+                elm = this.get(elm);
 
-            var offset = elm.offsetLeft;
+                var offset = elm.offsetLeft;
 
-            while(elm.offsetParent){
-                if(elm.offsetParent.tagName.toLowerCase() !== "body"){
-                    elm = elm.offsetParent;
-                    offset += elm.offsetLeft;
-                } else {
-                    break;
+                while(elm.offsetParent){
+                    if(elm.offsetParent.tagName.toLowerCase() !== "body"){
+                        elm = elm.offsetParent;
+                        offset += elm.offsetLeft;
+                    } else {
+                        break;
+                    }
                 }
-            }
 
-            return offset;
+                return offset;
+            */
+           return this.offset2( elm );
         },
 
         /**
@@ -240,31 +243,27 @@ Ink.createModule('Ink.Dom.Element', 1, [], function() {
                 cs = window.getComputedStyle ? window.getComputedStyle(el, null) : el.currentStyle;
                 dRes = [el.offsetLeft | 0, el.offsetTop | 0];
                 bRes = [getPropPx(cs, bProp[0]), getPropPx(cs, bProp[1])];
-                //console.log([el, dRes.join(','), bRes.join(',')]);
-                if (Ink.Browser.OPERA) {   // apparently Opera does need border width correction
+                if( InkBrowser.OPERA ){
                     res[0] += dRes[0];
                     res[1] += dRes[1];
-                }
-                else {
+                } else {
                     res[0] += dRes[0] + bRes[0];
                     res[1] += dRes[1] + bRes[1];
                 }
                 parent = el.offsetParent;
-                //console.log(parent);
             } while (el = parent);
 
             bRes = [getPropPx(cs, bProp[0]), getPropPx(cs, bProp[1])];
 
-            if (Ink.Browser.OPERA) {
-            }
-            else if (Ink.Browser.GECKO) {
+            if (InkBrowser.GECKO) {
                 res[0] += bRes[0];
                 res[1] += bRes[1];
             }
-            else {
+            else if( !InkBrowser.OPERA ) {
                 res[0] -= bRes[0];
                 res[1] -= bRes[1];
             }
+            
             return res;
         },
 
