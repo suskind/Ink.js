@@ -233,7 +233,8 @@ Ink.createModule('Ink.Dom.Event', 1, [], function() {
                   //tests if it is our event and if not
                   //check if it is IE and our dom:loaded was overrided (IE only supports one ondatavailable)
                   //- fix /opera also supports attachEvent and was firing two events
-                  if(ev.eventName === eventName || (Ink.Browser.IE && eventName === 'dom:loaded')){
+                  // if(ev.eventName === eventName || (Ink.Browser.IE && eventName === 'dom:loaded')){
+                  if(ev.eventName === eventName){
                     //fix for FF since it loses the event in case of using a second binObjEvent
                     if(window.addEventListener){
                       window.event = ev;
