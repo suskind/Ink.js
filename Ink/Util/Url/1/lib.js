@@ -363,10 +363,10 @@ Ink.createModule('Ink.Util.Url', '1', [], function() {
         },
         base64Decode: function(string)
         {
-         * @function {String} ?
+         * --function {String} ?
          * Decode a BASE 64 encoded string
-         * @param {String} string base64 encoded string
-         * @return string decoded
+         * --param {String} string base64 encoded string
+         * --return string decoded
             if(!SAPO.Utility.String || typeof(SAPO.Utility.String) === 'undefined') {
                 throw "SAPO.Utility.Url.base64Decode depends of SAPO.Utility.String, which has not been referred.";
             }
