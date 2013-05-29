@@ -30,7 +30,7 @@ Ink.createModule('Ink.UI.Pagination', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','In
      * @uses Ink.Dom.Element
      * @uses Ink.Dom.Selector
      * @param {String|DOMElement} selector
-     * @param {Object} options Options for the datepicker
+     * @param {Object} options Options
      * @param {Number}   options.size                number of pages
      * @param {Number}   [options.maxSize]           if passed, only shows at most maxSize items. displays also first|prev page and next page|last buttons
      * @param {Number}   [options.start]             start page. defaults to 1

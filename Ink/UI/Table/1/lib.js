@@ -21,7 +21,7 @@ Ink.createModule('Ink.UI.Table', '1', ['Ink.Net.Ajax_1','Ink.UI.Aux_1','Ink.Dom.
      * @uses Ink.Util.Array
      * @uses Ink.UI.Pagination
      * @param {String|DOMElement} selector
-     * @param {Object} [options] Options for the datepicker
+     * @param {Object} [options] Options
      *     @param {Number}     options.pageSize       Number of rows per page.
      *     @param {String}     options.endpoint       Endpoint to get the records via AJAX
      * @example
