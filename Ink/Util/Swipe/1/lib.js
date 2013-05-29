@@ -18,7 +18,7 @@ Ink.createModule('Ink.Util.Swipe', '1', ['Ink.Dom.Event_1'], function(Event) {
      *
      * @param {String|DOMElement} selector
      * @param {Object} [options] Options for the Swipe detection
-     *     @param {Number}    [options.callback]        Function to be called when a swipe is detected. Default is undefined.
+     *     @param {Function}  [options.callback]        Function to be called when a swipe is detected. Default is undefined.
      *     @param {Number}    [options.forceAxis]       Specify in which axis the swipe will be detected (x or y). Default is both.
      *     @param {Number}    [options.maxDist]         maximum allowed distance, in pixels
      *     @param {Number}    [options.maxDuration]     maximum allowed duration, in seconds
