@@ -17,8 +17,7 @@ Ink.createModule('Ink.Util.Swipe', '1', ['Ink.Dom.Event_1'], function(Event) {
      * @uses Ink.Dom.Event
      *
      * @param {String|DOMElement} selector
-     * @param {Object} [options] Options for the datepicker
-     *     @param {Function} options
+     * @param {Object} [options] Options for the Swipe detection
      *     @param {Number}    [options.minDist]         minimum allowed distance, in pixels
      *     @param {Number}    [options.maxDist]         maximum allowed distance, in pixels
      *     @param {Number}    [options.minDuration]     minimum allowed duration, in seconds
