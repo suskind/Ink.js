@@ -22,8 +22,8 @@ Ink.createModule('Ink.Util.Swipe', '1', ['Ink.Dom.Event_1'], function(Event) {
      *     @param {Number}    [options.maxDist]         maximum allowed distance, in pixels
      *     @param {Number}    [options.minDuration]     minimum allowed duration, in seconds
      *     @param {Number}    [options.maxDuration]     maximum allowed duration, in seconds
-     *     @param {Number}    [options.forceAxis]       maximum allowed duration, in seconds
-     *     @param {Boolean}   [options.storeGesture]    maximum allowed duration, in seconds
+     *     @param {Number}    [options.forceAxis]       Specify in which axis the swipe will be detected (x or y). Default is both.
+     *     @param {Boolean}   [options.storeGesture]    Stores the gesture to be used for other purposes.
      *     @param {Boolean}   [options.stopEvents]      Flag that specifies if it should stop events. Default is true.
      */
     var Swipe = function(el, options) {
