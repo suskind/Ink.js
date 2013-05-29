@@ -18,24 +18,26 @@ Ink.createModule('Ink.Util.Swipe', '1', ['Ink.Dom.Event_1'], function(Event) {
      *
      * @param {String|DOMElement} selector
      * @param {Object} [options] Options for the Swipe detection
-     *     @param {Number}    [options.minDist]         minimum allowed distance, in pixels
-     *     @param {Number}    [options.maxDist]         maximum allowed distance, in pixels
-     *     @param {Number}    [options.minDuration]     minimum allowed duration, in seconds
-     *     @param {Number}    [options.maxDuration]     maximum allowed duration, in seconds
+     *     @param {Number}    [options.callback]        Function to be called when a swipe is detected. Default is undefined.
      *     @param {Number}    [options.forceAxis]       Specify in which axis the swipe will be detected (x or y). Default is both.
-     *     @param {Boolean}   [options.storeGesture]    Stores the gesture to be used for other purposes.
+     *     @param {Number}    [options.maxDist]         maximum allowed distance, in pixels
+     *     @param {Number}    [options.maxDuration]     maximum allowed duration, in seconds
+     *     @param {Number}    [options.minDist]         minimum allowed distance, in pixels
+     *     @param {Number}    [options.minDuration]     minimum allowed duration, in seconds
      *     @param {Boolean}   [options.stopEvents]      Flag that specifies if it should stop events. Default is true.
+     *     @param {Boolean}   [options.storeGesture]    Stores the gesture to be used for other purposes.
      */
     var Swipe = function(el, options) {
 
         this._options = Ink.extendObj({
-            minDist:        undefined,      // in pixels
-            maxDist:        undefined,
-            minDuration:    undefined,      // in seconds
-            maxDuration:    undefined,
+            callback:       undefined,
             forceAxis:      undefined,       // x | y
-            storeGesture:   false,
-            stopEvents:     true
+            maxDist:        undefined,
+            maxDuration:    undefined,
+            minDist:        undefined,      // in pixels
+            minDuration:    undefined,      // in seconds
+            stopEvents:     true,
+            storeGesture:   false
         }, options || {});
 
         this._handlers = {
