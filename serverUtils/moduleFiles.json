@@ -16,7 +16,7 @@
 	"./Ink/Util/Cookie/1/lib.js",
 	"./Ink/Util/Array/1/lib.js",
 	"./Ink/Util/Validator/1/lib.js",
-	"./Ink/UI/TreeView/1/lib.js",
+	"./Ink/UI/Aux/1/lib.js",
 	"./Ink/UI/Pagination/1/lib.js",
 	"./Ink/UI/SortableList/1/lib.js",
 	"./Ink/UI/Spy/1/lib.js",
@@ -31,6 +31,6 @@
 	"./Ink/UI/FormValidator/1/lib.js",
 	"./Ink/UI/DatePicker/1/lib.js",
 	"./Ink/UI/Close/1/lib.js",
-	"./Ink/UI/Aux/1/lib.js",
+	"./Ink/UI/TreeView/1/lib.js",
 	"./Ink/UI/ProgressBar/1/lib.js"
 ]

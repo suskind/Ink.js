@@ -86,6 +86,27 @@
             dirs.sort(sortFn);
             files.sort(sortFn);
 
+            // martelada 
+            var tmpFirstUI = -1; 
+            var tmpUIAux = -1; 
+            for(var i=0; i < files.length; i++) {
+                if(/.*Ink\/UI.*/.test(files[i])) {
+                    tmpFirstUI = i;
+                    break;
+                }
+            }
+            for(var i=0; i < files.length; i++) {
+                if(/.*Ink\/UI\/Aux.*/.test(files[i])) {
+                    tmpUIAux = i;
+                    break;
+                }
+            }
+            if(tmpFirstUI > -1 && tmpUIAux > -1) {
+                var tmpTmp = files[tmpUIAux];
+                files[tmpUIAux] = files[tmpFirstUI];
+                files[tmpFirstUI] = tmpTmp; 
+            }
+
             myUtils.saveJSON('serverUtils/moduleDirs.json',  dirs);
             myUtils.saveJSON('serverUtils/moduleFiles.json', files);
         }
