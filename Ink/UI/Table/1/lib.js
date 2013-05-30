@@ -3,7 +3,7 @@
  * @author inkdev AT sapo.pt
  * @version 1
  */
-Ink.createModule('Ink.UI.Table', '1', ['Ink.Net.Ajax_1','Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Dom.Css_1','Ink.Dom.Element_1','Ink.Dom.Selector_1','Ink.Util.Array_1','Ink.UI.Pagination_1'], function(Ajax, Aux, Event, Css, Element, Selector, InkArray, Pagination ) {
+Ink.createModule('Ink.UI.Table', '1', ['Ink.Net.Ajax_1','Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Dom.Css_1','Ink.Dom.Element_1','Ink.Dom.Selector_1','Ink.Util.Array_1'], function(Ajax, Aux, Event, Css, Element, Selector, InkArray ) {
     'use strict';
 
     /**
@@ -181,6 +181,8 @@ Ink.createModule('Ink.UI.Table', '1', ['Ink.Net.Ajax_1','Ink.UI.Aux_1','Ink.Dom.
                     if( this._pagination.nodeName.toLowerCase() !== 'nav' ){
                         throw '[Ink.UI.Table] :: Missing the pagination markup or is mis-positioned';
                     }
+
+                    var Pagination = Ink.getModule('Ink.UI.Pagination',1);
 
                     this._pagination = new Pagination( this._pagination, {
                         size: Math.ceil(this._totalRows/this._options.pageSize),
@@ -509,11 +511,13 @@ Ink.createModule('Ink.UI.Table', '1', ['Ink.Net.Ajax_1','Ink.UI.Aux_1','Ink.Dom.
                     this._pagination.className = 'ink-navigation';
                     this._rootElement.parentNode.insertBefore(this._pagination,this._rootElement.nextSibling);
                     this._pagination.appendChild( document.createElement('ul') ).className = 'pagination';
+
+                    var Pagination = Ink.getModule('Ink.UI.Pagination',1);
+
                     this._pagination = new Pagination( this._pagination, {
                         size: Math.ceil(this._totalRows/this._options.pageSize),
-                        onChange: Ink.bind(function( pagingObj ){
+                        onChange: Ink.bind(function( ){
                             this._getData( this._options.endpoint );
-                            // this._paginate( (pagingObj._current+1) );
                         },this)
                     }); 
                 }
