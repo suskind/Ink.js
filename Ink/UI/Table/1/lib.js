@@ -3,7 +3,7 @@
  * @author inkdev AT sapo.pt
  * @version 1
  */
-Ink.createModule('Ink.UI.Table', '1', ['Ink.Net.Ajax_1','Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Dom.Css_1','Ink.Dom.Element_1','Ink.Dom.Selector_1','Ink.Util.Array_1'], function(Ajax, Aux, Event, Css, Element, Selector, InkArray ) {
+Ink.createModule('Ink.UI.Table', '1', ['Ink.Net.Ajax_1','Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Dom.Css_1','Ink.Dom.Element_1','Ink.Dom.Selector_1','Ink.Util.Array_1','Ink.Util.String_1'], function(Ajax, Aux, Event, Css, Element, Selector, InkArray, InkString ) {
     'use strict';
 
     /**
@@ -168,6 +168,7 @@ Ink.createModule('Ink.UI.Table', '1', ['Ink.Net.Ajax_1','Ink.UI.Aux_1','Ink.Dom.
 
                 /**
                  * Set pagination if defined
+                 * 
                  */
                 if( ("pageSize" in this._options) && (typeof this._options.pageSize !== 'undefined') ){
                     /**
@@ -231,17 +232,17 @@ Ink.createModule('Ink.UI.Table', '1', ['Ink.Net.Ajax_1','Ink.UI.Aux_1','Ink.Dom.
                 for( var prop in this._sortableFields ){
                     if( prop !== ('col_' + index) ){
                         this._sortableFields[prop] = 'none';
-                        this._headers[prop.replace('col_','')].innerHTML = this._headers[prop.replace('col_','')].innerText;
+                        this._headers[prop.replace('col_','')].innerHTML = InkString.stripTags(this._headers[prop.replace('col_','')].innerHTML);
                     }
                 }
 
                 if( this._sortableFields['col_'+index] === 'asc' )
                 {
                     this._sortableFields['col_'+index] = 'desc';
-                    this._headers[index].innerHTML = this._headers[index].innerText + '<i class="icon-caret-down"></i>';
+                    this._headers[index].innerHTML = InkString.stripTags(this._headers[index].innerHTML) + '<i class="icon-caret-down"></i>';
                 } else {
                     this._sortableFields['col_'+index] = 'asc';
-                    this._headers[index].innerHTML = this._headers[index].innerText + '<i class="icon-caret-up"></i>';
+                    this._headers[index].innerHTML = InkString.stripTags(this._headers[index].innerHTML) + '<i class="icon-caret-up"></i>';
 
                 }
 
@@ -255,17 +256,8 @@ Ink.createModule('Ink.UI.Table', '1', ['Ink.Net.Ajax_1','Ink.UI.Aux_1','Ink.Dom.
 
                 if( (this._sortableFields['col_'+index] === 'desc') && (this._options.allowResetSorting && (this._options.allowResetSorting.toString() === 'true')) )
                 {
-                    this._headers[index].innerHTML = this._headers[index].innerText;
+                    this._headers[index].innerHTML = InkString.stripTags(this._headers[index].innerHTML);
                     this._sortableFields['col_'+index] = 'none';
-
-                    // var found = false;
-                    // for(var prop in this._sortableFields ){
-                    //     if( this._sortableFields[prop] === 'asc' || this._sortableFields[prop] === 'desc' ){
-                    //         found = true;
-                    //         this._sort(prop.replace('col_',''));
-                    //         break;
-                    //     }
-                    // }
 
                     // if( !found ){
                         this._data = this._originalData.slice(0);
@@ -275,7 +267,7 @@ Ink.createModule('Ink.UI.Table', '1', ['Ink.Net.Ajax_1','Ink.UI.Aux_1','Ink.Dom.
                     for( var prop in this._sortableFields ){
                         if( prop !== ('col_' + index) ){
                             this._sortableFields[prop] = 'none';
-                            this._headers[prop.replace('col_','')].innerHTML = this._headers[prop.replace('col_','')].innerText;
+                            this._headers[prop.replace('col_','')].innerHTML = InkString.stripTags(this._headers[prop.replace('col_','')].innerHTML);
                         }
                     }
 
@@ -285,10 +277,10 @@ Ink.createModule('Ink.UI.Table', '1', ['Ink.Net.Ajax_1','Ink.UI.Aux_1','Ink.Dom.
                     {
                         this._data.reverse();
                         this._sortableFields['col_'+index] = 'desc';
-                        this._headers[index].innerHTML = this._headers[index].innerText + '<i class="icon-caret-down"></i>';
+                        this._headers[index].innerHTML = InkString.stripTags(this._headers[index].innerHTML) + '<i class="icon-caret-down"></i>';
                     } else {
                         this._sortableFields['col_'+index] = 'asc';
-                        this._headers[index].innerHTML = this._headers[index].innerText + '<i class="icon-caret-up"></i>';
+                        this._headers[index].innerHTML = InkString.stripTags(this._headers[index].innerHTML) + '<i class="icon-caret-up"></i>';
 
                     }
                 }
