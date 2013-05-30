@@ -141,6 +141,7 @@ Ink.createModule('Ink.Dom.Loaded', 1, [], function() {
                 for (var i = 0; i < this._cbQueue.length; ++i) {
                     this._cbQueue[i].call(this._win);
                 }
+                this._cbQueue = [];
             }
         }
     };
