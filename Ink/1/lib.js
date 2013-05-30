@@ -91,7 +91,7 @@
             var uriPrefix = paths[root];
             if (!uriPrefix) {
                 uriPrefix = './' + root + '/';
-                console.warn('Not sure where to fetch ' + root + ' modules from! Attempting ' + uriPrefix + '...');
+                // console.warn('Not sure where to fetch ' + root + ' modules from! Attempting ' + uriPrefix + '...');
             }
             return [uriPrefix, parts.join('/'), '/lib.js'].join('');
         },
@@ -211,7 +211,7 @@
                 var args = Array.prototype.slice.call(arguments);
                 var moduleContent = modFn.apply(window, args);
                 modulesLoadOrder.push(modAll);
-                console.log('** loaded module ' + modAll + '**');
+                // console.log('** loaded module ' + modAll + '**');
 
 
                 // set version
@@ -248,7 +248,7 @@
                         t[0][ t[1] ] = moduleContent; // in namespace
                     }
                     else {
-                        console.warn(['Ink.createModule ', modAll, ': module has been defined already with a different version!'].join(''));
+                        // console.warn(['Ink.createModule ', modAll, ': module has been defined already with a different version!'].join(''));
                     }
                 }
 
@@ -321,7 +321,7 @@
         getModuleScripts: function() {
             var mlo = this.getModulesLoadOrder();
             mlo.unshift('Ink_1');
-            console.log(mlo);
+            // console.log(mlo);
             mlo = mlo.map(function(m) {
                 var cutAt = m.indexOf('.');
                 if (cutAt === -1) { cutAt = m.indexOf('_'); }
@@ -483,7 +483,7 @@
         var l = mk.length;
 
         if (l > 0) {
-            console.log('** waiting for modules: ' + mk.join(', ') + ' **');
+            // console.log('** waiting for modules: ' + mk.join(', ') + ' **');
 
             for (var i = 0, f = mk.length, k, v; i < f; ++i) {
                 k = mk[i];
@@ -497,7 +497,7 @@
             }
         }
         else {
-            console.log('** Module loads complete. **');
+            // console.log('** Module loads complete. **');
             clearInterval(tmpTmr);
         }
     }, checkDelta*1000);
