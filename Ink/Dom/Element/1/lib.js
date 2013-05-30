@@ -2,7 +2,7 @@
  * @author inkdev AT sapo.pt
  */
 
-Ink.createModule('Ink.Dom.Element', 1, ['Ink.Dom.Browser_1'], function( InkBrowser ) {
+Ink.createModule('Ink.Dom.Element', 1, [], function() {
 
     'use strict';
 
@@ -238,6 +238,8 @@ Ink.createModule('Ink.Dom.Element', 1, ['Ink.Dom.Browser_1'], function( InkBrows
             var res = [0, 0];
             var dRes, bRes, parent, cs;
             var getPropPx = this._getPropPx;
+
+            var InkBrowser = Ink.getModule('Ink.Dom.Browser',1);
 
             do {
                 cs = window.getComputedStyle ? window.getComputedStyle(el, null) : el.currentStyle;
