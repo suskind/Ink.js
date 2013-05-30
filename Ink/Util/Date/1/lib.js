@@ -409,8 +409,8 @@ Ink.createModule('Ink.Util.Date', '1', [], function() {
          * Works like PHP 5.2.2 <a href="http://php.net/manual/en/function.date.php" target="_blank">PHP Date function</a>
          *
          * @method set
-         * @param {String} format As the string in which the date it will be formatted - mandatory
-         * @param {String} str_date The date formatted.
+         * @param {String} [format] As the string in which the date it will be formatted. By default is 'Y-m-d'
+         * @param {String} str_date The date formatted - Mandatory.
          * @return {Date} Date object based on the formatted date
          * @public
          * @static

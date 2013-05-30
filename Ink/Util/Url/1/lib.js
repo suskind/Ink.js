@@ -317,15 +317,17 @@ Ink.createModule('Ink.Util.Url', '1', [], function() {
             }
         },
 
-        /**
-         * @function {String} ?
-         * Convert a string to BASE 64
-         * @param {String} string - string to convert
-         * @return base64 encoded string
-         */
+        
         /*
         base64Encode: function(string)
         {
+            /**
+         * --function {String} ?
+         * --Convert a string to BASE 64
+         * @param {String} string - string to convert
+         * @return base64 encoded string
+         *
+         * 
             if(!SAPO.Utility.String || typeof(SAPO.Utility.String) === 'undefined') {
                 throw "SAPO.Utility.Url.base64Encode depends of SAPO.Utility.String, which has not been referred.";
             }
@@ -359,17 +361,12 @@ Ink.createModule('Ink.Util.Url', '1', [], function() {
             }
             return output;
         },
-        */
-
-        /**
-         * @function {String} ?
-         * Decode a BASE 64 encoded string
-         * @param {String} string base64 encoded string
-         * @return string decoded
-         */
-        /*
         base64Decode: function(string)
         {
+         * --function {String} ?
+         * Decode a BASE 64 encoded string
+         * --param {String} string base64 encoded string
+         * --return string decoded
             if(!SAPO.Utility.String || typeof(SAPO.Utility.String) === 'undefined') {
                 throw "SAPO.Utility.Url.base64Decode depends of SAPO.Utility.String, which has not been referred.";
             }

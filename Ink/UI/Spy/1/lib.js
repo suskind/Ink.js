@@ -20,7 +20,7 @@ Ink.createModule('Ink.UI.Spy', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Dom.C
      * @uses Ink.Dom.Selector
      * @uses Ink.Util.Array
      * @param {String|DOMElement} selector
-     * @param {Object} [options] Options for the datepicker
+     * @param {Object} [options] Options
      *     @param {DOMElement|String}     options.target          Target menu on where the spy will highlight the right option.
      * @example
      *      <script>

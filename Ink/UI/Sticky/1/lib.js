@@ -19,7 +19,7 @@ Ink.createModule('Ink.UI.Sticky', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Do
      * @uses Ink.Dom.Element
      * @uses Ink.Dom.Selector
      * @param {String|DOMElement} selector
-     * @param {Object} [options] Options for the datepicker
+     * @param {Object} [options] Options
      *     @param {Number}     options.offsetBottom       Number of pixels of distance from the bottomElement.
      *     @param {Number}     options.offsetTop          Number of pixels of distance from the topElement.
      *     @param {String}     options.topElement         CSS Selector that specifies a top element with which the component could collide.

@@ -19,7 +19,7 @@ Ink.createModule('Ink.UI.DatePicker', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','In
      * @uses Ink.Util.Date
      *
      * @param {String|DOMElement} selector
-     * @param {Object} [options] Options for the datepicker
+     * @param {Object} [options] Options
      *      @param {String}   [options.instance]         unique id for the datepicker
      *      @param {String}   [options.format]           Date format string
      *      @param {String}   [options.cssClass]         CSS class to be applied to the datepicker
