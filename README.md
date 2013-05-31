@@ -1,12 +1,13 @@
 # Ink.js 
 
-[Ink](http://ink.sapo.pt/) includes a group of [UI components](http://ink.sapo.pt/js/ui/) out of the box.
-Those components depend on Ink's [JavaScript core](http://ink.sapo.pt/js/core/), which provides a set of methods and modules that help developers extending the features of this framework.
+[Ink](http://ink.sapo.pt/) comes with a collection of [UI components](http://ink.sapo.pt/js/ui/) out of the box. 
+These components depend on [Ink's JavaScript core](http://ink.sapo.pt/js/core/), which provides a set of methods and modules that give developers the ability to extend the features of the framework.
 
-You can find all information on Ink JS core page at http://ink.sapo.pt/js/core, or in the technical documentation at http://js.ink.sapo.pt/docs/.
-This repo is just to provides you a way to know how Ink's JavaScript core is organized. 
-
-All code it's on __Ink__ directory, there, you'll find our main module, __the core__, and all namespaces, yes, we use namespaces to keep all source code organized in the right place. 
+Documentation for Ink's JavaScript core comes in two flavours, a simpler version to get you up and running as quickly as possible, and a more technical in depth version for when you want to go beyond our examples, these can be found at http://ink.sapo.pt/js/core/ and http://js.ink.sapo.pt/docs/ respectively.
+ 
+This repo provides you with information on how Ink's JavaScript core is organised.
+ 
+It all starts with __Ink__, from there you will find our main module, __the core__, and all of the relevant namespaces.
 
 ## Organization
 
@@ -18,10 +19,11 @@ All code it's on __Ink__ directory, there, you'll find our main module, __the co
  * Util - provides utility modules 
  * UI - Where all [UI modules](http://ink.sapo.pt/js/ui) are made 
 
-
-We expose a global variable called __Ink__ which provides methods to create and load all modules. 
-
-All namespaces and modules are exposed in the same way that you can see them on the filesystem. BTW, we have the module file __lib.js__ in the version directory to prevent collisions and we guaranty that you can use different versions of the same module in the same page, well, if you use it in the right way. 
+A global variable named __Ink__ provides the methods to create and load all of the modules. 
+ 
+Namespaces and modules mirror the structure of the filesystem keeping everything coordinated and where you'd expect it to be.
+ 
+The __lib.js__ file is in a numbered directory to prevent collisions, this way different versions of the same module in the same page will not break any existing code, the following sections show how to avoid collisions altogether.
 
 Ex: 
 * /Ink/1/ exposes `window.Ink` 
@@ -29,9 +31,11 @@ Ex:
 * /Ink/Dom/Event/1/ exposes `Ink.Dom.Event` and `Ink.Dom.Event_1` with methods to manipulate Events
 * /Ink/Net/Ajax/1/ exposes `Ink.Net.Ajax` and `Ink.Net.Ajax_1` to make AJAX requests 
 
-## The right way to use a module 
-
-To prevent collisions of modules with same name but different versions Ink provides you `Ink.requireModule()` and this method has the capability to request the module if it's not loaded or `Ink.getModule()` if you have loaded the module previously. 
+## Using modules 
+ 
+There may be times when you need to use an older version of a component in the same instance that a newer one has been loaded. Ink provides a couple of methods that mitigate problems involving namespace collisions when loading modules, namely:
+`Ink.requireModule()` - request a module if it's not loaded yet
+`Ink.getModule()` - return a module that has already been loaded
 
 Ex: 
 ```javascript
@@ -48,7 +52,7 @@ ModuleName.moduleMethod('arg1', 'arg2');
 ```
 
 
-## How to create a new module 
+## Creating modules 
 Take a look at our samples on __/Ink/Namespace/ClassModule/__ and __/Ink/Namespace/StaticModule/__
 In a simple explanation its: 
 ```javascript
@@ -58,7 +62,7 @@ Ink.createModule(
     ['Ink_Namespace_Dependency1_version', 'Ink_Namespace_Dependency2_version'], 
     function(Dependency1, Dependency2) {
         var ModuleName = {
-            __...your code hete...__
+            // __...your code hete...__
         };
 
         return ModuleName;
@@ -69,8 +73,8 @@ Ink.createModule(
 
 
 ## Other important files on the repo: 
-* Makefile - Running "make all" will minify all modules, create bundles (on builds directory) and documentation files (on docs directory) 
-* builds - It's the place where bundles will be created (ink-v.v.v.js, ink-all.v.v.v.js and ink-ui.v.v.v.js) 
+* Makefile - Running "make all" will minify all modules, create bundles (in builds directory) and documentation files (in docs directory) 
+* builds - It's the place where bundles are created (ink-v.v.v.js, ink-all.v.v.v.js and ink-ui.v.v.v.js) 
 * serverUtils - The place with node.js scripts and config files to run make 
 
 
