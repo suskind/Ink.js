@@ -5,4 +5,5 @@ report
 serverUtils/moduleDirs.json
 serverUtils/moduleFiles.json
 inkjs.sublime-workspace
+samples/tests
 *min.js
