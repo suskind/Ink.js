@@ -451,11 +451,12 @@
                 }
             }
             return destination;
-        },
+        }
 
         /**
          * TODO EH?!
          */
+        /*
         Browser: {
             IE: true,
             GECKO: true,
@@ -467,13 +468,15 @@
             version: '',
             userAgent: ''
         }
+        */
 
 
     };
 
 
 
-    // TODO TEMP - to detect pending stuff
+    // TODO for debug - to detect pending stuff
+    /*
     var failCount = {};   // fail count per module name
     var maxFails = 3;     // times
     var checkDelta = 0.5; //seconds
@@ -501,5 +504,6 @@
             clearInterval(tmpTmr);
         }
     }, checkDelta*1000);
+    */
 
 })();
