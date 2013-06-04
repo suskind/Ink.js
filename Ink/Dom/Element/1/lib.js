@@ -1284,19 +1284,21 @@ Ink.createModule('Ink.Dom.Element', 1, [], function() {
             }
 
             var dataset = {};
-            var attributesElements = _element.dataset || _element.attributes || {}; 
+            // var attributesElements = _element.dataset || _element.attributes || {}; 
+            var attributesElements = _element.attributes || {}; 
             var prop ;
 
             var curAttr;
-            if(_element.dataset) {
-                for( prop in attributesElements ){
-                    if(attributesElements.hasOwnProperty && attributesElements.hasOwnProperty(prop)) {
-                        //if(typeof(attributesElements[prop]) === 'object') {
-                        dataset[prop] = attributesElements[prop];
-                        //}
-                    }
-                }
-            } else {
+            // if(_element.dataset) {
+            //     for( prop in attributesElements ){
+            //         if(attributesElements.hasOwnProperty && attributesElements.hasOwnProperty(prop)) {
+            //             //if(typeof(attributesElements[prop]) === 'object') {
+            //             dataset[prop] = attributesElements[prop];
+            //             //}
+            //         }
+            //     }
+            // } else {
+            if( attributesElements ){
                 for( prop in attributesElements ){
                     curAttr = _element.getAttribute(prop);
                     if(curAttr !== null) {
