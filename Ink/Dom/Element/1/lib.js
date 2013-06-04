@@ -1285,10 +1285,10 @@ Ink.createModule('Ink.Dom.Element', 1, [], function() {
 
             var dataset = {};
             // var attributesElements = _element.dataset || _element.attributes || {}; 
-            var attributesElements = _element.attributes || {}; 
+            var attributesElements = _element.attributes || []; 
             var prop ;
 
-            var curAttr;
+            var curAttr, curAttrName, curAttrValue;
             // if(_element.dataset) {
             //     for( prop in attributesElements ){
             //         if(attributesElements.hasOwnProperty && attributesElements.hasOwnProperty(prop)) {
@@ -1299,12 +1299,11 @@ Ink.createModule('Ink.Dom.Element', 1, [], function() {
             //     }
             // } else {
             if( attributesElements ){
-                for( prop in attributesElements ){
-                    curAttr = _element.getAttribute(prop);
-                    if(curAttr !== null) {
-                        if(prop.indexOf('data-') === 0) {
-                            dataset[this._camelCase(prop.replace('data-', ''))] = curAttr;
-                        }
+                for(var i=0, total=attributesElements.length; i < total; i++){
+                    curAttrName = attributesElements[i].name;
+                    curAttrValue = attributesElements[i].value;
+                    if(curAttrName && curAttrName.indexOf('data-') === 0) {
+                        dataset[this._camelCase(curAttrName.replace('data-', ''))] = curAttrValue;
                     }
                     /*
                        if(attributesElements.hasOwnProperty && attributesElements.hasOwnProperty(prop)) {
