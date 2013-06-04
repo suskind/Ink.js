@@ -27,9 +27,9 @@
 	"./Ink/UI/SmoothScroller/1/lib.js",
 	"./Ink/UI/Modal/1/lib.js",
 	"./Ink/UI/ImageQuery/1/lib.js",
-	"./Ink/UI/DatePicker/1/lib.js",
 	"./Ink/UI/Gallery/1/lib.js",
 	"./Ink/UI/FormValidator/1/lib.js",
+	"./Ink/UI/DatePicker/1/lib.js",
 	"./Ink/UI/Close/1/lib.js",
 	"./Ink/UI/TreeView/1/lib.js",
 	"./Ink/UI/ProgressBar/1/lib.js"
