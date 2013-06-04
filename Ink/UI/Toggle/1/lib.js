@@ -131,7 +131,6 @@ Ink.createModule('Ink.UI.Toggle', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Do
          * @private
          */
         _onTriggerEvent: function( event ){
-            Event.stop( event );
 
             if( this._accordion ){
                 var elms, i, accordionElement;
@@ -170,10 +169,10 @@ Ink.createModule('Ink.UI.Toggle', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Do
         _onClick: function( event ){
             var tgtEl = Event.element(event);
 
-            if( Element.isAncestorOf( this._rootElement, tgtEl ) || Element.isAncestorOf( this._childElement, tgtEl ) ){
+            if( (this._rootElement === tgtEl) || Element.isAncestorOf( this._rootElement, tgtEl ) || Element.isAncestorOf( this._childElement, tgtEl ) ){
                 return;
             }
-
+            
             this._dismiss( this._rootElement );
         },
 
