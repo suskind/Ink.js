@@ -36,10 +36,10 @@ Ink.createModule("Ink.UI.Droppable","1",["Ink.Dom.Element_1", "Ink.Dom.Event_1",
          * @method add
 		 * @param {String|DOMElement}       element    - target element
 		 * @param {optional Object}         options    - options object
-		 *     @property {String}       [options.hoverclass] - Classname applied when an acceptable draggable element is hovering the element
-		 *     @property {Array|String} [options.accept]     - Array or comma separated string of classnames for elements that can be accepted by this droppable
-		 *     @property {Function}     [options.onHover]    - callback called when an acceptable draggable element is hovering the droppable. Gets the draggable and the droppable element as parameters.
-		 *     @property {Function}     [options.onDrop]     - callback called when an acceptable draggable element is dropped. Gets the draggable, the droppable and the event as parameterse.
+		 *     @param {String}       [options.hoverclass] - Classname applied when an acceptable draggable element is hovering the element
+		 *     @param {Array|String} [options.accept]     - Array or comma separated string of classnames for elements that can be accepted by this droppable
+		 *     @param {Function}     [options.onHover]    - callback called when an acceptable draggable element is hovering the droppable. Gets the draggable and the droppable element as parameters.
+		 *     @param {Function}     [options.onDrop]     - callback called when an acceptable draggable element is dropped. Gets the draggable, the droppable and the event as parameterse.
          * @public
          */
 		add: function(element, options) {
