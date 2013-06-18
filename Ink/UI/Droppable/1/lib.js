@@ -6,7 +6,7 @@
 Ink.createModule("Ink.UI.Droppable","1",["Ink.Dom.Element_1", "Ink.Dom.Event_1", "Ink.Dom.Css_1"], function( Element, Event, Css) {
 
     /**
-     * @class Ink.UI.Draggable
+     * @class Ink.UI.Droppable
      * @version 1
      * @static
      */
