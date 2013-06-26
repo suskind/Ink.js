@@ -70,7 +70,7 @@ Ink.createModule('Ink.UI.Table', '1', ['Ink.Net.Ajax_1','Ink.UI.Aux_1','Ink.Dom.
      *                  <td>27000</td>
      *              </tr>
      *              <tr>
-     *                  <td>Jalapeño</td>
+     *                  <td>JalapeÃ±o</td>
      *                  <td>8000</td>
      *              </tr>
      *              <tr>
