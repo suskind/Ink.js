@@ -58,7 +58,7 @@ Ink.createModule('Ink.UI.Modal', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Dom
      *      <a href="#" id="bModal">Open modal</a>
      *      <script>
      *          Ink.requireModules( ['Ink.Dom.Selector_1','Ink.UI.Modal_1'], function( Selector, Modal ){
-     *              var modalElement = Ink.s('#bModal');
+     *              var modalElement = Ink.s('#test');
      *              var modalObj = new Modal( modalElement );
      *          });
      *      </script>
