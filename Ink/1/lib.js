@@ -338,7 +338,7 @@
         },
 
         /**
-         * Object.bind alternative
+         * Function.prototype.bind alternative
          *
          * @function bind
          * @param {Function}  fn
@@ -356,7 +356,7 @@
         },
 
         /**
-         * Object.bind alternative
+         * Function.prototype.bind alternative
          * same as bind but keeps first argument of the call the original event
          *
          * @function bindEvent
