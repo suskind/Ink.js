@@ -33,7 +33,7 @@ Ink.createModule('Ink.UI.Modal', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Dom
      *
      * @example
      *      <div class="ink-shade fade">
-     *          <div id="test" class="ink-modal fade" data-trigger="bModal" data-width="800px" data-height="400px">
+     *          <div id="test" class="ink-modal fade" data-trigger="#bModal" data-width="800px" data-height="400px">
      *              <div class="modal-header">
      *                  <button class="modal-close ink-dismiss"></button>
      *                  <h5>Modal windows can have headers</h5>
@@ -585,7 +585,23 @@ Ink.createModule('Ink.UI.Modal', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Dom
                 this._modalDiv.innerHTML = [contentMarkup].join('');
                 this._contentContainer = Selector.select(".modal-body",this._modalDiv);
                 if( !this._contentContainer.length ){
-                    throw 'Missing div with class "modal-body"';
+                    // throw 'Missing div with class "modal-body"';
+                    var tempHeader = Selector.select(".modal-header",this._modalDiv);
+                    var tempFooter = Selector.select(".modal-footer",this._modalDiv);
+
+                    InkArray.each(tempHeader,Ink.bind(function( element ){ element.parentNode.removeChild(element); },this));
+                    InkArray.each(tempFooter,Ink.bind(function( element ){ element.parentNode.removeChild(element); },this));
+
+                    var body = document.createElement('div');
+                    Css.addClassName(body,'modal-body');
+                    body.innerHTML = this._modalDiv.innerHTML;
+                    this._modalDiv.innerHTML = '';
+
+                    InkArray.each(tempHeader,Ink.bind(function( element ){ this._modalDiv.appendChild(element); },this));
+                    this._modalDiv.appendChild(body);
+                    InkArray.each(tempFooter,Ink.bind(function( element ){ this._modalDiv.appendChild(element); },this));
+                    
+                    this._contentContainer = Selector.select(".modal-body",this._modalDiv);
                 }
                 this._contentContainer = this._contentContainer[0];
             } else {
