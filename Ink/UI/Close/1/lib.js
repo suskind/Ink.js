@@ -8,7 +8,7 @@ Ink.createModule('Ink.UI.Close', '1', ['Ink.Dom.Event_1','Ink.Dom.Css_1','Ink.Ut
 
     /**
      * Subscribes clicks on the document.body. If and only if you clicked on an element
-     * having class "ink-close", will go up the DOM hierarchy looking for an element with any
+     * having class "ink-close" or "ink-dismiss", will go up the DOM hierarchy looking for an element with any
      * of the following classes: "ink-alert", "ink-alert-block".
      * If it is found, it is removed from the DOM.
      * 
