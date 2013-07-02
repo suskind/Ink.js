@@ -412,6 +412,16 @@ Ink.createModule('Ink.UI.Modal', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Dom
                     (!Element.descendantOf(this._shadeElement, tgtEl) || (tgtEl === this._shadeElement))
                 )
             ) {
+                var 
+                    alertsInTheModal = Selector.select('.ink-alert',this._shadeElement),
+                    alertsLength = alertsInTheModal.length
+                ;
+                for( var i = 0; i < alertsLength; i++ ){
+                    if( Element.descendantOf(alertsInTheModal[i], tgtEl) ){
+                        return;
+                    }
+                }
+
                 Event.stop(ev);
                 this.dismiss();
             }
