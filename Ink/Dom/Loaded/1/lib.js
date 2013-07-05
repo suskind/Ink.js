@@ -37,7 +37,7 @@ Ink.createModule('Ink.Dom.Loaded', 1, [], function() {
          * @public
          * @example
          *     Ink.requireModules(['Ink.Dom.Loaded_1'],function(Loaded){
-         *         new Loaded.run(function(){
+         *         Loaded.run(function(){
          *             console.log('This will run when the page/document is ready/loaded');
          *         });
          *     });

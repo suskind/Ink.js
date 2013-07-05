@@ -272,7 +272,15 @@ Ink.createModule('Ink.UI.Pagination', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','In
             Event.stop(ev);
 
             var tgtEl = Event.element(ev);
-            if (tgtEl.nodeName.toLowerCase() !== 'a') { return; }
+            if (tgtEl.nodeName.toLowerCase() !== 'a') {
+                do{
+                    tgtEl = tgtEl.parentNode;
+                }while( (tgtEl.nodeName.toLowerCase() !== 'a') && (tgtEl !== this._element) );
+                
+                if( tgtEl === this._element){
+                    return;
+                }
+            }
 
             var liEl = tgtEl.parentNode;
             if (liEl.nodeName.toLowerCase() !== 'li') { return; }
