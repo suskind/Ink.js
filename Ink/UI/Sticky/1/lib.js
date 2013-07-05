@@ -158,7 +158,7 @@ Ink.createModule('Ink.UI.Sticky', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Do
                 }
 
                 this._scrollTimeout = undefined;
-            },this), 100);
+            },this), 0);
         },
 
         /**
