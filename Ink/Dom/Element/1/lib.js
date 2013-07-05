@@ -360,6 +360,7 @@ Ink.createModule('Ink.Dom.Element', 1, [], function() {
          *
          * @function setTextContent
          * @param {DOMNode} node from which to retreive text from. Can be any node type.
+         * @param {String}  text to be appended to the node.
          */
         setTextContent: function(node, text){
             node = Ink.i(node);
