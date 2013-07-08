@@ -1,0 +1,118 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>SAPO.Utility.I18n</title>
+<link href="/Assets/Images/sample/styles.css" type="text/css" media="screen" rel="Stylesheet" />
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="content-language" content="pt-pt" />
+
+<script type="text/javascript" src="/SAPO/"></script>
+<script type="text/javascript" src="/SAPO/Utility/I18n/"></script>
+
+<script type="text/javascript">
+
+SAPO_Words_i18n = {
+    pt_PT: {
+           'Nome': 'Nome',
+           'Mais Recentes': 'Mais Recentes',
+           'Faltam {%s} caracteres': 'Faltam {%s} caracteres',
+           'Coment&aacute;rio enviado em {%s} &agrave;s {%s}': 'Coment&aacute;rio enviado em {%s} às {%s}',
+           'Confirmo que o coment&aacute;rio respeita os <a href="{%s}">termos de utiliza&ccedil;&atilde;o</a>': 'Confirmo que o coment&aacute;rio respeita os <a href="{%s}">termos de utiliza&ccedil;&atilde;o</a>',
+           '{%s} singular {%s}': '{%s} singular {%s}',
+           '{%s} plural {%s}': '{%s} plural {%s}',
+           '{%s} maisque {%s}': '{%s} maisque {%s}',
+           '{%s:1} abril {%s:2}': 'dia {%s:1} de abril de {%s:2}',
+           '{%s:1} teste vars {%s} {%s:2}': '{%s:1} teste vars {%s} {%s:2}',
+           '{%s:1} teste vars {%s} {%s:3} {%s:2} {%s} {%s:4}': '{%s:1} teste vars {%s} {%s:3} {%s:2} {%s} {%s:4}',
+           '{%s:1} teste vars {%s} {%s:3} {%s} {%s} {%s:4}': '{%s:1} teste vars {%s} {%s:3} {%s} {%s} {%s:4}',
+           'debug': false
+    },
+    en_US: {
+           'Nome': 'Nome',
+           'Mais Recentes': 'Mais Recentes',
+           'Faltam {%s} caracteres': 'Faltam {%s} caracteres',
+           'Coment&aacute;rio enviado em {%s} &agrave;s {%s}': 'Coment&aacute;rio enviado em {%s} às {%s}',
+           'Confirmo que o coment&aacute;rio respeita os <a href="{%s}">termos de utiliza&ccedil;&atilde;o</a>': 'Confirmo que o coment&aacute;rio respeita os <a href="{%s}">termos de utiliza&ccedil;&atilde;o</a>',
+           '{%s} singular {%s}': '{%s} singular {%s}',
+           '{%s} plural {%s}': '{%s} plural {%s}',
+           '{%s} maisque {%s}': '{%s} maisque {%s}',
+           '{%s:1} abril {%s:2}': 'year {%s:2} april day {%s:1}',
+           '{%s:1} teste vars {%s} {%s:2}': '{%s:1} teste en vars {%s} {%s:2}',
+           '{%s:1} teste vars {%s} {%s:3} {%s:2} {%s} {%s:4}': '{%s:1} teste en vars {%s} {%s:3} {%s:2} {%s} {%s:4}',
+           '{%s:1} teste vars {%s} {%s:3} {%s} {%s} {%s:4}': '{%s:1} teste vars {%s} {%s:3} {%s} {%s} {%s:4}',
+           'debug': false
+   }
+};
+
+</script>
+
+
+
+</head>
+<body> 
+
+<h1>SAPO.Utility.I18n</h1> 
+
+<hr /> 
+
+<script type="text/javascript">
+
+//SAPO.Utility.I18n.init(SAPO_Words_i18n, 'pt_PT');
+SAPO.Utility.I18n.init(SAPO_Words_i18n, 'en_US');
+
+
+document.write('<h3>SAPO.Utility.I18n.alias()</h3>');
+
+var _ = SAPO.Utility.I18n.alias(); 
+
+/* ************************************************************* */
+
+document.write('<h3>SAPO.Utility.I18n.text()</h3>');
+
+document.write(SAPO.Utility.I18n.text('Nome')+'<br /><br />');
+
+document.write('<h3>Using _()</h3>');
+
+document.write(_('Mais Recentes')+'<br /><br />');
+
+document.write(_('Faltam {%s} caracteres', '56')+'<br /><br />');
+
+document.write(_('Coment&aacute;rio enviado em {%s} &agrave;s {%s}', '2010-03-27', '15:45')+'<br /><br />');
+
+document.write(_('Confirmo que o coment&aacute;rio respeita os <a href="{%s}">termos de utiliza&ccedil;&atilde;o</a>', 'http://www.sapo.pt/')+'<br /><br />');
+
+/* ************************************************************* */
+
+document.write('<h3>Using {%s:index}</h3>');
+
+document.write(_('{%s:1} abril {%s:2}', '25', '2010')+'<br /><br />');
+//
+//document.write(_.text('{%s:1} teste vars {%s} {%s:3} {%s:2} {%s} {%s:4}', 'A', 'B', 'C', 'D', 'E', 'F')+'<br /><br />');
+
+/* ************************************************************* */
+
+document.write('<h3>SAPO.Utility.I18n.ntext();</h3>');
+
+var count = 3; 
+document.write(SAPO.Utility.I18n.ntext(_('{%s} singular {%s}', count, 'A'), _('{%s} plural {%s}', count, 'B'), count)+'<br /><br />');
+
+document.write(SAPO.Utility.I18n.ntext([_('{%s} singular {%s}', 'A', 'B'), _('{%s} plural {%s}', 'A', 'B'), _('{%s} maisque {%s}', 'A', 'B')], 5)+'<br /><br />');
+
+
+/* ************************************************************* */
+
+document.write('<h3>String not defined</h3>');
+
+document.write(_('teste sem estar definido {%s} {%s}', 'X', 'Y')+'<br /><br />');
+
+
+</script>
+
+</body>
+</html>
+
+
+
+
+
