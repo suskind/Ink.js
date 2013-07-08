@@ -16,16 +16,16 @@ Ink.createModule('Ink.Util.I18n', '1', [], function () {
      * @param {String} langCode language code of the target language
      * @param {Boolean} translationStringsInRoot whether translation strings are in the root of langObject. This is turned off by default.
      */
-    function I18n () {
-        I18n.prototype.init.apply(this, [].slice.call(arguments));
+    function I18n (langObject, langCode, translationStringsInRoot) {
+        this._init(langObject, langCode, translationStringsInRoot);
     }
 
     I18n.prototype = {
-        init: function (langObject, langCode, translationStringsInRoot) {
+        _init: function (langObject, langCode, translationStringsInRoot) {
             this._testMode = false;
             this._lang = langCode || 'pt_PT';
-            this._strings = {};  // TODO rename
-            this.append(langObject, translationStringsInRoot);
+            this._strings = {};
+            this.append(langObject, translationStringsInRoot);  // Add the translation strings
         },
         /**
          * @function ? adds translation strings for this helper to use.
@@ -132,13 +132,23 @@ Ink.createModule('Ink.Util.I18n', '1', [], function () {
          */
         ntext: function(strSin, strPlur, count) {
             if (typeof strSin === 'string' && typeof strPlur === 'string' && typeof count === 'number') {
-                return (count === 1) ? strSin : strPlur;
+                if (count === 1) {
+                    return strSin;
+                } else {
+                    return strPlur;
+                }
             }
             else {
                 var words = strSin;
                 count = strPlur;
+
                 var lastIndex = words.length - 1;
-                return words[ (count >= lastIndex) ? lastIndex : count ];
+
+                if (count >= lastIndex) {
+                    return words[lastIndex];
+                } else {
+                    return words[count];
+                }
             }
         }
     };
