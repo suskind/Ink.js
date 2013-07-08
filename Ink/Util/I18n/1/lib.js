@@ -51,7 +51,7 @@ Ink.createModule('Ink.Util.I18n', '1', [], function () {
         },
         /**
          * @function {Function} ? returns an alias to I18n.text. Usually bound to "_"
-         * check SAPO.Utility.I18n.text
+         * check Ink.Util.I18n.text
          */
         alias: function () {
             var that = this;
@@ -119,16 +119,16 @@ Ink.createModule('Ink.Util.I18n', '1', [], function () {
          * @param {Number}   count - number which defines which word to use
          *
          * @sample
-         * SAPO.Utility.I18n.ntext('animal', 'animals', 0); // returns 'animals'
-         * SAPO.Utility.I18n.ntext('animal', 'animals', 1); // returns 'animal'
+         * Ink.Util.I18n.ntext('animal', 'animals', 0); // returns 'animals'
+         * Ink.Util.I18n.ntext('animal', 'animals', 1); // returns 'animal'
          *
          * @sample
          * var args = ['', 'st', 'nd', 'rd', 'th'];
-         * SAPO.Utility.I18n.ntext(args, 1);    // returns 'st'
-         * SAPO.Utility.I18n.ntext(args, 2);    // returns 'nd'
-         * SAPO.Utility.I18n.ntext(args, 3);    // returns 'rd'
-         * SAPO.Utility.I18n.ntext(args, 4);    // returns 'th'
-         * SAPO.Utility.I18n.ntext(args, 5);    // returns 'th'
+         * Ink.Util.I18n.ntext(args, 1);    // returns '1st'
+         * Ink.Util.I18n.ntext(args, 2);    // returns '2nd'
+         * Ink.Util.I18n.ntext(args, 3);    // returns '3rd'
+         * Ink.Util.I18n.ntext(args, 4);    // returns '4th'
+         * Ink.Util.I18n.ntext(args, 5);    // returns '5th'
          */
         ntext: function(strSin, strPlur, count) {
             if (typeof strSin === 'string' && typeof strPlur === 'string' && typeof count === 'number') {
