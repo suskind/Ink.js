@@ -1,5 +1,5 @@
 /**
- * @module Ink.Util.I18n
+ * @module Ink.Util.I18n_1
  * @author inkdev AT sapo.pt
  * @version 1
  */
@@ -9,12 +9,13 @@ Ink.createModule('Ink.Util.I18n', '1', [], function () {
 
     /**
      * Creates a new internationalization helper object
+     *
      * @class Ink.Util.I18n
      * @constructor
      *
-     * @param {Object} langObject object containing language objects
+     * @param {Object} langObject object containing language objects identified by their language code
      * @param {String} langCode language code of the target language
-     * @param {Boolean} translationStringsInRoot whether translation strings are in the root of langObject. This is turned off by default.
+     * @param {Boolean} translationStringsInRoot indicates whether translation strings are in the root of langObject. This is turned off by default.
      */
     function I18n (langObject, langCode, translationStringsInRoot) {
         this._init(langObject, langCode, translationStringsInRoot);
@@ -28,9 +29,11 @@ Ink.createModule('Ink.Util.I18n', '1', [], function () {
             this.append(langObject, translationStringsInRoot);  // Add the translation strings
         },
         /**
-         * @function ? adds translation strings for this helper to use.
-         * @param {Object} baseLangObject
-         * @param {Boolean} translationStringsInRoot whether translation strings are in the root of langObject. This is turned off by default.
+         * Adds translation strings for this helper to use.
+         *
+         * @method append
+         * @param {Object} baseLangObject object containing language objects identified by their language code
+         * @param {Boolean} translationStringsInRoot indicates whether translation strings are in the root of langObject. This is turned off by default.
          */
         append: function (langObject, translationStringsInRoot) {
             var keys = langObject[this._lang];
@@ -40,18 +43,26 @@ Ink.createModule('Ink.Util.I18n', '1', [], function () {
             Ink.extendObj(this._strings, keys);
         },
         /**
-         * @function {String} ? returns base lang
+         * returns the language code for this instance
+         * @method {String} getLang
          */
         getLang: function () {return this._lang;},
         /**
-         * @function ? sets or unsets test mode. In test mode, unknown strings are wrapped in []
+         * Sets or unsets test mode. In test mode, unknown strings are wrapped
+         * in []
+         *
+         * @method testMode
+         * @param {Boolean} toggle boolean value to set the test mode to.
          */
         testMode: function (toggle) {
             this._testMode = toggle || false;
         },
         /**
-         * @function {Function} ? returns an alias to I18n.text. Usually bound to "_"
-         * check Ink.Util.I18n.text
+         * Returns an alias to `text()`. The result is the function
+         * traditionally assigned to "_".
+         *
+         * @method alias
+         * @returns {Function}
          */
         alias: function () {
             var that = this;
@@ -60,16 +71,21 @@ Ink.createModule('Ink.Util.I18n', '1', [], function () {
             };
         },
         /**
-         * @function {String} ? replaces
+         * Given a translation key, return a translated string, with replaced parameters.
+         * When a translated string is not available, the original string is returned unchanged.
+         *
+         * @method {String} text
          * @param {String}          str     key to look for in i18n dictionary (returns key if unknown)
          * @param {optional String} arg1    replacement #1 (replaces first {%s} and all {%s:1})
          * @param {optional String} arg2... replacement #2 (replaces second {%s} and all {%s:2})
          *
-         * @sample
-         * _('Gosto muito de {%s} e o céu é {%s}.', 'carros', 'azul');                      // returns 'Gosto muito de carros e o céu é azul.'
+         * @example
+         *     _('Gosto muito de {%s} e o céu é {%s}.', 'carros', 'azul');
+         *     // returns 'Gosto muito de carros e o céu é azul.'
          *
-         * @sample
-         * _('O {%s:1} é {%s:2} como {%s:2} é a cor do {%s:3}.', 'carro', 'azul', 'FCP');   // returns 'O carro é azul como azul é o FCP.'
+         * @example
+         *     _('O {%s:1} é {%s:2} como {%s:2} é a cor do {%s:3}.', 'carro', 'azul', 'FCP');
+         *     // returns 'O carro é azul como azul é o FCP.'
          */
         text: function (str /*, replace, arguments*/) {
             if (typeof str !== 'string') {return;} // Backwards-compat
@@ -107,28 +123,30 @@ Ink.createModule('Ink.Util.I18n', '1', [], function () {
             return original;
         },
         /**
-         * @function {String} ? returns either singular or plural words
+         * Given a singular string, a plural string, and a number, returns
+         * either the singular or plural string.
          *
-         * @paramset Syntax 1
-         * @param {String} strSin  - word to use when count is 1
-         * @param {String} strPlur - word to use otherwise
-         * @param {Number} count   - number which defines which word to use
+         * If the function receives a list of ordinal suffixes and a number,
+         * it returns the ordinal form of such number. See example below.
          *
-         * @paramset Syntax 2
-         * @param {String[]} words - words to use
-         * @param {Number}   count - number which defines which word to use
+         * @method ntext
+         * @return {String}
          *
-         * @sample
-         * Ink.Util.I18n.ntext('animal', 'animals', 0); // returns 'animals'
-         * Ink.Util.I18n.ntext('animal', 'animals', 1); // returns 'animal'
+         * @param {String} strSin word to use when count is 1
+         * @param {String} strPlur word to use otherwise
+         * @param {Number} count number which defines which word to use
          *
-         * @sample
-         * var args = ['', 'st', 'nd', 'rd', 'th'];
-         * Ink.Util.I18n.ntext(args, 1);    // returns '1st'
-         * Ink.Util.I18n.ntext(args, 2);    // returns '2nd'
-         * Ink.Util.I18n.ntext(args, 3);    // returns '3rd'
-         * Ink.Util.I18n.ntext(args, 4);    // returns '4th'
-         * Ink.Util.I18n.ntext(args, 5);    // returns '5th'
+         * @example
+         *     Ink.Util.I18n.ntext('animal', 'animals', 0); // returns 'animals'
+         *     Ink.Util.I18n.ntext('animal', 'animals', 1); // returns 'animal'
+         *
+         * @example
+         *     var args = ['', 'st', 'nd', 'rd', 'th'];
+         *     Ink.Util.I18n.ntext(args, 1);    // returns '1st'
+         *     Ink.Util.I18n.ntext(args, 2);    // returns '2nd'
+         *     Ink.Util.I18n.ntext(args, 3);    // returns '3rd'
+         *     Ink.Util.I18n.ntext(args, 4);    // returns '4th'
+         *     Ink.Util.I18n.ntext(args, 5);    // returns '5th'
          */
         ntext: function(strSin, strPlur, count) {
             if (typeof strSin === 'string' && typeof strPlur === 'string' && typeof count === 'number') {
