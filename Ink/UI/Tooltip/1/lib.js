@@ -10,6 +10,10 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
         this._init(element, options || {});
     }
 
+    function ok(v) {  // Sanity check. TODO remove
+        if (!v) {throw new Error(v);}
+    }
+
     Tooltip.prototype = {
         _init: function(element, options) {
             var elements;
@@ -17,7 +21,6 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
             this.sto = false;
             this.iframe = false;
             this.createHackIframe();
-            this._elmOptions = [];  // Options for each element, given as data attrs
 
             this.options = Ink.extendObj({
                     //elementAttr: 'element',
@@ -45,7 +48,6 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
             this.elements = new Array(elements.length);
 
             for (var i = 0, len = elements.length; i < len; i++) {
-                this._elmOptions[i] = {};
                 this.elements[i] = this._initEach(elements[i], i);
             }
         },
@@ -60,7 +62,7 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
             this.options.template.style.visibility = 'hidden';
             this.options.template.style.display = 'block';
 
-            var elm = Aux.elOrSelector(elm);
+            elm = Aux.elOrSelector(elm);
 
             InkEvent.observe(elm, 'mouseover', Ink.bindEvent(this.onMouseOver, this, index));
             InkEvent.observe(elm, 'mouseout', Ink.bindEvent(this.onMouseOut, this, index));
@@ -71,30 +73,46 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
                 options: this.options
             };
         },
+        _getOpt: function (index, option) {
+            ok(index);ok(option);
+            var dataAttrVal = this.elements[index].element.getAttribute('data-tip-' + option);
+            if (typeof dataAttrVal !== 'undefined') {
+                return dataAttrVal;
+            }
+            var optionVal = this.elements[index].options[option];
+            if (typeof optionVal !== 'undefined') {
+                return optionVal;
+            }
+            var instanceOption = this.options[option];
+            if (typeof instanceOption !== 'undefined') {
+                return instanceOption;
+            }
+            ok(false);
+        },
         onMouseOver: function(e, index) {
             if(this.elements[index].options.template) {
-
                 this.elements[index].options.template.style.zIndex = this.elements[index].options.zindex;
 
                 switch(this.elements[index].options.where) {
                     case 'right':
-                        var pos = Position.cumulativeOffset(this.elements[index].element);
-                        this.setPosition(index, (parseInt(pos[0]) + this.elements[index].options.leftElm), (parseInt(pos[1]) + this.elements[index].options.topElm));
+                        // TODO use Ink.Dom.Event: offset{,left,top} methods
+                        var pos = Element.offset(this.elements[index].element);
+                        this.setPosition(index, (parseInt(pos[0], 10) + this.elements[index].options.leftElm), (parseInt(pos[1], 10) + this.elements[index].options.topElm));
                         break;
 
                     case 'left':
-                        var pos = Position.cumulativeOffset(this.elements[index].element);
-                        this.setPosition(index, (parseInt(pos[0]) + this.elements[index].options.leftElm), (parseInt(pos[1]) + this.elements[index].options.topElm));
+                        var pos = Element.offset(this.elements[index].element);
+                        this.setPosition(index, (parseInt(pos[0], 10) + this.elements[index].options.leftElm), (parseInt(pos[1], 10) + this.elements[index].options.topElm));
                         break;
 
                     case 'mousemove':
                     case 'mousefix':
                         var mPos = this.getMousePosition(e);
-                        this.setPosition(index, (parseInt(mPos[0]) + this.elements[index].options.leftElm), (parseInt(mPos[1]) + this.elements[index].options.topElm));
+                        this.setPosition(index, (parseInt(mPos[0], 10) + this.elements[index].options.leftElm), (parseInt(mPos[1], 10) + this.elements[index].options.topElm));
                         break;
 
                     default:
-                        this.setPosition(index, (parseInt(pos[0]) + this.elements[index].options.leftElm), (parseInt(pos[1]) + this.elements[index].options.topElm));
+                        this.setPosition(index, (parseInt(pos[0], 10) + this.elements[index].options.leftElm), (parseInt(pos[1], 10) + this.elements[index].options.topElm));
                         break;
                 }
 
@@ -108,8 +126,8 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
                     this.writeContent(index);
 
                     if(this.elements[index].options.hasIframe) {
-                        this.iframe.style.width = (parseInt(InkElement.elementWidth(this.elements[index].options.template)) + 0)+'px';
-                        this.iframe.style.height = (parseInt(InkElement.elementHeight(this.elements[index].options.template)) + 0)+'px';
+                        this.iframe.style.width = (parseInt(InkElement.elementWidth(this.elements[index].options.template), 10) + 0)+'px';
+                        this.iframe.style.height = (parseInt(InkElement.elementHeight(this.elements[index].options.template), 10) + 0)+'px';
                     }
 
                     this.elements[index].options.template.style.visibility = 'visible';
@@ -144,7 +162,7 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
 
         onMouseMove: function(e, index) {
             if(this.elements[index].options.template) {
-                if(this.elements[index].options.where == 'mousemove' && this.active) {
+                if(this.elements[index].options.where === 'mousemove' && this.active) {
                     var mPos = this.getMousePosition(e);
                     this.setPosition(index, (mPos[0] + this.elements[index].options.leftElm), (mPos[1] + this.elements[index].options.topElm));
                 }
@@ -153,7 +171,7 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
 
         setPosition: function(index, left, top) {
             var pageDims = this.getPageXY();
-            var elmDims = [parseInt(InkElement.elementWidth(this.elements[index].options.template)), parseInt(InkElement.elementHeight(this.elements[index].options.template))];
+            var elmDims = [parseInt(InkElement.elementWidth(this.elements[index].options.template), 10), parseInt(InkElement.elementHeight(this.elements[index].options.template), 10)];
             var scrollDim = this.getScroll();
 
             if((elmDims[0] + left - scrollDim[0]) >= (pageDims[0] - 20)) {
@@ -175,7 +193,7 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
         getPageXY: function() {
             var cWidth = 0;
             var cHeight = 0;
-            if( typeof( window.innerWidth ) == 'number' ) {
+            if( typeof( window.innerWidth ) === 'number' ) {
                 cWidth = window.innerWidth;
                 cHeight = window.innerHeight;
             } else if( document.documentElement && ( document.documentElement.clientWidth || document.documentElement.clientHeight ) ) {
@@ -185,7 +203,7 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
                 cWidth = document.body.clientWidth;
                 cHeight = document.body.clientHeight;
             }
-            return [parseInt(cWidth), parseInt(cHeight)];
+            return [parseInt(cWidth, 10), parseInt(cHeight, 10)];
         },
 
         getScroll: function() {
@@ -200,15 +218,16 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
         },
 
         getMousePosition: function(e) {
-            return [parseInt(InkEvent.pointerX(e)), parseInt(InkEvent.pointerY(e))]
+            return [parseInt(InkEvent.pointerX(e), 10), parseInt(InkEvent.pointerY(e), 10)];
         },
 
         writeContent: function(index) {
             if(this.elements[index].options.hasText) {
+                var content;
                 if(this.elements[index].options.contentText) {
-                    var content = this.elements[index].options.contentText;
+                    content = this.elements[index].options.contentText;
                 } else {
-                    var content = this.elements[index].element.getAttribute(this.elements[index].options.contentAttr);
+                    content = this.elements[index].element.getAttribute(this.elements[index].options.contentAttr);
                 }
 
                 if(this.elements[index].options.contentElm) {
