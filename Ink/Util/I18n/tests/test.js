@@ -68,10 +68,10 @@ Ink.requireModules(['Ink.Util.I18n'], function () {
             'animals');
         
         var args = ['', 'st', 'nd', 'rd', 'th'];
-        equal(i18n.ntext(args, 1), 'st', '1st');
-        equal(i18n.ntext(args, 2), 'nd', '2nd');
-        equal(i18n.ntext(args, 3), 'rd', '3rd');
-        equal(i18n.ntext(args, 4), 'th', '4th');
-        equal(i18n.ntext(args, 5), 'th', '5th');
+        equal(i18n.ntext(args, 1), 'st');
+        equal(i18n.ntext(args, 2), 'nd');
+        equal(i18n.ntext(args, 3), 'rd');
+        equal(i18n.ntext(args, 4), 'th');
+        equal(i18n.ntext(args, 5), 'th');
     });
 });

@@ -43,13 +43,16 @@ Ink.createModule('Ink.Util.I18n', '1', [], function () {
             Ink.extendObj(this._strings, keys);
         },
         /**
-         * returns the language code for this instance
+         * Get the language code
+         *
+         * @returns {String} the language code for this instance
          * @method {String} getLang
          */
         getLang: function () {return this._lang;},
         /**
          * Sets or unsets test mode. In test mode, unknown strings are wrapped
-         * in []
+         * in `[ ... ]`. This is useful for debugging your application and
+         * making sure all your translation keys are in place.
          *
          * @method testMode
          * @param {Boolean} toggle boolean value to set the test mode to.
@@ -58,11 +61,11 @@ Ink.createModule('Ink.Util.I18n', '1', [], function () {
             this._testMode = toggle || false;
         },
         /**
-         * Returns an alias to `text()`. The result is the function
+         * Returns an alias to `text()`. The resulting function is
          * traditionally assigned to "_".
          *
          * @method alias
-         * @returns {Function}
+         * @returns {Function} an alias to `text()`
          */
         alias: function () {
             var that = this;
@@ -75,9 +78,10 @@ Ink.createModule('Ink.Util.I18n', '1', [], function () {
          * When a translated string is not available, the original string is returned unchanged.
          *
          * @method {String} text
-         * @param {String}          str     key to look for in i18n dictionary (returns key if unknown)
-         * @param {optional String} arg1    replacement #1 (replaces first {%s} and all {%s:1})
-         * @param {optional String} arg2... replacement #2 (replaces second {%s} and all {%s:2})
+         * @param {String} str key to look for in i18n dictionary (which is returned verbatim if unknown)
+         * @param {optional String} arg1 replacement #1 (replaces first {%s} and all {%s:1})
+         * @param {optional String} arg2 replacement #2 (replaces second {%s} and all {%s:2})
+         * @param {optional String} argn... replacement #n (replaces nth {%s} and all {%s:n})
          *
          * @example
          *     _('Gosto muito de {%s} e o céu é {%s}.', 'carros', 'azul');
@@ -87,7 +91,7 @@ Ink.createModule('Ink.Util.I18n', '1', [], function () {
          *     _('O {%s:1} é {%s:2} como {%s:2} é a cor do {%s:3}.', 'carro', 'azul', 'FCP');
          *     // returns 'O carro é azul como azul é o FCP.'
          */
-        text: function (str /*, replace, arguments*/) {
+        text: function (str /*, replacements...*/) {
             if (typeof str !== 'string') {return;} // Backwards-compat
 
             var original, res;
@@ -142,13 +146,13 @@ Ink.createModule('Ink.Util.I18n', '1', [], function () {
          *
          * @example
          *     var args = ['', 'st', 'nd', 'rd', 'th'];
-         *     Ink.Util.I18n.ntext(args, 1);    // returns '1st'
-         *     Ink.Util.I18n.ntext(args, 2);    // returns '2nd'
-         *     Ink.Util.I18n.ntext(args, 3);    // returns '3rd'
-         *     Ink.Util.I18n.ntext(args, 4);    // returns '4th'
-         *     Ink.Util.I18n.ntext(args, 5);    // returns '5th'
+         *     Ink.Util.I18n.ntext(args, 1);    // returns 'st'
+         *     Ink.Util.I18n.ntext(args, 2);    // returns 'nd'
+         *     Ink.Util.I18n.ntext(args, 3);    // returns 'rd'
+         *     Ink.Util.I18n.ntext(args, 4);    // returns 'th'
+         *     Ink.Util.I18n.ntext(args, 5);    // returns 'th'
          */
-        ntext: function(strSin, strPlur, count) {
+        ntext: function(strSin, strPlur, count) {  // TODO split into ntext and toOrdinal
             if (typeof strSin === 'string' && typeof strPlur === 'string' && typeof count === 'number') {
                 if (count === 1) {
                     return strSin;
