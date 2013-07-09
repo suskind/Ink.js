@@ -1,0 +1,40 @@
+<html>
+<head>
+<title>...</title> 
+<script type="text/javascript" src="/Ink/1/"></script>
+<script type="text/javascript">
+    Ink.setPath('Ink', '/Ink/');
+</script>
+<script type="text/javascript" src="/Ink/UI/Tooltip/1/"></script>
+</head>
+<body> 
+
+<div id="t"></div>
+
+<h1>Tooltip - demo</h1>
+
+<p>You can configure the text</p>
+
+<ul style="width: 200px; border: 1px solid gray;" class="tooltip-list">
+    <li data-tip-text="something">data-tip-text="something"</li>
+</ul>
+
+
+<p>Several tooltip positions:</p>
+
+<ul style="width: 200px; border: 1px solid gray;" class="tooltip-list">
+    <li>above</li>
+    <li>below</li>
+    <li>left</li>
+    <li>right</li>
+    <li>mousemove</li>
+</ul>
+
+<script type="text/javascript">
+    Ink.requireModules(['Ink.UI.Tooltip_1'], function (Tooltip) {
+        new Tooltip('.tooltip-list li', {template: '#t'});
+    });
+</script>
+
+</body>
+</html>
