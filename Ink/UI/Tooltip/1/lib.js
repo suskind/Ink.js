@@ -31,6 +31,7 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
                     leftElm: 20,
                     topElm: 20,
                     delay: 0,
+                    text: '',
                     hasIframe: true,
                 }, options || {});
 
@@ -69,7 +70,7 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
         _getOpt: function (index, option) {
             ok(index + 1);ok(option);
             var dataAttrVal = this.elements[index].element.getAttribute('data-tip-' + option);
-            if (typeof dataAttrVal !== 'undefined') {
+            if (typeof dataAttrVal !== 'undefined' && dataAttrVal !== null) {
                 return dataAttrVal;
             }
             var optionVal = this.elements[index].options[option];
@@ -83,29 +84,30 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
             ok(false);
         },
         onMouseOver: function(e, index) {
-            if(this.elements[index].options.template) {
-                this.elements[index].options.template.style.zIndex = this.elements[index].options.zindex;
+            var options = this.elements[index].options;
+            var element = this.elements[index].element;
+            if(options.template) {
+                options.template.style.zIndex = options.zindex;
 
-                switch(this.elements[index].options.where) {
+                switch(options.where) {
                     case 'right':
-                        // TODO use Ink.Dom.Event: offset{,left,top} methods
-                        var pos = Element.offset(this.elements[index].element);
-                        this.setPosition(index, (parseInt(pos[0], 10) + this.elements[index].options.leftElm), (parseInt(pos[1], 10) + this.elements[index].options.topElm));
+                        var pos = Element.offset(element);
+                        this.setPosition(index, (parseInt(pos[0], 10) + options.leftElm), (parseInt(pos[1], 10) + options.topElm));
                         break;
 
                     case 'left':
-                        var pos = Element.offset(this.elements[index].element);
-                        this.setPosition(index, (parseInt(pos[0], 10) + this.elements[index].options.leftElm), (parseInt(pos[1], 10) + this.elements[index].options.topElm));
+                        var pos = Element.offset(element);
+                        this.setPosition(index, (parseInt(pos[0], 10) + options.leftElm), (parseInt(pos[1], 10) + options.topElm));
                         break;
 
                     case 'mousemove':
                     case 'mousefix':
                         var mPos = this.getMousePosition(e);
-                        this.setPosition(index, (parseInt(mPos[0], 10) + this.elements[index].options.leftElm), (parseInt(mPos[1], 10) + this.elements[index].options.topElm));
+                        this.setPosition(index, (parseInt(mPos[0], 10) + options.leftElm), (parseInt(mPos[1], 10) + options.topElm));
                         break;
 
                     default:
-                        this.setPosition(index, (parseInt(pos[0], 10) + this.elements[index].options.leftElm), (parseInt(pos[1], 10) + this.elements[index].options.topElm));
+                        this.setPosition(index, (parseInt(pos[0], 10) + options.leftElm), (parseInt(pos[1], 10) + options.topElm));
                         break;
                 }
 
@@ -118,32 +120,33 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
 
                     this.writeContent(index);
 
-                    if(this.elements[index].options.hasIframe) {
-                        this.iframe.style.width = (parseInt(InkElement.elementWidth(this.elements[index].options.template), 10) + 0)+'px';
-                        this.iframe.style.height = (parseInt(InkElement.elementHeight(this.elements[index].options.template), 10) + 0)+'px';
+                    if(options.hasIframe) {
+                        this.iframe.style.width = (parseInt(InkElement.elementWidth(options.template), 10) + 0)+'px';
+                        this.iframe.style.height = (parseInt(InkElement.elementHeight(options.template), 10) + 0)+'px';
                     }
 
-                    this.elements[index].options.template.style.visibility = 'visible';
-                    if(this.elements[index].options.hasIframe) {
+                    options.template.style.visibility = 'visible';
+                    if(options.hasIframe) {
                         this.iframe.style.display = 'block';
                     }
 
-                }.bind(this), this.elements[index].options.delay);  // TODO Function#bind is es4
+                }.bind(this), options.delay);  // TODO Function#bind is es4
 
                 this.active = true;
             }
         },
 
         onMouseOut: function(e, index) {
-            if(this.elements[index].options.template) {
-                if(this.elements[index].options.hasIframe) {
+            var options = this.elements[index].options;
+            if(options.template) {
+                if(options.hasIframe) {
                     this.iframe.style.display = 'none';
                 }
-                this.elements[index].options.template.style.visibility = 'hidden';
-                this.elements[index].options.template.style.position = 'absolute';
+                options.template.style.visibility = 'hidden';
+                options.template.style.position = 'absolute';
 
-                this.elements[index].options.template.style.left = '0px';
-                this.elements[index].options.template.style.top = '0px';
+                options.template.style.left = '0px';
+                options.template.style.top = '0px';
 
                 if(this.sto) {
                     clearTimeout(this.sto);
@@ -155,10 +158,11 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
         },
 
         onMouseMove: function(e, index) {
-            if(this.elements[index].options.template) {
-                if(this.elements[index].options.where === 'mousemove' && this.active) {
+            var options = this.elements[index].options;
+            if(options.template) {
+                if(options.where === 'mousemove' && this.active) {
                     var mPos = this.getMousePosition(e);
-                    this.setPosition(index, (mPos[0] + this.elements[index].options.leftElm), (mPos[1] + this.elements[index].options.topElm));
+                    this.setPosition(index, (mPos[0] + options.leftElm), (mPos[1] + options.topElm));
                 }
             }
         },
