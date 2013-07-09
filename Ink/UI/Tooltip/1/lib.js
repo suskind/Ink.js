@@ -24,13 +24,10 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
 
             this.options = Ink.extendObj({
                     //elementAttr: 'element',
-                    where: 'mousefix',
-                    template: false,
+                    where: 'mousefix',  // TODO better default
+                    template: false,  // TODO remove
                     zindex: 10000,
                     hasText: true,
-                    contentAttr: 'title',
-                    contentText: false,
-                    contentElm: false,
                     leftElm: 20,
                     topElm: 20,
                     delay: 0,
@@ -55,10 +52,6 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
             this.options.template = Aux.elOrSelector(this.options.template, 'Tooltip template');
             this.options.delay = (this.options.delay * 1000);
 
-            if(this.options.contentElm) {
-                this.options.contentElm = Aux.elOrSelector(this.options.contentElm);
-            }
-
             this.options.template.style.visibility = 'hidden';
             this.options.template.style.display = 'block';
 
@@ -74,7 +67,7 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
             };
         },
         _getOpt: function (index, option) {
-            ok(index);ok(option);
+            ok(index + 1);ok(option);
             var dataAttrVal = this.elements[index].element.getAttribute('data-tip-' + option);
             if (typeof dataAttrVal !== 'undefined') {
                 return dataAttrVal;
@@ -135,7 +128,7 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
                         this.iframe.style.display = 'block';
                     }
 
-                }.bind(this), this.elements[index].options.delay);
+                }.bind(this), this.elements[index].options.delay);  // TODO Function#bind is es4
 
                 this.active = true;
             }
@@ -147,6 +140,7 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
                     this.iframe.style.display = 'none';
                 }
                 this.elements[index].options.template.style.visibility = 'hidden';
+                this.elements[index].options.template.style.position = 'absolute';
 
                 this.elements[index].options.template.style.left = '0px';
                 this.elements[index].options.template.style.top = '0px';
@@ -223,18 +217,9 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
 
         writeContent: function(index) {
             if(this.elements[index].options.hasText) {
-                var content;
-                if(this.elements[index].options.contentText) {
-                    content = this.elements[index].options.contentText;
-                } else {
-                    content = this.elements[index].element.getAttribute(this.elements[index].options.contentAttr);
-                }
+                var content = this._getOpt(index, 'text');
 
-                if(this.elements[index].options.contentElm) {
-                    this.elements[index].options.contentElm.innerHTML = content;
-                } else {
-                    this.elements[index].options.template.innerHTML = content;
-                }
+                this.elements[index].options.template.innerHTML = content;
             }
         },
 
