@@ -25,8 +25,7 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
             this.options = Ink.extendObj({
                     //elementAttr: 'element',
                     where: 'mousefix',  // TODO better default
-                    template: false,  // TODO remove
-                    zindex: 10000,
+                    zIndex: 10000,
                     hasText: true,
                     leftElm: 20,
                     topElm: 20,
@@ -50,12 +49,7 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
             }
         },
         _initEach: function(elm, index) {
-            this.options.template = Aux.elOrSelector(this.options.template, 'Tooltip template');
             this.options.delay = (this.options.delay * 1000);
-
-            this.options.template.style.visibility = 'hidden';
-            this.options.template.style.display = 'block';
-
             elm = Aux.elOrSelector(elm);
 
             InkEvent.observe(elm, 'mouseover', Ink.bindEvent(this.onMouseOver, this, index));
@@ -66,6 +60,45 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
                 element: elm,
                 options: this.options
             };
+        },
+        _makeTooltip: function (index, mouseEvent) {
+            ok(this.elements[index]);
+            var oldtip = this.elements[index].tooltip;
+            if (oldtip && oldtip.parentNode) {
+                oldtip.parentNode.removeChild(oldtip);
+            }
+            var element = this.elements[index].element;
+            var options = this.elements[index].options;
+            var tooltip = this.elements[index].tooltip = document.createElement('DIV');
+            tooltip.style.display = 'block';
+            tooltip.style.position = 'absolute';
+            tooltip.style.zIndex = this._getOpt(index, 'zIndex');
+            var where = this._getOpt(index, 'where');
+
+            switch (where) {
+                case 'right':
+                    var pos = Element.offset(element);
+                    this.setPosition(index, (parseInt(pos[0], 10) + options.leftElm), (parseInt(pos[1], 10) + options.topElm));
+                    break;
+
+                case 'left':
+                    var pos = Element.offset(element);
+                    this.setPosition(index, (parseInt(pos[0], 10) + options.leftElm), (parseInt(pos[1], 10) + options.topElm));
+                    break;
+
+                case 'mousemove':
+                case 'mousefix':
+                    var mPos = this.getMousePosition(mouseEvent);
+                    this.setPosition(index, (parseInt(mPos[0], 10) + options.leftElm), (parseInt(mPos[1], 10) + options.topElm));
+                    break;
+
+                default:
+                    this.setPosition(index, (parseInt(pos[0], 10) + options.leftElm), (parseInt(pos[1], 10) + options.topElm));
+                    break;
+            }
+            if (document.documentElement) {
+                document.documentElement.appendChild(tooltip);
+            }
         },
         _getOpt: function (index, option) {
             ok(index + 1);ok(option);
@@ -85,68 +118,34 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
         },
         onMouseOver: function(e, index) {
             var options = this.elements[index].options;
-            var element = this.elements[index].element;
-            if(options.template) {
-                options.template.style.zIndex = options.zindex;
-
-                switch(options.where) {
-                    case 'right':
-                        var pos = Element.offset(element);
-                        this.setPosition(index, (parseInt(pos[0], 10) + options.leftElm), (parseInt(pos[1], 10) + options.topElm));
-                        break;
-
-                    case 'left':
-                        var pos = Element.offset(element);
-                        this.setPosition(index, (parseInt(pos[0], 10) + options.leftElm), (parseInt(pos[1], 10) + options.topElm));
-                        break;
-
-                    case 'mousemove':
-                    case 'mousefix':
-                        var mPos = this.getMousePosition(e);
-                        this.setPosition(index, (parseInt(mPos[0], 10) + options.leftElm), (parseInt(mPos[1], 10) + options.topElm));
-                        break;
-
-                    default:
-                        this.setPosition(index, (parseInt(pos[0], 10) + options.leftElm), (parseInt(pos[1], 10) + options.topElm));
-                        break;
-                }
-
-                if(this.sto) {
-                    clearTimeout(this.sto);
-                    this.sto = false;
-                }
-
-                this.sto = setTimeout(function() {
-
-                    this.writeContent(index);
-
-                    if(options.hasIframe) {
-                        this.iframe.style.width = (parseInt(InkElement.elementWidth(options.template), 10) + 0)+'px';
-                        this.iframe.style.height = (parseInt(InkElement.elementHeight(options.template), 10) + 0)+'px';
-                    }
-
-                    options.template.style.visibility = 'visible';
-                    if(options.hasIframe) {
-                        this.iframe.style.display = 'block';
-                    }
-
-                }.bind(this), options.delay);  // TODO Function#bind is es4
-
-                this.active = true;
+            var tooltp = this._makeTooltip(index, e);
+            if(this.sto) {
+                clearTimeout(this.sto);
+                this.sto = false;
             }
+
+            this.sto = setTimeout(function() {
+                this.writeContent(index);
+
+                if(options.hasIframe && tooltp) {
+                    this.iframe.style.width = (parseInt(InkElement.elementWidth(tooltp), 10) + 0)+'px';
+                    this.iframe.style.height = (parseInt(InkElement.elementHeight(tooltp), 10) + 0)+'px';
+                    this.iframe.style.display = 'block';
+                }
+
+            }.bind(this), options.delay);  // TODO Function#bind is es4
+
+            this.active = true;
         },
 
         onMouseOut: function(e, index) {
             var options = this.elements[index].options;
-            if(options.template) {
+            var tooltp = this.elements[index].tooltip;
+            if(tooltp) {
                 if(options.hasIframe) {
                     this.iframe.style.display = 'none';
                 }
-                options.template.style.visibility = 'hidden';
-                options.template.style.position = 'absolute';
-
-                options.template.style.left = '0px';
-                options.template.style.top = '0px';
+                tooltp.parentNode.removeChild(tooltp);
 
                 if(this.sto) {
                     clearTimeout(this.sto);
@@ -155,12 +154,14 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
 
                 this.active = false;
             }
+            this.elements[index].tooltip = null;
         },
 
         onMouseMove: function(e, index) {
             var options = this.elements[index].options;
-            if(options.template) {
-                if(options.where === 'mousemove' && this.active) {
+            var tooltp = this.elements[index].tooltip;
+            if (tooltp) {
+                if (options.where === 'mousemove' && this.active) {
                     var mPos = this.getMousePosition(e);
                     this.setPosition(index, (mPos[0] + options.leftElm), (mPos[1] + options.topElm));
                 }
@@ -169,23 +170,26 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
 
         setPosition: function(index, left, top) {
             var pageDims = this.getPageXY();
-            var elmDims = [parseInt(InkElement.elementWidth(this.elements[index].options.template), 10), parseInt(InkElement.elementHeight(this.elements[index].options.template), 10)];
-            var scrollDim = this.getScroll();
+            var tooltp = this.elements[index].tooltip;
+            if (tooltp) {
+                var elmDims = [parseInt(InkElement.elementWidth(tooltp), 10), parseInt(InkElement.elementHeight(tooltp), 10)];
+                var scrollDim = this.getScroll();
 
-            if((elmDims[0] + left - scrollDim[0]) >= (pageDims[0] - 20)) {
-                left = (left - elmDims[0] - this.elements[index].options.leftElm - 10);
-            }
-            if((elmDims[1] + top - scrollDim[1]) >= (pageDims[1] - 20)) {
-                top = (top - elmDims[1] - this.elements[index].options.topElm - 10);
-            }
+                if((elmDims[0] + left - scrollDim[0]) >= (pageDims[0] - 20)) {
+                    left = (left - elmDims[0] - this.elements[index].options.leftElm - 10);
+                }
+                if((elmDims[1] + top - scrollDim[1]) >= (pageDims[1] - 20)) {
+                    top = (top - elmDims[1] - this.elements[index].options.topElm - 10);
+                }
 
-            if(this.elements[index].options.hasIframe) {
-                this.iframe.style.left = left+'px';
-                this.iframe.style.top = top+'px';
-            }
+                if(this.elements[index].options.hasIframe) {
+                    this.iframe.style.left = left+'px';
+                    this.iframe.style.top = top+'px';
+                }
 
-            this.elements[index].options.template.style.left = left+'px';
-            this.elements[index].options.template.style.top = top+'px';
+                tooltp.style.left = left+'px';
+                tooltp.style.top = top+'px';
+            }
         },
 
         getPageXY: function() {
@@ -220,10 +224,10 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
         },
 
         writeContent: function(index) {
-            if(this.elements[index].options.hasText) {
+            if(this.elements[index].tooltip) {
                 var content = this._getOpt(index, 'text');
 
-                this.elements[index].options.template.innerHTML = content;
+                this.elements[index].tooltip.innerHTML = content;
             }
         },
 
