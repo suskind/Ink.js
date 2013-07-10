@@ -7,6 +7,12 @@
 </script>
 <script type="text/javascript" src="/Ink/UI/Tooltip/1/"></script>
 <link rel="stylesheet" href="style.css"></script>
+<style type="text/css">
+.tooltip-list {
+    width: 300px;
+    border: 1px solid gray;
+}
+</style>
 </head>
 <body> 
 
@@ -16,24 +22,36 @@
 
 <p>You can configure the text</p>
 
-<ul style="width: 200px; border: 1px solid gray;" class="tooltip-list">
+<ul class="tooltip-list">
     <li data-tip-text="something">data-tip-text="something"</li>
 </ul>
 
 
 <p>Several tooltip positions:</p>
 
-<ul style="width: 200px; border: 1px solid gray;" class="tooltip-list">
-    <li>above</li>
-    <li>below</li>
-    <li>left</li>
-    <li>right</li>
-    <li>mousemove</li>
+<ul class="tooltip-list">
+    <li data-tip-where="up">data-tip-where="above"</li>
+    <li data-tip-where="down">data-tip-where="below"</li>
+    <li data-tip-where="left">data-tip-where="left"</li>
+    <li data-tip-where="right">data-tip-where="right"</li>
+    <li data-tip-where="mousemove">data-tip-where="mousemove"</li>
+    <li data-tip-where="mousefix">data-tip-where="mousefix"</li>
+</ul>
+
+<p>Different colors</p>
+
+<ul class="tooltip-list">
+    <li>[no color defined]</li>
+    <li data-tip-color="red">data-tip-color="red"</li>
+    <li data-tip-color="orange">data-tip-color="orange"</li>
+    <li data-tip-color="blue">data-tip-color="blue"</li>
+    <li data-tip-color="green">data-tip-color="green"</li>
+    <li data-tip-color="black">data-tip-color="black"</li>
 </ul>
 
 <p>Custom templates:</p>
 
-<ul style="width: 200px; border: 1px solid gray;" class="tooltip-list">
+<ul class="tooltip-list">
     <li data-tip-template="#tooltip-template" data-tip-templatefield="span" data-tip-text="Something I wish to write in that span">data-tip-template="#tooltip-template" data-tip-templatefield="span" data-tip-text="Something I wish to write in that span"</li>
 </ul>
 

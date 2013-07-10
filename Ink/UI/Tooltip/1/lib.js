@@ -6,6 +6,10 @@
 Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink.Dom.Element_1', 'Ink.Dom.Selector_1'], function (Aux, InkEvent, InkElement, Selector) {
     'use strict';
 
+    /**
+     * @class Tooltip
+     * @version 1
+     */
     function Tooltip (element, options) {
         this._init(element, options || {});
     }
@@ -114,27 +118,10 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
             tooltip.style.display = 'block';
             tooltip.style.position = 'absolute';
             tooltip.style.zIndex = this._getOpt(index, 'zIndex');
-
-            switch (where) {
-                case 'right':
-                    var pos = Element.offset(element);
-                    this.setPosition(index, (parseInt(pos[0], 10) + options.leftElm), (parseInt(pos[1], 10) + options.topElm));
-                    break;
-
-                case 'left':
-                    var pos = Element.offset(element);
-                    this.setPosition(index, (parseInt(pos[0], 10) + options.leftElm), (parseInt(pos[1], 10) + options.topElm));
-                    break;
-
-                case 'mousemove':
-                case 'mousefix':
-                    var mPos = this.getMousePosition(mouseEvent);
-                    this.setPosition(index, mPos[0] + options.leftElm, mPos[1] + options.topElm);
-                    break;
-
-                default:
-                    this.setPosition(index, (parseInt(pos[0], 10) + options.leftElm), (parseInt(pos[1], 10) + options.topElm));
-                    break;
+            
+            if (where === 'mousemove' || where === 'mousefix') {
+                var mPos = this.getMousePosition(mouseEvent);
+                this.setPosition(index, mPos[0] + options.leftElm, mPos[1] + options.topElm);
             }
 
             if (document.documentElement) {
@@ -163,13 +150,8 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
             if(this.sto) {
                 clearTimeout(this.sto);
             }
-
-            this.sto = setTimeout(function() {
-                if (this.elements[index]) {
-                    this._makeTooltip(index, e);
-                }
-            }.bind(this), options.delay * 1000);  // TODO Function#bind is es4
-
+            
+            this.sto = setTimeout(Ink.bind(this._makeTooltip, this, index, e), options.delay * 1000);
             this.active = true;
         },
 
@@ -192,7 +174,7 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
             var options = this.elements[index].options;
             var tooltp = this.elements[index].tooltip;
             if (tooltp) {
-                if (options.where === 'mousemove' && this.active) {
+                if (this._getOpt(index, 'where') === 'mousemove' && this.active) {
                     var mPos = this.getMousePosition(e);
                     this.setPosition(index, (mPos[0] + options.leftElm), (mPos[1] + options.topElm));
                 }
