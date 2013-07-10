@@ -28,6 +28,8 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
                     leftElm: 20,
                     topElm: 20,
                     delay: 0,
+                    template: null,
+                    templatefield: null,
                     text: '',
                 }, options || {});
 
@@ -46,9 +48,6 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
             }
         },
         _initEach: function(elm, index) {
-            this.options.delay = (this.options.delay * 1000);
-            elm = Aux.elOrSelector(elm);
-
             InkEvent.observe(elm, 'mouseover', Ink.bindEvent(this.onMouseOver, this, index));
             InkEvent.observe(elm, 'mouseout', Ink.bindEvent(this.onMouseOut, this, index));
             InkEvent.observe(elm, 'mousemove', Ink.bindEvent(this.onMouseMove, this, index));
@@ -66,7 +65,17 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
             }
             var element = this.elements[index].element;
             var options = this.elements[index].options;
-            var tooltip = this.elements[index].tooltip = document.createElement('DIV');
+            
+            var template = this._getOpt(index, 'template');
+            var tooltip;
+
+            if (template) {
+                tooltip = Aux.elOrSelector(template, 'options.template');
+            } else {
+                tooltip = document.createElement('DIV');
+            }
+
+            this.elements[index].tooltip = tooltip;
             tooltip.style.display = 'block';
             tooltip.style.position = 'absolute';
             tooltip.style.zIndex = this._getOpt(index, 'zIndex');
@@ -123,7 +132,7 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
 
             this.sto = setTimeout(function() {
                 this.writeContent(index);
-            }.bind(this), options.delay);  // TODO Function#bind is es4
+            }.bind(this), options.delay * 1000);  // TODO Function#bind is es4
 
             this.active = true;
         },

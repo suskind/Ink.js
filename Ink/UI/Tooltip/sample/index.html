@@ -30,9 +30,21 @@
     <li>mousemove</li>
 </ul>
 
+<p>Custom templates:</p>
+
+<ul style="width: 200px; border: 1px solid gray;" class="tooltip-list">
+    <li data-tip-template="#tooltip-template" data-tip-templatefield="span" data-tip-text="Something I wish to write in that span">data-tip-template="#tooltip-template" data-tip-templatefield="span" data-tip-text="Something I wish to write in that span"</li>
+</ul>
+
+<div id="tooltip-template" style="border: 1px solid gray; background-color: #eee;">
+    <h1>A random tooltip template</h1>
+    <hr/>
+    <p><span>Write tooltip text here in this span, please</span></p>
+</div>
+
 <script type="text/javascript">
     Ink.requireModules(['Ink.UI.Tooltip_1'], function (Tooltip) {
-        new Tooltip('.tooltip-list li', {template: '#t', text: 'This is a tooltip!'});
+        new Tooltip('.tooltip-list li', {text: 'This is a tooltip!'});
     });
 </script>
 
