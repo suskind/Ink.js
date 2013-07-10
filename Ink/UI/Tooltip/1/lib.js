@@ -19,8 +19,6 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
             var elements;
 
             this.sto = false;
-            this.iframe = false;
-            this.createHackIframe();
 
             this.options = Ink.extendObj({
                     //elementAttr: 'element',
@@ -31,7 +29,6 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
                     topElm: 20,
                     delay: 0,
                     text: '',
-                    hasIframe: true,
                 }, options || {});
 
             if (typeof element === 'string') {
@@ -103,7 +100,7 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
         _getOpt: function (index, option) {
             ok(index + 1);ok(option);
             var dataAttrVal = this.elements[index].element.getAttribute('data-tip-' + option);
-            if (typeof dataAttrVal !== 'undefined' && dataAttrVal !== null) {
+            if (dataAttrVal /* null or "" may signify the absense of this attribute*/) {
                 return dataAttrVal;
             }
             var optionVal = this.elements[index].options[option];
@@ -119,20 +116,13 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
         onMouseOver: function(e, index) {
             var options = this.elements[index].options;
             var tooltp = this._makeTooltip(index, e);
+
             if(this.sto) {
                 clearTimeout(this.sto);
-                this.sto = false;
             }
 
             this.sto = setTimeout(function() {
                 this.writeContent(index);
-
-                if(options.hasIframe && tooltp) {
-                    this.iframe.style.width = (parseInt(InkElement.elementWidth(tooltp), 10) + 0)+'px';
-                    this.iframe.style.height = (parseInt(InkElement.elementHeight(tooltp), 10) + 0)+'px';
-                    this.iframe.style.display = 'block';
-                }
-
             }.bind(this), options.delay);  // TODO Function#bind is es4
 
             this.active = true;
@@ -142,10 +132,7 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
             var options = this.elements[index].options;
             var tooltp = this.elements[index].tooltip;
             if(tooltp) {
-                if(options.hasIframe) {
-                    this.iframe.style.display = 'none';
-                }
-                tooltp.parentNode.removeChild(tooltp);
+                InkElement.remove(tooltp);
 
                 if(this.sto) {
                     clearTimeout(this.sto);
@@ -172,7 +159,7 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
             var pageDims = this.getPageXY();
             var tooltp = this.elements[index].tooltip;
             if (tooltp) {
-                var elmDims = [parseInt(InkElement.elementWidth(tooltp), 10), parseInt(InkElement.elementHeight(tooltp), 10)];
+                var elmDims = [InkElement.elementWidth(tooltp), InkElement.elementHeight(tooltp)];
                 var scrollDim = this.getScroll();
 
                 if((elmDims[0] + left - scrollDim[0]) >= (pageDims[0] - 20)) {
@@ -180,11 +167,6 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
                 }
                 if((elmDims[1] + top - scrollDim[1]) >= (pageDims[1] - 20)) {
                     top = (top - elmDims[1] - this.elements[index].options.topElm - 10);
-                }
-
-                if(this.elements[index].options.hasIframe) {
-                    this.iframe.style.left = left+'px';
-                    this.iframe.style.top = top+'px';
                 }
 
                 tooltp.style.left = left+'px';
@@ -230,23 +212,6 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
                 this.elements[index].tooltip.innerHTML = content;
             }
         },
-
-        createHackIframe: function() {
-            this.iframe = document.createElement('IFRAME');
-            this.iframe.style.border = '0px';
-            this.iframe.style.margin = '0px';
-            this.iframe.style.padding = '0px';
-            this.iframe.style.position = 'absolute';
-            if(this.iframe.style.opacity) {
-                this.iframe.style.opacity = '1';
-            }
-            this.iframe.style.display = 'none';
-            this.iframe.style.zIndex = 999;
-
-            if(document.body) {
-                document.body.appendChild(this.iframe);
-            }
-        }
     };
 
     return Tooltip;
