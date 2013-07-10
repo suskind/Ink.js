@@ -15,6 +15,12 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
     }
 
     Tooltip.prototype = {
+        _oppositeDirections: {
+            left: 'right',
+            right: 'left',
+            up: 'down',
+            down: 'up'
+        },
         _init: function(element, options) {
             var elements;
 
@@ -28,6 +34,7 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
                     leftElm: 20,
                     topElm: 20,
                     delay: 0,
+                    color: '',
                     template: null,
                     templatefield: null,
                     text: '',
@@ -58,29 +65,55 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
             };
         },
         _makeTooltip: function (index, mouseEvent) {
-            ok(this.elements[index]);
+            if (!this.elements[index]) {
+                return;
+            }
+
             var oldtip = this.elements[index].tooltip;
             if (oldtip && oldtip.parentNode) {
                 oldtip.parentNode.removeChild(oldtip);
             }
             var element = this.elements[index].element;
             var options = this.elements[index].options;
-            
-            var template = this._getOpt(index, 'template');  // User template instead of our HTML
-            var tooltip,
-                field;
+            var where = this._getOpt(index, 'where');
 
-            if (template) {
-                tooltip = Aux.elOrSelector(template, 'options.template');
-            } else {
+            var template = this._getOpt(index, 'template');  // User template instead of our HTML
+            var templatefield = this._getOpt(index, 'templatefield');
+
+            var tooltip,  // The element we float
+                field;  // Element where we write our message. Child or same as the above
+
+            if (template) {  // The user told us of a template to use. We copy it.
+                var temp = document.createElement('DIV');
+                temp.innerHTML = Aux.elOrSelector(template, 'options.template').outerHTML;
+                tooltip = temp.firstChild;
+                
+                if (templatefield) {
+                    field = Selector.select(templatefield, tooltip);
+                    if (field) {
+                        field = field[0];
+                    } else {
+                        throw 'options.templatefield must be a valid selector within options.template';
+                    }
+                } else {
+                    field = tooltip;  // Use same
+                }
+            } else {  // We create the default structure
                 tooltip = document.createElement('DIV');
+                tooltip.setAttribute('class', 'ink-tooltip ' + this._getOpt(index, 'color'));
+                field = document.createElement('DIV');
+                field.setAttribute('class', 'content');
+                tooltip.appendChild(field);
+                var arrow = document.createElement('span');
+                arrow.setAttribute('class', this._oppositeDirections[where] || 'left');
+                tooltip.appendChild(arrow);
             }
 
             this.elements[index].tooltip = tooltip;
+            InkElement.setTextContent(field, this._getOpt(index, 'text'));
             tooltip.style.display = 'block';
             tooltip.style.position = 'absolute';
             tooltip.style.zIndex = this._getOpt(index, 'zIndex');
-            var where = this._getOpt(index, 'where');
 
             switch (where) {
                 case 'right':
@@ -103,6 +136,7 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
                     this.setPosition(index, (parseInt(pos[0], 10) + options.leftElm), (parseInt(pos[1], 10) + options.topElm));
                     break;
             }
+
             if (document.documentElement) {
                 document.documentElement.appendChild(tooltip);
             }
@@ -132,9 +166,7 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
 
             this.sto = setTimeout(function() {
                 if (this.elements[index]) {
-                    var content = this._getOpt(index, 'text');
                     this._makeTooltip(index, e);
-                    this.elements[index].tooltip.innerHTML = content;
                 }
             }.bind(this), options.delay * 1000);  // TODO Function#bind is es4
 
