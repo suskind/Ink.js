@@ -77,9 +77,7 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
             if (this.elements[index].tooltip) {
                 InkElement.remove(this.elements[index].tooltip);
             }
-            var element = this.elements[index].element;
             var where = this._getOpt(index, 'where');
-
             var template = this._getOpt(index, 'template');  // User template instead of our HTML
             var templatefield = this._getOpt(index, 'templatefield');
 
@@ -107,7 +105,7 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
                 field = document.createElement('DIV');
                 field.setAttribute('class', 'content');
 
-                var arrow = document.createElement('span');
+                var arrow = document.createElement('SPAN');
                 arrow.setAttribute('class', 'arrow ' + this._oppositeDirections[where] || 'left');
 
                 tooltip.appendChild(field);
@@ -167,12 +165,8 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
         _getOpt: function (index, option) {
             ok(index + 1);ok(option);
             var dataAttrVal = this.elements[index].element.getAttribute('data-tip-' + option);
-            if (dataAttrVal /* null or "" may signify the absense of this attribute*/) {
+            if (dataAttrVal /* either null or "" may signify the absense of this attribute*/) {
                 return dataAttrVal;
-            }
-            var optionVal = this.elements[index].options[option];
-            if (typeof optionVal !== 'undefined') {
-                return optionVal;
             }
             var instanceOption = this.options[option];
             if (typeof instanceOption !== 'undefined') {
