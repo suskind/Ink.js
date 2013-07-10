@@ -66,8 +66,9 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
             var element = this.elements[index].element;
             var options = this.elements[index].options;
             
-            var template = this._getOpt(index, 'template');
-            var tooltip;
+            var template = this._getOpt(index, 'template');  // User template instead of our HTML
+            var tooltip,
+                field;
 
             if (template) {
                 tooltip = Aux.elOrSelector(template, 'options.template');
@@ -95,7 +96,7 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
                 case 'mousemove':
                 case 'mousefix':
                     var mPos = this.getMousePosition(mouseEvent);
-                    this.setPosition(index, (parseInt(mPos[0], 10) + options.leftElm), (parseInt(mPos[1], 10) + options.topElm));
+                    this.setPosition(index, mPos[0] + options.leftElm, mPos[1] + options.topElm);
                     break;
 
                 default:
@@ -124,23 +125,25 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
         },
         onMouseOver: function(e, index) {
             var options = this.elements[index].options;
-            var tooltp = this._makeTooltip(index, e);
 
             if(this.sto) {
                 clearTimeout(this.sto);
             }
 
             this.sto = setTimeout(function() {
-                this.writeContent(index);
+                if (this.elements[index]) {
+                    var content = this._getOpt(index, 'text');
+                    this._makeTooltip(index, e);
+                    this.elements[index].tooltip.innerHTML = content;
+                }
             }.bind(this), options.delay * 1000);  // TODO Function#bind is es4
 
             this.active = true;
         },
 
         onMouseOut: function(e, index) {
-            var options = this.elements[index].options;
             var tooltp = this.elements[index].tooltip;
-            if(tooltp) {
+            if (tooltp) {
                 InkElement.remove(tooltp);
 
                 if(this.sto) {
@@ -212,14 +215,6 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
 
         getMousePosition: function(e) {
             return [parseInt(InkEvent.pointerX(e), 10), parseInt(InkEvent.pointerY(e), 10)];
-        },
-
-        writeContent: function(index) {
-            if(this.elements[index].tooltip) {
-                var content = this._getOpt(index, 'text');
-
-                this.elements[index].tooltip.innerHTML = content;
-            }
         },
     };
 
