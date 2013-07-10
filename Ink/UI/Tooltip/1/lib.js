@@ -32,7 +32,7 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
 
             this.options = Ink.extendObj({
                     //elementAttr: 'element',
-                    where: 'mousefix',  // TODO better default
+                    where: 'up',
                     zIndex: 10000,
                     hasText: true,
                     left: 10,
@@ -74,12 +74,10 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
                 return;
             }
 
-            var oldtip = this.elements[index].tooltip;
-            if (oldtip && oldtip.parentNode) {
-                oldtip.parentNode.removeChild(oldtip);
+            if (this.elements[index].tooltip) {
+                InkElement.remove(this.elements[index].tooltip);
             }
             var element = this.elements[index].element;
-            var options = this.elements[index].options;
             var where = this._getOpt(index, 'where');
 
             var template = this._getOpt(index, 'template');  // User template instead of our HTML
@@ -101,28 +99,30 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
                         throw 'options.templatefield must be a valid selector within options.template';
                     }
                 } else {
-                    field = tooltip;  // Use same
+                    field = tooltip;  // Assume same element if user did not specify a field
                 }
             } else {  // We create the default structure
                 tooltip = document.createElement('DIV');
                 tooltip.setAttribute('class', 'ink-tooltip ' + this._getOpt(index, 'color'));
                 field = document.createElement('DIV');
                 field.setAttribute('class', 'content');
-                tooltip.appendChild(field);
+
                 var arrow = document.createElement('span');
                 arrow.setAttribute('class', 'arrow ' + this._oppositeDirections[where] || 'left');
+
+                tooltip.appendChild(field);
                 tooltip.appendChild(arrow);
             }
 
             this.elements[index].tooltip = tooltip;
             InkElement.setTextContent(field, this._getOpt(index, 'text'));
             tooltip.style.display = 'block';
-            tooltip.style.zIndex = this._getOpt(index, 'zIndex');
+            tooltip.style.zIndex = this._getIntOpt(index, 'zIndex');
             
             if (where === 'mousemove' || where === 'mousefix') {
                 tooltip.style.position = 'absolute';
                 var mPos = this.getMousePosition(mouseEvent);
-                this.setPosition(index, mPos[0] + options.left, mPos[1] + options.top);
+                this._setPos(index, mPos[0] + this._getIntOpt(index, 'left'), mPos[1] + this._getIntOpt(index, 'top'));
                 if (document.documentElement) {
                     document.documentElement.appendChild(tooltip);
                 }
@@ -130,7 +130,6 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
                 var target = this.elements[index].element;
                 tooltip.style.position = 'absolute';
                 this.elements[index].tooltip = tooltip;
-                tooltip.firstChild.style.padding = '1em';
 
                 if (document.documentElement) {
                     document.documentElement.appendChild(tooltip);
@@ -141,7 +140,7 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
                     ttop = targetElementPos[1];
                 var centerh = (InkElement.elementWidth(target) / 2) - (InkElement.elementWidth(tooltip) / 2),
                     centerv = (InkElement.elementHeight(target) / 2) - (InkElement.elementHeight(tooltip) / 2);
-                var spacing = this._getOpt(index, 'spacing');
+                var spacing = this._getIntOpt(index, 'spacing');
                 ok(tleft);ok(ttop);
                 
                 if (where === 'up') {
@@ -181,14 +180,16 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
             }
             ok(false);
         },
+        _getIntOpt: function (index, option) {
+            return parseInt(this._getOpt(index, option), 10);
+        },
         onMouseOver: function(e, index) {
-            var options = this.elements[index].options;
-
             if(this.sto) {
                 clearTimeout(this.sto);
             }
             
-            this.sto = setTimeout(Ink.bind(this._makeTooltip, this, index, e), options.delay * 1000);
+            var cb = Ink.bind(this._makeTooltip, this, index, e);
+            this.sto = setTimeout(cb, this._getIntOpt(index, 'delay') * 1000);
             this.active = true;
         },
 
@@ -208,36 +209,37 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
         },
 
         onMouseMove: function(e, index) {
-            var options = this.elements[index].options;
             var tooltp = this.elements[index].tooltip;
             if (tooltp) {
                 if (this._getOpt(index, 'where') === 'mousemove' && this.active) {
                     var mPos = this.getMousePosition(e);
-                    this.setPosition(index, (mPos[0] + options.left), (mPos[1] + options.top));
+                    this._setPos(index,
+                        mPos[0] + this._getIntOpt(index, 'left'),
+                        mPos[1] + this._getIntOpt(index, 'top'));
                 }
             }
         },
 
-        setPosition: function(index, left, top) {
-            var pageDims = this.getPageXY();
+        _setPos: function(index, left, top) {
+            var pageDims = this._getPageXY();
             var tooltp = this.elements[index].tooltip;
             if (tooltp) {
                 var elmDims = [InkElement.elementWidth(tooltp), InkElement.elementHeight(tooltp)];
                 var scrollDim = this.getScroll();
 
                 if((elmDims[0] + left - scrollDim[0]) >= (pageDims[0] - 20)) {
-                    left = (left - elmDims[0] - this.elements[index].options.left - 10);
+                    left = (left - elmDims[0] - this._getIntOpt(index, 'left') - 10);
                 }
                 if((elmDims[1] + top - scrollDim[1]) >= (pageDims[1] - 20)) {
-                    top = (top - elmDims[1] - this.elements[index].options.top - 10);
+                    top = (top - elmDims[1] - this._getIntOpt(index, 'top') - 10);
                 }
 
-                tooltp.style.left = left+'px';
-                tooltp.style.top = top+'px';
+                tooltp.style.left = left + 'px';
+                tooltp.style.top = top + 'px';
             }
         },
 
-        getPageXY: function() {
+        _getPageXY: function() {
             var cWidth = 0;
             var cHeight = 0;
             if( typeof( window.innerWidth ) === 'number' ) {
