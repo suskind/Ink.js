@@ -3,7 +3,7 @@
  * @author inkdev AT sapo.pt
  * @version 1
  */
-Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink.Dom.Element_1', 'Ink.Dom.Selector_1'], function (Aux, InkEvent, InkElement, Selector) {
+Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink.Dom.Element_1', 'Ink.Dom.Selector_1', 'Ink.Dom.Browser_1'], function (Aux, InkEvent, InkElement, Selector) {
     'use strict';
 
     /**
@@ -35,8 +35,9 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
                     where: 'mousefix',  // TODO better default
                     zIndex: 10000,
                     hasText: true,
-                    leftElm: 20,
-                    topElm: 20,
+                    left: 10,
+                    top: 10,
+                    spacing: 8,
                     delay: 0,
                     color: '',
                     template: null,
@@ -68,7 +69,7 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
                 options: this.options
             };
         },
-        _makeTooltip: function (index, mouseEvent) {
+        _makeTooltip: function (index, mouseEvent) {  // TODO refactor this into like 20 functions
             if (!this.elements[index]) {
                 return;
             }
@@ -109,23 +110,59 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
                 field.setAttribute('class', 'content');
                 tooltip.appendChild(field);
                 var arrow = document.createElement('span');
-                arrow.setAttribute('class', this._oppositeDirections[where] || 'left');
+                arrow.setAttribute('class', 'arrow ' + this._oppositeDirections[where] || 'left');
                 tooltip.appendChild(arrow);
             }
 
             this.elements[index].tooltip = tooltip;
             InkElement.setTextContent(field, this._getOpt(index, 'text'));
             tooltip.style.display = 'block';
-            tooltip.style.position = 'absolute';
             tooltip.style.zIndex = this._getOpt(index, 'zIndex');
             
             if (where === 'mousemove' || where === 'mousefix') {
+                tooltip.style.position = 'absolute';
                 var mPos = this.getMousePosition(mouseEvent);
-                this.setPosition(index, mPos[0] + options.leftElm, mPos[1] + options.topElm);
-            }
+                this.setPosition(index, mPos[0] + options.left, mPos[1] + options.top);
+                if (document.documentElement) {
+                    document.documentElement.appendChild(tooltip);
+                }
+            } else if (where.match(/(up|down|left|right)/)) {
+                var target = this.elements[index].element;
+                tooltip.style.position = 'absolute';
+                this.elements[index].tooltip = tooltip;
+                tooltip.firstChild.style.padding = '1em';
 
-            if (document.documentElement) {
-                document.documentElement.appendChild(tooltip);
+                if (document.documentElement) {
+                    document.documentElement.appendChild(tooltip);
+                }
+                
+                var targetElementPos = InkElement.offset2(target);
+                var tleft = targetElementPos[0],
+                    ttop = targetElementPos[1];
+                var centerh = (InkElement.elementWidth(target) / 2) - (InkElement.elementWidth(tooltip) / 2),
+                    centerv = (InkElement.elementHeight(target) / 2) - (InkElement.elementHeight(tooltip) / 2);
+                var spacing = this._getOpt(index, 'spacing');
+                ok(tleft);ok(ttop);
+                
+                if (where === 'up') {
+                    ttop -= InkElement.elementHeight(tooltip);
+                    ttop -= spacing;
+                    tleft += centerh;
+                } else if (where === 'down') {
+                    ttop += InkElement.elementHeight(target);
+                    ttop += spacing;
+                    tleft += centerh;
+                } else if (where === 'left') {
+                    tleft -= InkElement.elementWidth(tooltip);
+                    tleft -= spacing;
+                    ttop += centerv;
+                } else if (where === 'right') {
+                    tleft += InkElement.elementWidth(target);
+                    tleft += spacing;
+                    ttop += centerv;
+                }
+                tooltip.style.left = tleft + 'px';
+                tooltip.style.top = ttop + 'px';
             }
         },
         _getOpt: function (index, option) {
@@ -176,7 +213,7 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
             if (tooltp) {
                 if (this._getOpt(index, 'where') === 'mousemove' && this.active) {
                     var mPos = this.getMousePosition(e);
-                    this.setPosition(index, (mPos[0] + options.leftElm), (mPos[1] + options.topElm));
+                    this.setPosition(index, (mPos[0] + options.left), (mPos[1] + options.top));
                 }
             }
         },
@@ -189,10 +226,10 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
                 var scrollDim = this.getScroll();
 
                 if((elmDims[0] + left - scrollDim[0]) >= (pageDims[0] - 20)) {
-                    left = (left - elmDims[0] - this.elements[index].options.leftElm - 10);
+                    left = (left - elmDims[0] - this.elements[index].options.left - 10);
                 }
                 if((elmDims[1] + top - scrollDim[1]) >= (pageDims[1] - 20)) {
-                    top = (top - elmDims[1] - this.elements[index].options.topElm - 10);
+                    top = (top - elmDims[1] - this.elements[index].options.top - 10);
                 }
 
                 tooltp.style.left = left+'px';
