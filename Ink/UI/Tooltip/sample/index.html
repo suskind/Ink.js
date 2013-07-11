@@ -18,6 +18,7 @@
 
 <h1>Tooltip - demo</h1>
 
+
 <p>You can configure the text</p>
 
 <ul class="tooltip-list">
@@ -36,6 +37,7 @@
     <li data-tip-where="mousefix">data-tip-where="mousefix"</li>
 </ul>
 
+
 <p>Different colors</p>
 
 <ul class="tooltip-list">
@@ -47,6 +49,7 @@
     <li data-tip-color="black">data-tip-color="black"</li>
 </ul>
 
+
 <p>Custom templates:</p>
 
 <div id="tooltip-template" style="border: 1px solid gray; background-color: #eee; float:right">
@@ -55,13 +58,13 @@
     <p><span>Write tooltip text here in this span, please</span></p>
 </div>
 
-
-
 <ul class="tooltip-list">
     <li data-tip-template="#tooltip-template" data-tip-templatefield="span" data-tip-text="Something I wish to write in that span">data-tip-template="#tooltip-template" data-tip-templatefield="span" data-tip-text="Something I wish to write in that span"</li>
 </ul>
 
+
 <p>It totally works on scrolled content</p>
+
 <div class="tooltip-list" style="height: 150px; overflow-y: scroll">
     <h3>The Spanish Inquisition</h3>
     <p><b class="biggles">Biggles:</b> Er.... Nobody...um....</p>
@@ -70,6 +73,17 @@
     <p><b class="ximinez">Ximinez:</b> Inquisition.</p>
     <p><b class="biggles">Biggles:</b> I know, I know! Nobody expects the Spanish Inquisition.</p>
 </div>
+
+
+<p>You can specify whether you want it to fade in and out, and how much time (in seconds) you want it to take.</p>
+
+<ul class="tooltip-list">
+    <li data-tip-fade="0">data-tip-fade="0"</li>
+    <li data-tip-fade="0.2">data-tip-fade="0.2"</li>
+    <li data-tip-fade="0.5">data-tip-fade="0.5"</li>
+    <li data-tip-fade="1">data-tip-fade="1"</li>
+    <li data-tip-fade="10">data-tip-fade="10"</li>
+</ul>
 
 <script type="text/javascript">
     Ink.requireModules(['Ink.UI.Tooltip_1'], function (Tooltip) {
