@@ -23,15 +23,16 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
     }
 
     var transitionSupport;
-    (function () {
+    (function () {  // Feature detection
         var test = document.createElement('DIV');
-        var stl = test.style;
-        transitionSupport = (
-            typeof stl.transition !== 'undefined' ||
-            typeof stl.oTransition !== 'undefined' ||
-            typeof stl.msTransition !== 'undefined' ||
-            typeof stl.mozTransition !== 'undefined' ||
-            typeof stl.webkitTransition !== 'undefined');
+        var names = ['transition', 'oTransition', 'msTransition', 'mozTransition',
+            'webkitTransition'];
+        for (var i = 0; i < names.length; i++) {
+            if (typeof test.style[names[i] + 'Duration'] !== 'undefined') {
+                transitionSupport = names[i] + 'Duration';
+                break;
+            }
+        }
     }());
 
     Tooltip.prototype = {
@@ -86,7 +87,7 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
             up: 'down',
             down: 'up'
         },
-        _fadeOutTime: 150,  // From the css transition
+        _fadeOutTime: 150,  // From CSS. TODO use .style to fetch that
         _init: function(root, elm) {
             InkEvent.observe(elm, 'mouseover', Ink.bindEvent(this._onMouseOver, this));
             InkEvent.observe(elm, 'mouseout', Ink.bindEvent(this._onMouseOut, this));
@@ -194,14 +195,15 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
             this.tooltip = tooltip;
         },
         _removeTooltip: function() {
-            var tooltip = this.tooltip;
+            var tooltip = this.tooltip;  // avoids race condition because of setTimeout
             if (!this.tooltip) {return;}
 
             var remove = Ink.bind(InkElement.remove, {}, this.tooltip);
 
             if (this._getOpt('where') !== 'mousemove' && transitionSupport) {
                 tooltip.style.opacity = 0;
-                setTimeout(remove, this._fadeOutTime);  // remove() will operate on the present tooltip, even though it will be removed
+                // remove() will operate on correct tooltip, although this.tooltip === null then
+                setTimeout(remove, this._fadeOutTime);
             } else {
                 remove();
             }
