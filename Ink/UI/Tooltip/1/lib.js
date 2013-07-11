@@ -22,6 +22,18 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
         if (!v) {throw new Error(v);}
     }
 
+    var transitionSupport;
+    (function () {
+        var test = document.createElement('DIV');
+        var stl = test.style;
+        transitionSupport = (
+            typeof stl.transition !== 'undefined' ||
+            typeof stl.oTransition !== 'undefined' ||
+            typeof stl.msTransition !== 'undefined' ||
+            typeof stl.mozTransition !== 'undefined' ||
+            typeof stl.webkitTransition !== 'undefined');
+    }());
+
     Tooltip.prototype = {
         _init: function(element, options) {
             var elements;
@@ -73,6 +85,7 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
             up: 'down',
             down: 'up'
         },
+        _fadeOutTime: 150,  // From the css transition
         _init: function(root, elm) {
             InkEvent.observe(elm, 'mouseover', Ink.bindEvent(this._onMouseOver, this));
             InkEvent.observe(elm, 'mouseout', Ink.bindEvent(this._onMouseOut, this));
@@ -120,18 +133,23 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
 
             InkElement.setTextContent(field, this._getOpt('text'));
             tooltip.style.display = 'block';
+            tooltip.style.position = 'absolute';
             tooltip.style.zIndex = this._getIntOpt('zIndex');
+
+            if (transitionSupport) {
+                tooltip.style.opacity = '0';
+                setTimeout(function () {
+                    tooltip.style.opacity = '1';
+                }, 0);
+            }
             
             if (where === 'mousemove' || where === 'mousefix') {
-                tooltip.style.position = 'absolute';
                 var mPos = this._getMousePosition(mouseEvent);
                 this._setPos(mPos[0] + this._getIntOpt('left'), mPos[1] + this._getIntOpt('top'));
                 if (document.documentElement) {
                     document.documentElement.appendChild(tooltip);
                 }
             } else if (where.match(/(up|down|left|right)/)) {
-                tooltip.style.position = 'absolute';
-
                 if (document.documentElement) {
                     document.documentElement.appendChild(tooltip);
                 }
@@ -172,6 +190,28 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
             }
             this.tooltip = tooltip;
         },
+        _removeTooltip: function() {
+            if (!this.tooltip) {return;}
+            var remove = Ink.bind(function () {
+                    if (this.tooltip) {
+                        InkElement.remove(this.tooltip);
+                        this.tooltip = null;
+                    }
+                }, this);
+            if (this._getOpt('where') !== 'mousemove' && transitionSupport) {
+                this.tooltip.style.opacity = 0;
+                setTimeout(remove, this._fadeOutTime);
+            } else {
+                remove();
+            }
+            
+            if (this.sto) {
+                clearTimeout(this.sto);
+                this.sto = false;
+            }
+
+            this.active = false;
+        },
         _getOpt: function (option) {
             var dataAttrVal = this.element.getAttribute('data-tip-' + option);
             if (dataAttrVal /* either null or "" may signify the absense of this attribute*/) {
@@ -206,19 +246,6 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
             this.sto = setTimeout(cb, this._getIntOpt('delay') * 1000);
             this.active = true;
         },
-        _onMouseOut: function() {
-            if (this.tooltip) {
-                InkElement.remove(this.tooltip);
-
-                if(this.sto) {
-                    clearTimeout(this.sto);
-                    this.sto = false;
-                }
-
-                this.active = false;
-            }
-            this.tooltip = null;
-        },
         _onMouseMove: function(e) {
             if (this.tooltip) {
                 if (this._getOpt('where') === 'mousemove' && this.active) {
@@ -227,6 +254,9 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
                                  mPos[1] + this._getIntOpt('top'));
                 }
             }
+        },
+        _onMouseOut: function () {
+            this._removeTooltip();
         },
         _setPos: function(left, top) {
             var pageDims = this._getPageXY();
