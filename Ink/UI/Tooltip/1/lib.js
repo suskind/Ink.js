@@ -50,6 +50,7 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
                     spacing: 8,
                     delay: 0,
                     color: '',
+                    timeout: 3000,
                     template: null,
                     templatefield: null,
                     text: '',
@@ -191,16 +192,14 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
             this.tooltip = tooltip;
         },
         _removeTooltip: function() {
+            var tooltip = this.tooltip;
             if (!this.tooltip) {return;}
-            var remove = Ink.bind(function () {
-                    if (this.tooltip) {
-                        InkElement.remove(this.tooltip);
-                        this.tooltip = null;
-                    }
-                }, this);
+
+            var remove = Ink.bind(InkElement.remove, {}, this.tooltip);
+
             if (this._getOpt('where') !== 'mousemove' && transitionSupport) {
-                this.tooltip.style.opacity = 0;
-                setTimeout(remove, this._fadeOutTime);
+                tooltip.style.opacity = 0;
+                setTimeout(remove, this._fadeOutTime);  // remove() will operate on the present tooltip, even though it will be removed
             } else {
                 remove();
             }
@@ -211,6 +210,7 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
             }
 
             this.active = false;
+            this.tooltip = null;
         },
         _getOpt: function (option) {
             var dataAttrVal = this.element.getAttribute('data-tip-' + option);
