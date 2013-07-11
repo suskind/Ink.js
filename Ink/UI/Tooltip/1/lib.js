@@ -10,7 +10,7 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
      * @class Tooltip
      * @version 1
      */
-    function Tooltip (element, options) {
+    function Tooltip(element, options) {
         this._init(element, options || {});
     }
 
@@ -55,11 +55,11 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
                     spacing: 8,
                     delay: 0,
                     color: '',
-                    timeout: 3000,
+                    timeout: 3000, // TODO use this.
                     template: null,
                     templatefield: null,
                     fade: 0.3,
-                    text: '',
+                    text: ''
                 }, options || {});
 
             if (typeof element === 'string') {
@@ -239,7 +239,7 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
             this.tooltip = null;
         },
         _getOpt: function (option) {
-            var dataAttrVal = this.element.getAttribute('data-tip-' + option);
+            var dataAttrVal = this.element.getAttribute('data-tip-' + option);  // TODO use that data dict
             if (dataAttrVal /* either null or "" may signify the absense of this attribute*/) {
                 return dataAttrVal;
             }
