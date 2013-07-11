@@ -185,9 +185,11 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
                 tooltip.style.left = (tleft - scrl[0]) + 'px';
                 tooltip.style.top = (ttop - scrl[1]) + 'px';
             }
+            
+            InkEvent.observe(tooltip, 'mouseover', Ink.bindEvent(this._onTooltipMouseOver, this));
 
             if (this.tooltip) {
-                InkElement.remove(this.tooltip);
+                this._removeTooltip();
             }
             this.tooltip = tooltip;
         },
@@ -257,6 +259,11 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
         },
         _onMouseOut: function () {
             this._removeTooltip();
+        },
+        _onTooltipMouseOver: function () {
+            if (this.tooltip) {  // If tooltip is already being removed, this has no effect
+                this._removeTooltip();
+            }
         },
         _setPos: function(left, top) {
             var pageDims = this._getPageXY();
