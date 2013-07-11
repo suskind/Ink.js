@@ -16,8 +16,6 @@
 </head>
 <body> 
 
-<div id="t"></div>
-
 <h1>Tooltip - demo</h1>
 
 <p>You can configure the text</p>
@@ -51,19 +49,33 @@
 
 <p>Custom templates:</p>
 
+<div id="tooltip-template" style="border: 1px solid gray; background-color: #eee; float:right">
+    <p><strong>A random tooltip template</strong></p>
+    <hr/>
+    <p><span>Write tooltip text here in this span, please</span></p>
+</div>
+
+
+
 <ul class="tooltip-list">
     <li data-tip-template="#tooltip-template" data-tip-templatefield="span" data-tip-text="Something I wish to write in that span">data-tip-template="#tooltip-template" data-tip-templatefield="span" data-tip-text="Something I wish to write in that span"</li>
 </ul>
 
-<div id="tooltip-template" style="border: 1px solid gray; background-color: #eee;">
-    <h1>A random tooltip template</h1>
-    <hr/>
-    <p><span>Write tooltip text here in this span, please</span></p>
+<p>It totally works on scrolled content</p>
+<div class="tooltip-list" style="height: 150px; overflow-y: scroll">
+    <h3>The Spanish Inquisition</h3>
+    <p><b class="biggles">Biggles:</b> Er.... Nobody...um....</p>
+    <p><b class="ximinez">Ximinez:</b> Expects...</p>
+    <p><b class="biggles">Biggles:</b> Expects... Nobody expects the...um...the Spanish...um...</p>
+    <p><b class="ximinez">Ximinez:</b> Inquisition.</p>
+    <p><b class="biggles">Biggles:</b> I know, I know! Nobody expects the Spanish Inquisition.</p>
 </div>
 
 <script type="text/javascript">
     Ink.requireModules(['Ink.UI.Tooltip_1'], function (Tooltip) {
         new Tooltip('.tooltip-list li', {text: 'This is a tooltip!'});
+        new Tooltip('.biggles', {text: 'Biggles'});
+        new Tooltip('.ximinez', {text: 'Ximinez'});
     });
 </script>
 

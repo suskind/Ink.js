@@ -139,10 +139,10 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
                 var targetElementPos = InkElement.offset2(this.element);
                 var tleft = targetElementPos[0],
                     ttop = targetElementPos[1];
+
                 var centerh = (InkElement.elementWidth(this.element) / 2) - (InkElement.elementWidth(tooltip) / 2),
                     centerv = (InkElement.elementHeight(this.element) / 2) - (InkElement.elementHeight(tooltip) / 2);
                 var spacing = this._getIntOpt('spacing');
-                ok(tleft);ok(ttop);
                 
                 if (where === 'up') {
                     ttop -= InkElement.elementHeight(tooltip);
@@ -161,8 +161,10 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
                     tleft += spacing;
                     ttop += centerv;
                 }
-                tooltip.style.left = tleft + 'px';
-                tooltip.style.top = ttop + 'px';
+
+                var scrl = this._getLocalScroll();
+                tooltip.style.left = (tleft - scrl[0]) + 'px';
+                tooltip.style.top = (ttop - scrl[1]) + 'px';
             }
 
             if (this.tooltip) {
@@ -267,6 +269,23 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
             } else {
                 return [0, 0];
             }
+        },
+        _getLocalScroll: function () {
+            var cumScroll = [0, 0];
+            var cursor = this.element.parentNode;
+            var left, top;
+            while (cursor && cursor !== document.documentElement && cursor !== document.body) {
+                left = cursor.scrollLeft;
+                top = cursor.scrollTop;
+                if (left) {
+                    cumScroll[0] += left;
+                }
+                if (top) {
+                    cumScroll[1] += top;
+                }
+                cursor = cursor.parentNode;
+            }
+            return cumScroll;
         },
         _getMousePosition: function(e) {
             return [parseInt(InkEvent.pointerX(e), 10), parseInt(InkEvent.pointerY(e), 10)];
