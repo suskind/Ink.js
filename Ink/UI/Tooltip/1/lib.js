@@ -3,7 +3,7 @@
  * @author inkdev AT sapo.pt
  * @version 1
  */
-Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink.Dom.Element_1', 'Ink.Dom.Selector_1', 'Ink.Dom.Browser_1'], function (Aux, InkEvent, InkElement, Selector) {
+Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink.Dom.Element_1', 'Ink.Dom.Selector_1', 'Ink.Util.Array_1', 'Ink.Dom.Browser_1'], function (Aux, InkEvent, InkElement, Selector, InkArray) {
     'use strict';
 
     /**
@@ -51,9 +51,18 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
                 throw 'Element expected';
             }
 
+            this.tooltips = [];
+
             for (var i = 0, len = elements.length; i < len; i++) {
-                new EachTooltip(this, elements[i]);
+                this.tooltips[i] = new EachTooltip(this, elements[i]);
             }
+        },
+        destroy: function () {
+            InkArray.each(this.tooltips, function (tooltip) {
+                tooltip._destroy();
+            });
+            this.tooltips = null;
+            this.options = null;
         }
     };
 
@@ -65,9 +74,9 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
             down: 'up'
         },
         _init: function(root, elm) {
-            InkEvent.observe(elm, 'mouseover', Ink.bindEvent(this.onMouseOver, this));
-            InkEvent.observe(elm, 'mouseout', Ink.bindEvent(this.onMouseOut, this));
-            InkEvent.observe(elm, 'mousemove', Ink.bindEvent(this.onMouseMove, this));
+            InkEvent.observe(elm, 'mouseover', Ink.bindEvent(this._onMouseOver, this));
+            InkEvent.observe(elm, 'mouseout', Ink.bindEvent(this._onMouseOut, this));
+            InkEvent.observe(elm, 'mousemove', Ink.bindEvent(this._onMouseMove, this));
 
             this.root = root;
             this.element = elm;
@@ -115,7 +124,7 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
             
             if (where === 'mousemove' || where === 'mousefix') {
                 tooltip.style.position = 'absolute';
-                var mPos = this.getMousePosition(mouseEvent);
+                var mPos = this._getMousePosition(mouseEvent);
                 this._setPos(mPos[0] + this._getIntOpt('left'), mPos[1] + this._getIntOpt('top'));
                 if (document.documentElement) {
                     document.documentElement.appendChild(tooltip);
@@ -175,7 +184,18 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
         _getIntOpt: function (option) {
             return parseInt(this._getOpt(option), 10);
         },
-        onMouseOver: function(e) {
+        _destroy: function () {
+            if (this.tooltip) {
+                InkElement.remove(this.tooltip);
+            }
+            if (this.sto) {
+                clearTimeout(this.sto);
+            }
+            this.root = null;  // Cyclic reference = memory leaks
+            this.element = null;
+            this.tooltip = null;
+        },
+        _onMouseOver: function(e) {
             if(this.sto) {
                 clearTimeout(this.sto);
             }
@@ -184,8 +204,7 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
             this.sto = setTimeout(cb, this._getIntOpt('delay') * 1000);
             this.active = true;
         },
-
-        onMouseOut: function() {
+        _onMouseOut: function() {
             if (this.tooltip) {
                 InkElement.remove(this.tooltip);
 
@@ -198,22 +217,20 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
             }
             this.tooltip = null;
         },
-
-        onMouseMove: function(e) {
+        _onMouseMove: function(e) {
             if (this.tooltip) {
                 if (this._getOpt('where') === 'mousemove' && this.active) {
-                    var mPos = this.getMousePosition(e);
+                    var mPos = this._getMousePosition(e);
                     this._setPos(mPos[0] + this._getIntOpt('left'),
                                  mPos[1] + this._getIntOpt('top'));
                 }
             }
         },
-
         _setPos: function(left, top) {
             var pageDims = this._getPageXY();
             if (this.tooltip) {
                 var elmDims = [InkElement.elementWidth(this.tooltip), InkElement.elementHeight(this.tooltip)];
-                var scrollDim = this.getScroll();
+                var scrollDim = this._getScroll();
 
                 if((elmDims[0] + left - scrollDim[0]) >= (pageDims[0] - 20)) {
                     left = (left - elmDims[0] - this._getIntOpt('left') - 10);
@@ -226,7 +243,6 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
                 this.tooltip.style.top = top + 'px';
             }
         },
-
         _getPageXY: function() {
             var cWidth = 0;
             var cHeight = 0;
@@ -242,8 +258,7 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
             }
             return [parseInt(cWidth, 10), parseInt(cHeight, 10)];
         },
-
-        getScroll: function() {
+        _getScroll: function() {
             var dd = document.documentElement, db = document.body;
             if (dd && (dd.scrollLeft || dd.scrollTop)) {
                 return [dd.scrollLeft, dd.scrollTop];
@@ -253,8 +268,7 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
                 return [0, 0];
             }
         },
-
-        getMousePosition: function(e) {
+        _getMousePosition: function(e) {
             return [parseInt(InkEvent.pointerX(e), 10), parseInt(InkEvent.pointerY(e), 10)];
         }
     };
