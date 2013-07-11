@@ -102,10 +102,24 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
             this.tooltip = null;
         },
         _makeTooltip: function (mouseEvent) {  // TODO refactor this into like 20 functions
-            var where = this._getOpt('where'),
-                template = this._getOpt('template'),  // User template instead of our HTML
-                templatefield = this._getOpt('templatefield'),
+            var tooltip;
+            
+            tooltip = this._createTooltipElement();
+            this._fadeInTooltipElement(tooltip);
+            this._placeTooltipElement(tooltip, mouseEvent);
 
+            InkEvent.observe(tooltip, 'mouseover', Ink.bindEvent(this._onTooltipMouseOver, this));
+
+            if (this.tooltip) {
+                this._removeTooltip();
+            }
+            this.tooltip = tooltip;
+        },
+        _createTooltipElement: function () {
+            var template = this._getOpt('template'),  // User template instead of our HTML
+                templatefield = this._getOpt('templatefield'),
+                
+                where = this._getOpt('where'),
                 tooltip,  // The element we float
                 field;  // Element where we write our message. Child or same as the above
 
@@ -136,12 +150,15 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
                 tooltip.appendChild(field);
                 tooltip.appendChild(arrow);
             }
-
+            
             InkElement.setTextContent(field, this._getOpt('text'));
             tooltip.style.display = 'block';
             tooltip.style.position = 'absolute';
             tooltip.style.zIndex = this._getIntOpt('zIndex');
 
+            return tooltip;
+        },
+        _fadeInTooltipElement: function (tooltip) {
             var fadeTime = this._getFloatOpt('fade');
             if (transitionDurationName && fadeTime) {
                 tooltip.style.opacity = '0';
@@ -152,6 +169,10 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
                     tooltip.style.opacity = '1';
                 }, 0);
             }
+        },
+        _placeTooltipElement: function (tooltip, mouseEvent) {
+            var where = this._getOpt('where');
+            
             
             if (where === 'mousemove' || where === 'mousefix') {
                 var mPos = this._getMousePosition(mouseEvent);
@@ -194,13 +215,6 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
                 tooltip.style.left = (tleft - scrl[0]) + 'px';
                 tooltip.style.top = (ttop - scrl[1]) + 'px';
             }
-            
-            InkEvent.observe(tooltip, 'mouseover', Ink.bindEvent(this._onTooltipMouseOver, this));
-
-            if (this.tooltip) {
-                this._removeTooltip();
-            }
-            this.tooltip = tooltip;
         },
         _removeTooltip: function() {
             var tooltip = this.tooltip;  // avoids race condition because of setTimeout
