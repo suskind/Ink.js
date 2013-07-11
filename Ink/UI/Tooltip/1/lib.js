@@ -22,7 +22,9 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
         if (!v) {throw new Error(v);}
     }
 
-    var transitionDurationName;
+    var transitionDurationName,
+        transitionPropertyName,
+        transitionTimingFunctionName;
     (function () {  // Feature detection
         var test = document.createElement('DIV');
         var names = ['transition', 'oTransition', 'msTransition', 'mozTransition',
@@ -30,6 +32,8 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
         for (var i = 0; i < names.length; i++) {
             if (typeof test.style[names[i] + 'Duration'] !== 'undefined') {
                 transitionDurationName = names[i] + 'Duration';
+                transitionPropertyName = names[i] + 'Property';
+                transitionTimingFunctionName = names[i] + 'TimingFunction';
                 break;
             }
         }
@@ -142,6 +146,8 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
             if (transitionDurationName && fadeTime) {
                 tooltip.style.opacity = '0';
                 tooltip.style[transitionDurationName] = fadeTime + 's';
+                tooltip.style[transitionPropertyName] = 'opacity';
+                tooltip.style[transitionTimingFunctionName] = 'ease-in-out';
                 setTimeout(function () {
                     tooltip.style.opacity = '1';
                 }, 0);
