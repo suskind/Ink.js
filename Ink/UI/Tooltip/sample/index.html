@@ -20,6 +20,26 @@
 
 <h1>Tooltip - demo</h1>
 
+<h2>How to use</h2>
+
+<p></p>
+
+<pre><code>Ink.requireModules(['Ink.UI.Tooltip_1'], function (Tooltip) {
+    new Tooltip('.tooltip-list li', {text: 'This is a tooltip!'});
+    new Tooltip('.biggles', {text: 'Biggles'});
+    new Tooltip('.ximinez', {text: 'Ximinez'});
+});
+</code></pre>
+
+
+<h2>Options</h2>
+
+<p>You can define options either through the second argument to the Tooltip constructor, or as data-attributes in each target element. Options set through data-attributes all start with <code>data-tip</code>, and are prioritized over options passed into the Tooltip constructor.</p>
+
+
+<h2>Demos</h2>
+
+<p>Here you can see several lists where each item has options on it through data-attributes. Hover your mouse on each example to see the tooltips (applied with the above code)</p>
 
 <p>You can configure the text</p>
 

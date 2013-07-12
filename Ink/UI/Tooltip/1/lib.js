@@ -18,10 +18,6 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
         this._init(root, elm);
     }
 
-    function ok(v) {  // Sanity check. TODO remove
-        if (!v) {throw new Error(v);}
-    }
-
     var transitionDurationName,
         transitionPropertyName,
         transitionTimingFunctionName;
@@ -255,7 +251,6 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
             if (typeof instanceOption !== 'undefined') {
                 return instanceOption;
             }
-            ok(false);
         },
         _getIntOpt: function (option) {
             return parseInt(this._getOpt(option), 10);
