@@ -6,10 +6,13 @@
 Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink.Dom.Element_1', 'Ink.Dom.Selector_1', 'Ink.Util.Array_1', 'Ink.Dom.Css_1', 'Ink.Dom.Browser_1'], function (Aux, InkEvent, InkElement, Selector, InkArray, Css) {
     'use strict';
 
+    // TODO API + option docs
+    // TODO paranoid test
+
     /**
      * @class Tooltip
      * @version 1
-     */  // TODO API + option docs
+     */
     function Tooltip(element, options) {
         this._init(element, options || {});
     }
