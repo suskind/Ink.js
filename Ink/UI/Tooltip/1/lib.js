@@ -51,8 +51,9 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
                     left: 10,
                     top: 10,
                     spacing: 8,
+                    forever: 0,
                     color: '',
-                    timeout: 3000, // TODO use this.
+                    timeout: 0,
                     template: null,
                     templatefield: null,
                     fade: 0.3,
@@ -99,7 +100,6 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
             this.tooltip = null;
         },
         _makeTooltip: function (mouseEvent) {
-            // TODO does this work when a <select> is opened?
             var tooltip;
             
             tooltip = this._createTooltipElement();
@@ -107,6 +107,15 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
             this._placeTooltipElement(tooltip, mouseEvent);
 
             InkEvent.observe(tooltip, 'mouseover', Ink.bindEvent(this._onTooltipMouseOver, this));
+
+            var timeout = this._getFloatOpt('timeout');
+            if (timeout) {
+                setTimeout(Ink.bind(function () {
+                    if (this.tooltip === tooltip) {
+                        this._removeTooltip();
+                    }
+                }, this), timeout * 1000);
+            }
 
             if (this.tooltip) {
                 this._removeTooltip();
@@ -219,10 +228,10 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
             }
         },
         _removeTooltip: function() {
-            var tooltip = this.tooltip;  // avoids race condition because of setTimeout
-            if (!this.tooltip) {return;}
+            var tooltip = this.tooltip;
+            if (!tooltip) {return;}
 
-            var remove = Ink.bind(InkElement.remove, {}, this.tooltip);
+            var remove = Ink.bind(InkElement.remove, {}, tooltip);
 
             if (this._getOpt('where') !== 'mousemove' && transitionDurationName) {
                 tooltip.style.opacity = 0;
@@ -231,7 +240,6 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
             } else {
                 remove();
             }
-            
             this.tooltip = null;
         },
         _getOpt: function (option) {
@@ -269,7 +277,9 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
             }
         },
         _onMouseOut: function () {
-            this._removeTooltip();
+            if (!this._getIntOpt('forever')) {
+                this._removeTooltip();
+            }
         },
         _onTooltipMouseOver: function () {
             if (this.tooltip) {  // If tooltip is already being removed, this has no effect
