@@ -179,7 +179,7 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
             
             if (where === 'mousemove' || where === 'mousefix') {
                 var mPos = this._getMousePosition(mouseEvent);
-                this._setPos(mPos[0] + this._getIntOpt('left'), mPos[1] + this._getIntOpt('top'));
+                this._setPos(mPos[0], mPos[1]);
                 insert();
             } else if (where.match(/(up|down|left|right)/)) {
                 insert();
@@ -228,7 +228,6 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
                 remove();
             }
             
-            this.active = false;
             this.tooltip = null;
         },
         _getOpt: function (option) {
@@ -258,15 +257,11 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
         },
         _onMouseOver: function(e) {
             this._makeTooltip(e);
-            this.active = true;  // TODO remove this
         },
         _onMouseMove: function(e) {
-            if (this.tooltip) {
-                if (this._getOpt('where') === 'mousemove' && this.active) {
-                    var mPos = this._getMousePosition(e);
-                    this._setPos(mPos[0] + this._getIntOpt('left'),
-                                 mPos[1] + this._getIntOpt('top'));
-                }
+            if (this._getOpt('where') === 'mousemove' && this.tooltip) {
+                var mPos = this._getMousePosition(e);
+                this._setPos(mPos[0], mPos[1]);
             }
         },
         _onMouseOut: function () {
@@ -278,6 +273,8 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
             }
         },
         _setPos: function(left, top) {
+            left += this._getIntOpt('left');
+            top += this._getIntOpt('top');
             var pageDims = this._getPageXY();
             if (this.tooltip) {
                 var elmDims = [InkElement.elementWidth(this.tooltip), InkElement.elementHeight(this.tooltip)];
