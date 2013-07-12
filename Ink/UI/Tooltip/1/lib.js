@@ -101,8 +101,15 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
         },
         _makeTooltip: function (mouseEvent) {
             var tooltip;
-            
+
             tooltip = this._createTooltipElement();
+            
+            if (this.tooltip) {
+                this._removeTooltip();
+            }
+
+            this.tooltip = tooltip;
+
             this._fadeInTooltipElement(tooltip);
             this._placeTooltipElement(tooltip, mouseEvent);
 
@@ -116,11 +123,6 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
                     }
                 }, this), timeout * 1000);
             }
-
-            if (this.tooltip) {
-                this._removeTooltip();
-            }
-            this.tooltip = tooltip;
         },
         _createTooltipElement: function () {
             var template = this._getOpt('template'),  // User template instead of our HTML
@@ -187,7 +189,7 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
                 var bodies = document.getElementsByTagName('body');
                 var insertInto = bodies && bodies.length ? bodies[0] : document.documentElement;
 
-                insertInto.appendChild(tooltip);
+                InkElement.insertTop(tooltip, insertInto);
             };
             
             if (where === 'mousemove' || where === 'mousefix') {
