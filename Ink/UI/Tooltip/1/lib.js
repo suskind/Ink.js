@@ -232,7 +232,7 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
             this.tooltip = null;
         },
         _getOpt: function (option) {
-            var dataAttrVal = this.element.getAttribute('data-tip-' + option);  // TODO use that data dict
+            var dataAttrVal = InkElement.data(this.element)[InkElement._camelCase('tip-' + option)];
             if (dataAttrVal /* either null or "" may signify the absense of this attribute*/) {
                 return dataAttrVal;
             }
