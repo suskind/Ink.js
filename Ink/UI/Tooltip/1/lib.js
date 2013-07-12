@@ -43,8 +43,6 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
         _init: function(element, options) {
             var elements;
 
-            this.sto = false;
-
             this.options = Ink.extendObj({
                     //elementAttr: 'element',
                     where: 'up',
@@ -53,7 +51,6 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
                     left: 10,
                     top: 10,
                     spacing: 8,
-                    delay: 0,
                     color: '',
                     timeout: 3000, // TODO use this.
                     template: null,
@@ -231,11 +228,6 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
                 remove();
             }
             
-            if (this.sto) {
-                clearTimeout(this.sto);
-                this.sto = false;
-            }
-
             this.active = false;
             this.tooltip = null;
         },
@@ -260,20 +252,12 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
             if (this.tooltip) {
                 InkElement.remove(this.tooltip);
             }
-            if (this.sto) {
-                clearTimeout(this.sto);
-            }
             this.root = null;  // Cyclic reference = memory leaks
             this.element = null;
             this.tooltip = null;
         },
         _onMouseOver: function(e) {
-            if(this.sto) {
-                clearTimeout(this.sto);
-            }
-            
-            var cb = Ink.bind(this._makeTooltip, this, e);
-            this.sto = setTimeout(cb, this._getFloatOpt('delay') * 1000);  // TODO underscores
+            this._makeTooltip(e);
             this.active = true;  // TODO remove this
         },
         _onMouseMove: function(e) {
