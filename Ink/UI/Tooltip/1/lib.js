@@ -99,6 +99,7 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
             this.tooltip = null;
         },
         _makeTooltip: function (mouseEvent) {
+            // TODO does this work when a <select> is opened?
             var tooltip;
             
             tooltip = this._createTooltipElement();
