@@ -98,7 +98,7 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
             this.element = elm;
             this.tooltip = null;
         },
-        _makeTooltip: function (mouseEvent) {  // TODO refactor this into like 20 functions
+        _makeTooltip: function (mouseEvent) {
             var tooltip;
             
             tooltip = this._createTooltipElement();
