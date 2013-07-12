@@ -9,6 +9,9 @@
         <link rel="stylesheet" href="/samples/assets/css/docs.css" />
 
         <script type="text/javascript" src="/Ink/1/"></script>
+        <script type="text/javascript" src="/Ink/Dom/Selector/1/"></script>
+        <script type="text/javascript" src="/Ink/Dom/Event/1/"></script>
+        <script type="text/javascript" src="/Ink/UI/FormValidator/1/"></script>
         <script type="text/javascript" src="http://imgs.sapo.pt/ink/assets/js/prettify.js"></script>
         <style>
             pre.prettyprint{
@@ -133,8 +136,11 @@ Ink.requireModules(['Ink.Dom.Selector_1','Ink.Dom.Event_1','Ink.UI.FormValidator
             <script>
                 Ink.requireModules(['Ink.Dom.Selector_1','Ink.Dom.Event_1','Ink.UI.FormValidator_1'],function(Selector,Event,FormValidator){
                     Event.observe(Ink.s('#myform'),'submit',function( event ){
-                        Event.stop(event);
-                        FormValidator.validate(this);
+                        if(!FormValidator.validate(this)) {
+                            Event.stop(event);
+                        } else {
+                            alert('Success... submit form');
+                        }
                     });
                 });
             </script>
