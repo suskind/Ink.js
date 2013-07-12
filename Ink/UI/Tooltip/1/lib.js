@@ -155,12 +155,14 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
                 field = document.createElement('DIV');
                 Css.addClassName(field, 'content');
 
-                var arrow = document.createElement('SPAN');
-                Css.addClassName(arrow, 'arrow');
-                Css.addClassName(arrow, this._oppositeDirections[where] || 'left');
-
                 tooltip.appendChild(field);
-                tooltip.appendChild(arrow);
+                
+                if (where.match(/(up|down|left|right)/)) {
+                    var arrow = document.createElement('SPAN');
+                    Css.addClassName(arrow, 'arrow');
+                    Css.addClassName(arrow, this._oppositeDirections[where]);
+                    tooltip.appendChild(arrow);
+                }
             }
             
             InkElement.setTextContent(field, this._getOpt('text'));
