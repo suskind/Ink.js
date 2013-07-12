@@ -173,18 +173,19 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
         _placeTooltipElement: function (tooltip, mouseEvent) {
             var where = this._getOpt('where');
             
+            var insert = function () {
+                var bodies = document.getElementsByTagName('body');
+                var insertInto = bodies && bodies.length ? bodies[0] : document.documentElement;
+
+                InkElement.insertTop(tooltip, insertInto);
+            }
             
             if (where === 'mousemove' || where === 'mousefix') {
                 var mPos = this._getMousePosition(mouseEvent);
                 this._setPos(mPos[0] + this._getIntOpt('left'), mPos[1] + this._getIntOpt('top'));
-                if (document.documentElement) {
-                    document.documentElement.appendChild(tooltip);
-                }
+                insert();
             } else if (where.match(/(up|down|left|right)/)) {
-                if (document.documentElement) {
-                    document.documentElement.appendChild(tooltip);
-                }
-                
+                insert();
                 var targetElementPos = InkElement.offset2(this.element);
                 var tleft = targetElementPos[0],
                     ttop = targetElementPos[1];
@@ -272,8 +273,8 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
             }
             
             var cb = Ink.bind(this._makeTooltip, this, e);
-            this.sto = setTimeout(cb, this._getFloatOpt('delay') * 1000);
-            this.active = true;
+            this.sto = setTimeout(cb, this._getFloatOpt('delay') * 1000);  // TODO underscores
+            this.active = true;  // TODO remove this
         },
         _onMouseMove: function(e) {
             if (this.tooltip) {
