@@ -3,7 +3,7 @@
  * @author inkdev AT sapo.pt
  * @version 1
  */
-Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink.Dom.Element_1', 'Ink.Dom.Selector_1', 'Ink.Util.Array_1', 'Ink.Dom.Browser_1'], function (Aux, InkEvent, InkElement, Selector, InkArray) {
+Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink.Dom.Element_1', 'Ink.Dom.Selector_1', 'Ink.Util.Array_1', 'Ink.Dom.Css_1', 'Ink.Dom.Browser_1'], function (Aux, InkEvent, InkElement, Selector, InkArray, Css) {
     'use strict';
 
     /**
@@ -138,12 +138,15 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
                 }
             } else {  // We create the default structure
                 tooltip = document.createElement('DIV');
-                tooltip.setAttribute('class', 'ink-tooltip ' + this._getOpt('color'));
+                Css.addClassName(tooltip, 'ink-tooltip');
+                Css.addClassName(tooltip, this._getOpt('color'));
+
                 field = document.createElement('DIV');
-                field.setAttribute('class', 'content');
+                Css.addClassName(field, 'content');
 
                 var arrow = document.createElement('SPAN');
-                arrow.setAttribute('class', 'arrow ' + this._oppositeDirections[where] || 'left');
+                Css.addClassName(arrow, 'arrow');
+                Css.addClassName(arrow, this._oppositeDirections[where] || 'left');
 
                 tooltip.appendChild(field);
                 tooltip.appendChild(arrow);
@@ -175,7 +178,7 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
                 var bodies = document.getElementsByTagName('body');
                 var insertInto = bodies && bodies.length ? bodies[0] : document.documentElement;
 
-                InkElement.insertTop(tooltip, insertInto);
+                insertInto.appendChild(tooltip);
             }
             
             if (where === 'mousemove' || where === 'mousefix') {
