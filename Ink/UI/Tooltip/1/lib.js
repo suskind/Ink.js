@@ -179,7 +179,7 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
                 var insertInto = bodies && bodies.length ? bodies[0] : document.documentElement;
 
                 insertInto.appendChild(tooltip);
-            }
+            };
             
             if (where === 'mousemove' || where === 'mousefix') {
                 var mPos = this._getMousePosition(mouseEvent);
