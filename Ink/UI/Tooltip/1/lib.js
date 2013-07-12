@@ -9,7 +9,7 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
     /**
      * @class Tooltip
      * @version 1
-     */
+     */  // TODO API + option docs
     function Tooltip(element, options) {
         this._init(element, options || {});
     }
@@ -40,7 +40,6 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
             var elements;
 
             this.options = Ink.extendObj({
-                    //elementAttr: 'element',
                     where: 'up',
                     zIndex: 10000,
                     hasText: true,
@@ -50,6 +49,7 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
                     forever: 0,
                     color: '',
                     timeout: 0,
+                    delay: 0,
                     template: null,
                     templatefield: null,
                     fade: 0.3,
@@ -93,13 +93,14 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
 
             this.root = root;
             this.element = elm;
+            this._delayTimeout = null;
             this.tooltip = null;
         },
-        _makeTooltip: function (mouseEvent) {
+        _makeTooltip: function (mousePosition) {
             var tooltip;
 
             tooltip = this._createTooltipElement();
-            
+
             if (this.tooltip) {
                 this._removeTooltip();
             }
@@ -107,7 +108,7 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
             this.tooltip = tooltip;
 
             this._fadeInTooltipElement(tooltip);
-            this._placeTooltipElement(tooltip, mouseEvent);
+            this._placeTooltipElement(tooltip, mousePosition);
 
             InkEvent.observe(tooltip, 'mouseover', Ink.bindEvent(this._onTooltipMouseOver, this));
 
@@ -180,7 +181,7 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
                 }, 0);
             }
         },
-        _placeTooltipElement: function (tooltip, mouseEvent) {
+        _placeTooltipElement: function (tooltip, mousePosition) {
             var where = this._getOpt('where');
             
             var insert = function () {
@@ -191,7 +192,7 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
             };
             
             if (where === 'mousemove' || where === 'mousefix') {
-                var mPos = this._getMousePosition(mouseEvent);
+                var mPos = mousePosition;
                 this._setPos(mPos[0], mPos[1]);
                 insert();
             } else if (where.match(/(up|down|left|right)/)) {
@@ -267,7 +268,19 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
             this.tooltip = null;
         },
         _onMouseOver: function(e) {
-            this._makeTooltip(e);
+            // on IE < 10 you can't access the mouse event not even a tick after it fired
+            var mousePosition = this._getMousePosition(e);
+            var delay = this._getFloatOpt('delay');
+            if (delay) {
+                this._delayTimeout = setTimeout(Ink.bind(function () {
+                    if (!this.tooltip) {
+                        this._makeTooltip(mousePosition);
+                    }
+                    this._delayTimeout = null;
+                }, this), delay * 1000);
+            } else {
+                this._makeTooltip(mousePosition);
+            }
         },
         _onMouseMove: function(e) {
             if (this._getOpt('where') === 'mousemove' && this.tooltip) {
@@ -278,6 +291,10 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
         _onMouseOut: function () {
             if (!this._getIntOpt('forever')) {
                 this._removeTooltip();
+            }
+            if (this._delayTimeout) {
+                clearTimeout(this._delayTimeout);
+                this._delayTimeout = null;
             }
         },
         _onTooltipMouseOver: function () {
