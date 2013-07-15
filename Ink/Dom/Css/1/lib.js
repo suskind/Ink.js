@@ -276,6 +276,21 @@ Ink.createModule( 'Ink.Dom.Css', 1, [], function() {
          * @function setStyle
          * @param {DOMElement|String}  elm    DOM element or element id
          * @param {String}             style  Which css attribute to set
+         *
+         * @example
+         *     <a href="#" class="change-color">Change his color</a>
+         *     <p class="him">"He" is me</p>
+         *     <script type="text/javascript">
+         *         Ink.requireModules(['Ink.Dom.Css_1', 'Ink.Dom.Event_1', 'Ink.Dom.Selector_1'], function (Css, InkEvent, Selector) {
+         *             var btn = Selector.select('.change-color')[0];
+         *             var other = Selector.select('.him')[0];
+         *             InkEvent.observe(btn, 'click', function () {
+         *                 Css.setStyle(other, 'background-color: black');
+         *                 Css.setStyle(other, 'color: white');
+         *             });
+         *         });
+         *     </script>
+         *
          */
         setStyle: function(elm, style) {
             elm = Ink.i(elm);
