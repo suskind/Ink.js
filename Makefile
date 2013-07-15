@@ -54,7 +54,12 @@ runTests: extractTestsTree deleteTestResults
 
 docs:
 	@echo "\ngenerating documentation..."
-	@yuidoc -c .yuidoc.json --no-code -T default -q ./Ink
+	@yuidoc -c .yuidoc.json -T default -q ./Ink
+
+
+liveDocs:
+	@echo "\nstarting yuidoc server on http://localhost:4567/ ..."
+	@yuidoc --server 4567 -c .yuidoc.json -T default -q ./Ink
 
 
 showDocs: docs
