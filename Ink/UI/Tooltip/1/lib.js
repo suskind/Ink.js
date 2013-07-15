@@ -11,7 +11,7 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
      * @class Ink.UI.Tooltip
      * @constructor
      *
-     * @param {Element|Selector} target Target element or selector of elements, to display the tooltips on.
+     * @param {DOMElement|String} target Target element or selector of elements, to display the tooltips on.
      * @param {Object} [options]
      *     @param [options.text='']             Text content for the tooltip.
      *     @param [options.where='up']          Positioning for the tooltip. Options:
@@ -29,6 +29,21 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
      *
      *     @param [options.left,top=10]         (Nitty-gritty) Spacing from the target to the tooltip, when `where` is `mousemove` or `mousefix`
      *     @param [options.spacing=8]           (Nitty-gritty) Spacing between the tooltip and the target element, when `where` is `up`, `down`, `left`, or `right`
+     * 
+     * @example
+     *     <ul class="buttons">
+     *         <li class="button" data-tip-text="Create a new document">New</li>
+     *         <li class="button" data-tip-text="Exit the program">Quit</li>
+     *         <li class="button" data-tip-text="Save the document you are working on">Save</li>
+     *     </ul>
+     *     
+     *     [...]
+     *
+     *     <script>
+     *         Ink.requireModules(['Ink.UI.Tooltip_1'], function (Tooltip) {
+     *             new Tooltip('.button', {where: 'mousefix'});
+     *         });
+     *     </script>
      */
     function Tooltip(element, options) {
         this._init(element, options || {});

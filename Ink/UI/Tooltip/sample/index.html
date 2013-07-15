@@ -22,12 +22,19 @@
 
 <h2>How to use</h2>
 
-<p></p>
+<p>Require Ink.UI.Tooltip and instantiate it. The first argument to the constructor is a selector, and the second is an object containing options.</p>
 
+<p>HTML:</p>
+
+<pre><code>&lt;ul class="buttons"&gt;
+    &lt;li class="button" data-tip-text="Create a new document"&gt;New&lt;/li&gt;
+    &lt;li class="button" data-tip-text="Exit the program"&gt;Quit&lt;/li&gt;
+    &lt;li class="button" data-tip-text="Save the document you are working on"&gt;Save&lt;/li&gt;
+&lt;/ul&gt;</pre></code>
+
+<p>JavaScript:</p>
 <pre><code>Ink.requireModules(['Ink.UI.Tooltip_1'], function (Tooltip) {
-    new Tooltip('.tooltip-list li', {text: 'This is a tooltip!'});
-    new Tooltip('.biggles', {text: 'Biggles'});
-    new Tooltip('.ximinez', {text: 'Ximinez'});
+    new Tooltip('.button', {where: 'mousefix'});
 });
 </code></pre>
 
