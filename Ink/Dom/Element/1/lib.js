@@ -590,11 +590,7 @@ Ink.createModule('Ink.Dom.Element', 1, [], function() {
          * @return {DOMElement} the element with positionClone
          */
         clonePosition: function(cloneTo, cloneFrom){
-            /*
-            cloneTo.style.top = this.offsetTop(cloneFrom) + 'px';
-            cloneTo.style.left = this.offsetLeft(cloneFrom) + 'px';
-            */
-            var pos = this.offset2(cloneFrom);
+            var pos = this.offset(cloneFrom);
             cloneTo.style.left = pos[0]+'px';
             cloneTo.style.top = pos[1]+'px';
 
