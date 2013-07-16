@@ -55,10 +55,10 @@ Ink.createModule('Ink.Dom.Element', 1, [], function() {
         },
 
         /**
-         * Removes a DOM Element from DOM
+         * Removes a DOM Element from the DOM
          *
          * @function remove
-         * @param  {DOMElement} el
+         * @param {DOMElement} elm  The element to remove
          */
         remove: function(el) {
             var parEl;
