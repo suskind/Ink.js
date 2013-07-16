@@ -144,7 +144,7 @@ Ink.createModule('Ink.Dom.Element', 1, [], function() {
 
                 return offset;
             */
-           return this.offset2( elm );
+           return this.offset2(elm)[0};
         },
 
         /**
