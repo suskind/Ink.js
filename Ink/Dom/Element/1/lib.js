@@ -99,52 +99,27 @@ Ink.createModule('Ink.Dom.Element', 1, [], function() {
         /**
          * Gets the top cumulative offset for an element
          *
+         * Requires Ink.Dom.Browser
+         *
          * @function offsetTop
          * @param {DOMElement|String} elm  target element
          * @return {Number} Offset from the target element to the top of the document
          */
         offsetTop: function(elm) {
-            elm = this.get(elm);
-
-            var offset = elm.offsetTop;
-
-            while(elm.offsetParent){
-                if(elm.offsetParent.tagName.toLowerCase() !== "body"){
-                    elm = elm.offsetParent;
-                    offset += elm.offsetTop;
-                } else {
-                    break;
-                }
-            }
-
-            return offset;
+            return this.offset(elm)[1];
         },
 
         /**
          * Gets the left cumulative offset for an element
+         *
+         * Requires Ink.Dom.Browser
          *
          * @function offsetLeft
          * @param {DOMElement|String} elm  target element
          * @return {Number} Offset from the target element to the left of the document
          */
         offsetLeft: function(elm) {
-            /*
-                elm = this.get(elm);
-
-                var offset = elm.offsetLeft;
-
-                while(elm.offsetParent){
-                    if(elm.offsetParent.tagName.toLowerCase() !== "body"){
-                        elm = elm.offsetParent;
-                        offset += elm.offsetLeft;
-                    } else {
-                        break;
-                    }
-                }
-
-                return offset;
-            */
-           return this.offset2(elm)[0];
+            return this.offset(elm)[0];
         },
 
         /**
@@ -181,15 +156,50 @@ Ink.createModule('Ink.Dom.Element', 1, [], function() {
         /**
          * Gets the cumulative offset for an element
          *
+         * Returns the top left position of the element on the page
+         *
+         * Requires Ink.Dom.Browser
+         *
          * @function offset
-         * @param {DOMElement|String} elm  target element
-         * @return {Array} Array with offset from the target element to the top/left of the document
+         * @param {DOMElement|String}   elm     Target element
+         * @return {[Number, Number]}   Array with pixel distance from the target element to the top left corner of the document
          */
-        offset: function(elm) {
-            return [
-                this.offsetLeft(elm),
-                this.offsetTop(elm)
-            ];
+        offset: function(el) {
+            /*jshint boss:true */
+            el = Ink.i(el);
+            var bProp = ['border-left-width', 'border-top-width'];
+            var res = [0, 0];
+            var dRes, bRes, parent, cs;
+            var getPropPx = this._getPropPx;
+
+            var InkBrowser = Ink.getModule('Ink.Dom.Browser', 1);
+
+            do {
+                cs = window.getComputedStyle ? window.getComputedStyle(el, null) : el.currentStyle;
+                dRes = [el.offsetLeft | 0, el.offsetTop | 0];
+                bRes = [getPropPx(cs, bProp[0]), getPropPx(cs, bProp[1])];
+                if( InkBrowser.OPERA ){
+                    res[0] += dRes[0];
+                    res[1] += dRes[1];
+                } else {
+                    res[0] += dRes[0] + bRes[0];
+                    res[1] += dRes[1] + bRes[1];
+                }
+                parent = el.offsetParent;
+            } while (el = parent);
+
+            bRes = [getPropPx(cs, bProp[0]), getPropPx(cs, bProp[1])];
+
+            if (InkBrowser.GECKO) {
+                res[0] += bRes[0];
+                res[1] += bRes[1];
+            }
+            else if( !InkBrowser.OPERA ) {
+                res[0] -= bRes[0];
+                res[1] -= bRes[1];
+            }
+            
+            return res;
         },
 
         /**
@@ -225,48 +235,13 @@ Ink.createModule('Ink.Dom.Element', 1, [], function() {
         },
 
         /**
-         * Returns the top left position of the element on the page
+         * Alias for offset()
          *
          * @function offset2
-         * @param {String|DOMElement} el
-         * @return {Number[2]}
+         * @deprecated Kept for historic reasons. Use offset() instead.
          */
         offset2: function(el) {
-            /*jshint boss:true */
-            el = Ink.i(el);
-            var bProp = ['border-left-width', 'border-top-width'];
-            var res = [0, 0];
-            var dRes, bRes, parent, cs;
-            var getPropPx = this._getPropPx;
-
-            var InkBrowser = Ink.getModule('Ink.Dom.Browser',1);
-
-            do {
-                cs = window.getComputedStyle ? window.getComputedStyle(el, null) : el.currentStyle;
-                dRes = [el.offsetLeft | 0, el.offsetTop | 0];
-                bRes = [getPropPx(cs, bProp[0]), getPropPx(cs, bProp[1])];
-                if( InkBrowser.OPERA ){
-                    res[0] += dRes[0];
-                    res[1] += dRes[1];
-                } else {
-                    res[0] += dRes[0] + bRes[0];
-                    res[1] += dRes[1] + bRes[1];
-                }
-                parent = el.offsetParent;
-            } while (el = parent);
-
-            bRes = [getPropPx(cs, bProp[0]), getPropPx(cs, bProp[1])];
-
-            if (InkBrowser.GECKO) {
-                res[0] += bRes[0];
-                res[1] += bRes[1];
-            }
-            else if( !InkBrowser.OPERA ) {
-                res[0] -= bRes[0];
-                res[1] -= bRes[1];
-            }
-            
-            return res;
+            return this.offset(el);
         },
 
         /**
