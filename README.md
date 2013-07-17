@@ -40,7 +40,7 @@ There may be times when you need to use an older version of a component in the s
 Ex: 
 ```javascript
 Ink.requireModules(['Ink.Namespace.ModuleName_version'], function(ModuleName) {
-    ModuleName.moduleMethod('arg1, 'arg2');
+    ModuleName.moduleMethod('arg1', 'arg2');
 });
 ```
 
