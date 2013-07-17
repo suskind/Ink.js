@@ -1,0 +1,37 @@
+
+body {
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 16px;
+}
+
+.sapo_component_draggable {
+    border-style: solid;
+    border-color: #1F0050;
+    border-width: 2px;
+    background-color: #DDD;
+    width:  200px;
+    height: 100px;
+    overflow: hidden;
+}
+
+.sapo_component_draggable_handler {
+    height:  20px;
+    width:  100%;
+    background-color: #CCF;
+}
+
+.drops {
+    margin-left:    25%;
+    margin-top:        10%
+}
+
+.sapo_component_droppable {
+    color: #777;
+    border: 1px dotted #777;
+    width: 50%;
+    height: 200px;
+}
+
+.sapo_component_droppable_hover {
+    border: 2px solid #FAA;
+}

@@ -1,0 +1,84 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Droppable - 1</title>
+        
+        <script type="text/javascript" src="/Ink/1/"></script>
+        <script type="text/javascript">
+            Ink.setPath('Ink', '/Ink/');
+        </script>
+
+        <link rel="stylesheet" href="style.css">
+    </head>
+
+    <body>
+        <h1>Droppable - 1</h1>
+        
+        <div class="drops">
+            <div id="drop1" class="sapo_component_droppable">Drop #1</div>
+            <div id="drop2" class="sapo_component_droppable">Drop #2</div>
+        </div>
+        
+        <div id="drag1" class="sapo_component_draggable">
+            <div id="handler" class="sapo_component_draggable_handler">drag 1 w/revert</div>
+            <p>
+                The Quick Brown Fox
+                jumps over the lazy dog
+            </p>
+        </div>
+        
+        <div id="drag2" class="sapo_component_draggable">
+            <div id="handler" class="sapo_component_draggable_handler">drag 2</div>
+            <p>
+                The Quick Brown Fox
+                jumps over the lazy dog
+            </p>
+        </div>
+        
+        <script type="text/javascript">
+            Ink.requireModules(['Ink.UI.Draggable_1', 'Ink.UI.Droppable_1'], function (Draggable, Droppable) {
+                var fps;        // use a number to apply fps (ex: 15)
+                
+                new Draggable(    'drag1', {fps:fps, revert:true, mouseAnchor:'left top'}    );
+                new Draggable(    'drag2', {fps:fps,              mouseAnchor:'left top'}    );
+                
+                function onHover(draggable, element) {
+                    if (typeof console !== 'undefined') {
+                        console.log(['hovering', draggable.id, element.id]);
+                    }
+                }
+                
+                function onDrop(draggable, element, event) {
+                    if (typeof console !== 'undefined') {
+                        console.log(['dropped', draggable.id, element.id]);
+                    }
+                }
+
+                function onDropOut(draggable, element, event) {
+                    if (typeof console !== 'undefined') {
+                        console.log(['dropped out', draggable.id, element.id]);
+                    }
+                }
+
+                
+                Droppable.add(
+                    'drop1',
+                    {    hoverclass: 'sapo_component_droppable_hover',
+                        accept:        'sapo_component_draggable',
+                        onHover:    onHover,
+                        onDrop:        onDrop, 
+                        onDropOut:     onDropOut    }            
+                );
+        
+                Droppable.add(
+                    'drop2',
+                    {    hoverclass:    'sapo_component_droppable_hover',
+                        accept:        'sapo_component_draggable',
+                        onHover:    onHover,
+                        onDrop:        onDrop    }            
+                );
+            });
+        </script>
+    </body>
+</html>

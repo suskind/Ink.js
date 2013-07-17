@@ -1,0 +1,82 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Droppable - 2</title>
+        
+        <script type="text/javascript" src="/Ink/1/"></script> 
+        <script type="text/javascript">
+            Ink.setPath('Ink', '/Ink/');
+        </script> 
+        
+        <link rel="stylesheet" href="style.css">
+    </head>
+
+<body>
+    <h1>Droppable - 2</h1>
+    
+    <div class="drops">
+        <div id="drop1" class="sapo_component_droppable">Drop #1</div>
+        <div id="drop2" class="sapo_component_droppable">Drop #2</div>
+    </div>
+    
+    <div id="drag0" class="sapo_component_draggable">
+        <div id="handler" class="sapo_component_draggable_handler">without anchor</div>
+        <p>
+            The Quick Brown Fox
+            jumps over the lazy dog
+        </p>
+    </div>
+    
+    <div id="drag1" class="sapo_component_draggable">
+        <div id="handler" class="sapo_component_draggable_handler">with 'left top' anchor</div>
+        <p>
+            The Quick Brown Fox
+            jumps over the lazy dog
+        </p>
+    </div>
+    
+    <div id="drag2" class="sapo_component_draggable">
+        <div id="handler" class="sapo_component_draggable_handler">with 'center center' anchor</div>
+        <p>
+            The Quick Brown Fox
+            jumps over the lazy dog
+        </p>
+    </div>
+    
+    <script type="text/javascript">
+        Ink.requireModules(['Ink.UI.Draggable_1', 'Ink.UI.Droppable_1'], function (Draggable, Droppable) {
+            var fps;
+            var dbg = true;
+
+            new Draggable('drag0', {
+                    fps:fps, debug:dbg, revert:true
+                });
+            new Draggable('drag1', {
+                    fps:fps, debug:dbg, revert:true, mouseAnchor:'left top'
+                });
+            new Draggable('drag2', {
+                    fps:fps, debug:dbg, revert:true, mouseAnchor:'center center'
+                });
+            
+            function onDrop(draggable, element, event) {
+                if (typeof console !== 'undefined') {
+                    console.log(['dropped', draggable.id, element.id]);
+                }
+            }
+            
+            Droppable.add('drop1', {
+                    hoverclass: 'sapo_component_droppable_hover',
+                    accept: 'sapo_component_draggable',
+                    onDrop: onDrop
+                });
+
+            Droppable.add('drop2', {
+                    hoverclass: 'sapo_component_droppable_hover',
+                    accept: 'sapo_component_draggable',
+                    onDrop: onDrop
+                });
+        });
+    </script>
+    </body>
+</html>

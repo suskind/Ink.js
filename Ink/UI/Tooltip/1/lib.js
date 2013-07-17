@@ -234,7 +234,7 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
                 insert();
             } else if (where.match(/(up|down|left|right)/)) {
                 insert();
-                var targetElementPos = InkElement.offset2(this.element);
+                var targetElementPos = InkElement.offset(this.element);
                 var tleft = targetElementPos[0],
                     ttop = targetElementPos[1];
 

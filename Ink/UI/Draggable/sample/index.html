@@ -1,0 +1,82 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Draggable</title>
+        
+        <script type="text/javascript" src="/Ink/1/"></script>
+        <script type="text/javascript">
+            Ink.setPath('Ink', '/Ink/');
+        </script>
+
+        <style>
+            body {
+                font-family: Helvetica, Arial, sans-serif;
+                font-size: 16px;
+            }
+            
+            .sapo_component_draggable {
+                border-style: solid;
+                border-color: #1F0050;
+                border-width: 2px;
+                background-color: #DDD;
+                height: 100px;
+                width:  200px;
+                overflow: hidden;
+            }
+            
+            .sapo_component_draggable_handler {
+                height:  20px;
+                width:  100%;
+                background-color: #CCF;
+            }
+        </style>
+    </head>
+    
+    <body>
+        <h1>Draggable</h1>
+        
+        <div id="drag1" class="sapo_component_draggable">
+            <div id="handler" class="sapo_component_draggable_handler">drag1 w/revert</div>
+            <p>
+                The Quick Brown Fox
+                jumps over the lazy dog
+            </p>
+        </div>
+        
+        <div id="drag2" class="sapo_component_draggable">
+            <div id="handler" class="sapo_component_draggable_handler">drag2</div>
+            <p>
+                The Quick Brown Fox
+                jumps over the lazy dog
+            </p>
+        </div>
+        
+        <script>
+            Ink.requireModules(['Ink.UI.Draggable_1'], function (Draggable) {
+                function makeDebug(eventName) {
+                    return function (element, event) {
+                        if (typeof console !== 'undefined') {
+                            console.log([eventName, element.id]);
+                        }
+                    };
+                }
+            
+                new Draggable('drag1', {
+                        revert: true,
+                        onStart: makeDebug('start'),
+                        onDrag: makeDebug('drag'),
+                        onEnd: makeDebug('stop')
+                    });
+
+
+                new Draggable('drag2', {
+                        revert: false,
+                        onStart: makeDebug('start'),
+                        onDrag: makeDebug('drag'),
+                        onEnd: makeDebug('stop')
+                    });
+            });
+        </script>
+    </body>
+</html>
