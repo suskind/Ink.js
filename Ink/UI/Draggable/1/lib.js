@@ -10,7 +10,7 @@ Ink.createModule("Ink.UI.Draggable","1",["Ink.Dom.Element_1", "Ink.Dom.Event_1",
      * @version 1
      * @constructor
      * @param {String|DOMElement} selector Either a CSS Selector string, or the form's DOMElement
-     * @param {Object} [opptions] Optional object for configuring the component
+     * @param {Object} [options] Optional object for configuring the component
      *     @param {String}            [options.constraint]     - Movement constraint. None by default. Can be either vertical or horizontal.
      *     @param {Number}            [options.top]            - top limit for the draggable area
      *     @param {Number}            [options.right]          - right limit for the draggable area
