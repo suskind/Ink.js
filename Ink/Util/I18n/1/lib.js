@@ -14,8 +14,8 @@ Ink.createModule('Ink.Util.I18n', '1', [], function () {
      * @constructor
      *
      * @param {Object} langObject object containing language objects identified by their language code
-     * @param {String} langCode language code of the target language
-     * @param {Boolean} translationStringsInRoot indicates whether translation strings are in the root of langObject. This is turned off by default.
+     * @param {String} [langCode='pt_PT'] language code of the target language
+     * @param {Boolean} [translationStringsInRoot=false] indicates whether translation strings are in the root of langObject. This is turned off by default.
      */
     function I18n (langObject, langCode, translationStringsInRoot) {
         this._init(langObject, langCode, translationStringsInRoot);
@@ -26,7 +26,7 @@ Ink.createModule('Ink.Util.I18n', '1', [], function () {
             this._testMode = false;
             this._lang = langCode || 'pt_PT';
             this._strings = {};
-            this.append(langObject, translationStringsInRoot);  // Add the translation strings
+            this.append(langObject || {}, translationStringsInRoot);  // Add the translation strings
         },
         /**
          * Adds translation strings for this helper to use.
@@ -36,7 +36,7 @@ Ink.createModule('Ink.Util.I18n', '1', [], function () {
          * @param {Boolean} translationStringsInRoot indicates whether translation strings are in the root of langObject. This is turned off by default.
          */
         append: function (langObject, translationStringsInRoot) {
-            var keys = langObject[this._lang];
+            var keys = langObject[this._lang] || {};
             if (translationStringsInRoot) {
                 keys = langObject;
             }
@@ -127,11 +127,8 @@ Ink.createModule('Ink.Util.I18n', '1', [], function () {
             return original;
         },
         /**
-         * Given a singular string, a plural string, and a number, returns
+         * Given a singular string, a plural string, and a number, translates
          * either the singular or plural string.
-         *
-         * If the function receives a list of ordinal suffixes and a number,
-         * it returns the ordinal form of such number. See example below.
          *
          * @method ntext
          * @return {String}
@@ -141,37 +138,136 @@ Ink.createModule('Ink.Util.I18n', '1', [], function () {
          * @param {Number} count number which defines which word to use
          *
          * @example
-         *     Ink.Util.I18n.ntext('animal', 'animals', 0); // returns 'animals'
-         *     Ink.Util.I18n.ntext('animal', 'animals', 1); // returns 'animal'
+         *     i18n.ntext('platypus', 'platypuses', 1); // returns 'ornitorrinco'
+         *     i18n.ntext('platypus', 'platypuses', 2); // returns 'ornitorrincos'
+         */
+        ntext: function(strSin, strPlur, count) {
+            if (count === 1) {
+                return this.text(strSin);
+            } else {
+                return this.text(strPlur);
+            }
+        },
+        /**
+         * Returns the ordinal suffix of `num` (For example, 1 > 'st', 2 > 'nd', 5 > 'th', ...).
+         *
+         * This works by using transforms (in the form of Objects or Functions) passed into the
+         * function or found in the special key `_ordinals`, from the language dictionary.
+         *
+         * @method ordinal
+         *
+         * @param {Number}          num             Input number
+         * 
+         * @param {Object}          [options={}]
+         *
+         *    Maps for translating. Each of these options' fallback is found in the current
+         *    language's dictionary. The lookup order is the following:
+         *   
+         *        1. `exceptions`.
+         *        2. `byLastDigit`
+         *        3. `default`
+         *   
+         *    Each of these may be either an `Object` or a `Function`. If it's a function, it
+         *    is called, and if the function returns a string, that is used. If it's an object,
+         *    the property is looked up using `[...]`. If what is found is a string, it is used.
+         *
+         * @param {Object|Function} [options.byLastDigit={}]
+         *    If the language requires the last digit to be considered, mappings of last digits
+         *    to ordinal suffixes can be created here.
+         *
+         * @param {Object|Function} [options.exceptions={}]
+         *    Map unique, special cases to their ordinal suffixes.
+         *
+         * @returns {String}        Ordinal suffix for `num`.
          *
          * @example
-         *     var args = ['', 'st', 'nd', 'rd', 'th'];
-         *     Ink.Util.I18n.ntext(args, 1);    // returns 'st'
-         *     Ink.Util.I18n.ntext(args, 2);    // returns 'nd'
-         *     Ink.Util.I18n.ntext(args, 3);    // returns 'rd'
-         *     Ink.Util.I18n.ntext(args, 4);    // returns 'th'
-         *     Ink.Util.I18n.ntext(args, 5);    // returns 'th'
-         */
-        ntext: function(strSin, strPlur, count) {  // TODO split into ntext and toOrdinal
-            if (typeof strSin === 'string' && typeof strPlur === 'string' && typeof count === 'number') {
-                if (count === 1) {
-                    return strSin;
-                } else {
-                    return strPlur;
+         *     var i18n = new I18n({
+         *         fr: {  // 1er, 2e, 3e, 4e, ...
+         *             _ordinal: {  // The _ordinals key is special.
+         *                 default: "e", // Usually the suffix is "e" in french...
+         *                 exceptions: {
+         *                     1: "er"   // ... Except for the number one.
+         *                 }
+         *             }
+         *         },
+         *         en_US: {  // 1st, 2nd, 3rd, 4th, ..., 11th, 12th, ... 21st, 22nd...
+         *             _ordinal: {
+         *                 default: "th",// Usually the digit is "th" in english...
+         *                 byLastDigit: {
+         *                     1: "st",  // When the last digit is 1, use "th"...
+         *                     2: "nd",  // When the last digit is 2, use "nd"...
+         *                     3: "rd"   // When the last digit is 3, use "rd"...
+         *                 },
+         *                 exceptions: { // But these numbers are special
+         *                     0: "",
+         *                     11: "th",
+         *                     12: "th",
+         *                     13: "th"
+         *                 }
+         *             }
+         *         }
+         *     });
+         *
+         *     i18n.setLang('fr');
+         *     i18n.ordinal(1);    // return 'er'
+         *     i18n.ordinal(2);    // return 'e'
+         *     i18n.ordinal(11);   // return 'e'
+         *
+         *     i18n.setLang('en');
+         *     i18n.ordinal(1);    // returns 'st'
+         *     i18n.ordinal(2);    // returns 'nd'
+         *     i18n.ordinal(12);   // returns 'th'
+         *     i18n.ordinal(22);   // returns 'nd'
+         *     i18n.ordinal(3);    // returns 'rd'
+         *     i18n.ordinal(4);    // returns 'th'
+         *     i18n.ordinal(5);    // returns 'th'
+         *      
+         *     // Examples of passing in the options directly
+         *     var ptOrdinals = {
+         *         default: 'º'
+         *     }
+         *     var i18n2 = new I18n();
+         *     i18n2.ordinal(1, ptOrdinals); // Returns 'º'
+         *     i18n2.ordinal(4, ptOrdinals); // Returns 'º'
+         *
+         **/
+        ordinal: function (num, options) {
+            if (typeof num === 'undefined') {
+                return '';
+            }
+            var numStr = num.toString();
+            options = options || {};
+            var fromDict = this._strings._ordinals || {};
+
+            var inCaseOptionsIsAFunction = v(options, num) || v(fromDict, num);
+            if (inCaseOptionsIsAFunction) {
+                return inCaseOptionsIsAFunction;
+            }
+
+            function v(val, number) {
+                number = typeof number === 'undefined' ? num : number;
+                if (typeof val === 'undefined') {
+                    return;
+                } else if (typeof val === 'function') {
+                    try {
+                        var ret = val(number);
+                        return typeof ret === 'string' ? ret : null;
+                    } catch(e) {}
+                } else if (typeof val === 'object') {
+                    return val[number];
+                } else if (typeof val === 'string') {
+                    // Useful for the default option, or to define a global _ordinals rule for languages which don't need it.
+                    return val;
                 }
             }
-            else {
-                var words = strSin;
-                count = strPlur;
-
-                var lastIndex = words.length - 1;
-
-                if (count >= lastIndex) {
-                    return words[lastIndex];
-                } else {
-                    return words[count];
-                }
+            function lookup (obj) {
+                return (
+                    v(obj.exceptions, num) ||
+                    v(obj.byLastDigit, +(numStr[numStr.length - 1])) ||
+                    v(obj.default, num) ||
+                    null);
             }
+            return lookup(options) || lookup(fromDict) || '';
         }
     };
     
