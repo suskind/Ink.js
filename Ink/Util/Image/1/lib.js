@@ -54,7 +54,14 @@ Ink.createModule('Ink.Util.Image', '1',
 
 
 
-    var Img = {
+    /**
+     * Image utilities
+     *
+     * @class Ink.Util.Image
+     * @version 1
+     * @static
+     */
+    var IImg = {
 
         /**
          * Calculates the maximum size a rectagle can have maintaining aspect ratio.
@@ -96,6 +103,8 @@ Ink.createModule('Ink.Util.Image', '1',
          * @param  {String}     o.uri  
          * @param  {Function}   o.cb
          * @param  {Number}    [o.timeout]  in seconds. defaults to 10
+         * @async
+         * @static
          */
         measureImage: function(o) {
             if (!o.uri) { throw new Error('url is required!'); }
@@ -165,10 +174,47 @@ Ink.createModule('Ink.Util.Image', '1',
 
             document.body.insertBefore(imgEl, document.body.firstChild);
             imgEl.src = o.uri;
+        },
+
+        /**
+         * @method measureImages
+         * @param  {String[]}  uris list of image URIs to measure
+         * @param  {Function}  cb   returns object with hash of uri -> dims and array timeouts for URIs which have timed out
+         * @async
+         * @static
+         */
+        measureImages: function(uris, cb) {
+            var left = uris.length;
+            var O = {
+                measured:  {},
+                timeouts:  []
+            };
+
+            var innerCb = function(err, o) {
+                --left;
+
+                if (err) {
+                    O.timeouts.push( o.uri );
+                }
+                else {
+                    O.measured[ o.uri ] = o.dimensions;
+                }
+
+                if (left === 0) {
+                    cb(O);
+                }
+            };
+
+            for (var i = 0, f = left; i < f; ++i) {
+                IImg.measureImage({
+                    uri: uris[i],
+                    cb:  innerCb
+                });    
+            }
         }
 
     };
 
-    return Img;
+    return IImg;
 
 });

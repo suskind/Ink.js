@@ -16,6 +16,8 @@
 	"./Ink/Util/Cookie/1/lib.js",
 	"./Ink/Util/Array/1/lib.js",
 	"./Ink/Util/Validator/1/lib.js",
+    "./Ink/Util/BinPack/1/lib.js",
+    "./Ink/Util/Image/1/lib.js",
 	"./Ink/UI/Aux/1/lib.js",
 	"./Ink/UI/Modal/1/lib.js",
 	"./Ink/UI/ProgressBar/1/lib.js",

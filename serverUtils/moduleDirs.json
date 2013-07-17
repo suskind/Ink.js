@@ -15,6 +15,8 @@
 	"./Ink/Util/Cookie",
 	"./Ink/Util/Array",
 	"./Ink/Util/Validator",
+    "./Ink/Util/BinPack",
+    "./Ink/Util/Image",
 	"./Ink/UI/Toggle",
 	"./Ink/UI/Modal",
 	"./Ink/UI/ProgressBar",

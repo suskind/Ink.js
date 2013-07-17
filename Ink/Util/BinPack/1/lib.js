@@ -217,75 +217,97 @@ Ink.createModule('Ink.Util.BinPack', '1', [], function() {
       return [this.w, ' x ', this.h].join('');
     };
 
+
+
     /**
-    * @function binPack
-    * @param {Object}      o              options
-    * @param {Object[]}    o.blocks       array of items with w and h integer attributes.
-    * @param {Number[2]}  [o.dimensions]  if passed, container has fixed dimensions
-    * @param {String}     [o.sorter]      sorter function. one of: random, height, width, area, maxside
-    * @return {Object} dimensions: resulted container size (Number[2]), filled: filled ratio (Number), fitted (Object[]), unfitted (Object[]), blocks (Object[])
-    */
-    var binPack = function(o) {
-        var i, f, bl;
+     * Binary Packing algorithm implementation
+     *
+     * Based on the work of Jake Gordon
+     *
+     * see https://github.com/jakesgordon/bin-packing/
+     *
+     * @class Ink.Util.BinPack
+     * @version 1
+     * @static
+     */
+    var BinPack = {
+
+        /**
+        * @function binPack
+        * @param {Object}      o              options
+        * @param {Object[]}    o.blocks       array of items with w and h integer attributes.
+        * @param {Number[2]}  [o.dimensions]  if passed, container has fixed dimensions
+        * @param {String}     [o.sorter]      sorter function. one of: random, height, width, area, maxside
+        * @return {Object}
+        *     * {Number[2]} dimensions - resulted container size,
+        *     * {Number}    filled     - filled ratio,
+        *     * {Object[]}  fitted,
+        *     * {Object[]}  unfitted,
+        *     * {Object[]}  blocks
+        * @static
+        */
+        binPack: function(o) {
+            var i, f, bl;
 
 
 
-        // calculate area if not there already
-        for (i = 0, f = o.blocks.length; i < f; ++i) {
-            bl = o.blocks[i];
-            if (! ('area' in bl) ) {
-                bl.area = bl.w * bl.h;
+            // calculate area if not there already
+            for (i = 0, f = o.blocks.length; i < f; ++i) {
+                bl = o.blocks[i];
+                if (! ('area' in bl) ) {
+                    bl.area = bl.w * bl.h;
+                }
             }
-        }
 
 
 
-        // apply algorithm
-        var packer = o.dimensions ? new Packer(o.dimensions[0], o.dimensions[1]) : new GrowingPacker();
+            // apply algorithm
+            var packer = o.dimensions ? new Packer(o.dimensions[0], o.dimensions[1]) : new GrowingPacker();
 
-        if (!o.sorter) { o.sorter = 'maxside'; }
+            if (!o.sorter) { o.sorter = 'maxside'; }
 
-        o.blocks.sort( sorts[ o.sorter ] );
+            o.blocks.sort( sorts[ o.sorter ] );
 
-        packer.fit(o.blocks);
+            packer.fit(o.blocks);
 
-        var dims2 = [packer.root.w, packer.root.h];
+            var dims2 = [packer.root.w, packer.root.h];
 
 
 
-        // layout is done here, generating report data...
-        var fitted   = [];
-        var unfitted = [];
+            // layout is done here, generating report data...
+            var fitted   = [];
+            var unfitted = [];
 
-        for (i = 0, f = o.blocks.length; i < f; ++i) {
-            bl = o.blocks[i];
-            if (bl.fit) {
-                fitted.push(bl);
+            for (i = 0, f = o.blocks.length; i < f; ++i) {
+                bl = o.blocks[i];
+                if (bl.fit) {
+                    fitted.push(bl);
+                }
+                else {
+                    bl.toString = toString; // TO AID SERIALIZATION
+                    unfitted.push(bl);
+                }
             }
-            else {
-                bl.toString = toString; // TO AID SERIALIZATION
-                unfitted.push(bl);
+
+            var area = dims2[0] * dims2[1];
+            var fit = 0;
+            for (i = 0, f = fitted.length; i < f; ++i) {
+                bl = fitted[i];
+                fit += bl.area;
             }
-        }
 
-        var area = dims2[0] * dims2[1];
-        var fit = 0;
-        for (i = 0, f = fitted.length; i < f; ++i) {
-            bl = fitted[i];
-            fit += bl.area;
+            return {
+                dimensions: dims2,
+                filled:     fit / area,
+                blocks:     o.blocks,
+                fitted:     fitted,
+                unfitted:   unfitted
+            };
         }
-
-        return {
-            dimensions: dims2,
-            filled:     fit / area,
-            blocks:     o.blocks,
-            fitted:     fitted,
-            unfitted:   unfitted
-        };
     };
 
 
 
-    return binPack;
+    return BinPack;
 
 });
