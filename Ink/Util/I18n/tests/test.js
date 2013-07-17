@@ -1,3 +1,4 @@
+/*globals equal,test*/
 Ink.requireModules(['Ink.Util.I18n'], function () {
     'use strict';
 
@@ -66,13 +67,90 @@ Ink.requireModules(['Ink.Util.I18n'], function () {
 
         equal(i18n.ntext('animal', 'animals', 2),
             'animals');
+    });
+
+    test('ordinal (from dict)', function () {
+        var dict = {
+            fr: {
+                _ordinals: {
+                    "default": "<sup>e</sup>",
+                    exceptions: {
+                        1: "<sup>er</sup>"
+                    }
+                }
+            },
+            en_US: {
+                _ordinals: {
+                    "default": "th",
+                    byLastDigit: {
+                        1: "st",
+                        2: "nd",
+                        3: "rd"
+                    },
+                    exceptions: {
+                        0: "",
+                        11: "th",
+                        12: "th",
+                        13: "th"
+                    }
+                }
+            }
+        };
+
+        var i18n = new I18n(dict, 'fr');
+        equal(i18n.ordinal(1), '<sup>er</sup>');
+        equal(i18n.ordinal(2), '<sup>e</sup>');
+        equal(i18n.ordinal(11), '<sup>e</sup>');
         
-        var args = ['', 'st', 'nd', 'rd', 'th'];
-        equal(i18n.ntext(args, 1), 'st');
-        equal(i18n.ntext(args, 2), 'nd');
-        equal(i18n.ntext(args, 3), 'rd');
-        equal(i18n.ntext(args, 4), 'th');
-        equal(i18n.ntext(args, 5), 'th');
+        i18n = new I18n(dict, 'en_US');
+        equal(i18n.ordinal(1), 'st');
+        equal(i18n.ordinal(2), 'nd');
+        equal(i18n.ordinal(12), 'th');
+        equal(i18n.ordinal(22), 'nd');
+        equal(i18n.ordinal(3), 'rd');
+        equal(i18n.ordinal(4), 'th');
+        equal(i18n.ordinal(5), 'th');
+    });
+
+    test('ordinal (from passed options)', function () {
+        // Examples of passing in the options directly
+        var ptOrdinals = {
+            default: '&ordm;'
+        };
+        var i18n = new I18n();
+        equal(i18n.ordinal(1, ptOrdinals), '&ordm;'); // Returns 'º'
+        equal(i18n.ordinal(4, ptOrdinals), '&ordm;'); // Returns 'º'
+    });
+
+    test('ordinal (with functions)', function () {
+        var dict = {
+            'en': {
+                _ordinals: {
+                    byLastDigit: function (digit) {return digit === 0 ? 'th' : undefined;},
+                    exceptions: function (num) {return num === 3 ? 'rd' : undefined;}
+                }
+            }
+        };
+        var i18n = new I18n(dict, 'en');
+        equal(i18n.ordinal(0), 'th');
+        equal(i18n.ordinal(10), 'th');
+        equal(i18n.ordinal(200), 'th');
+        equal(i18n.ordinal(3), 'rd');
+        equal(i18n.ordinal(123), '');
+        equal(i18n.ordinal(12312312), '');
+    });
+
+    test('ordinal (passed a function)', function () {
+        var i18n = make();
+        equal(
+            i18n.ordinal(123, function () {return 'THTH';}),
+            'THTH'
+        );
+        equal(
+            i18n.ordinal(123, function () {return null;}),
+            ''
+        );
+
     });
 
     test('multilang', function () {
