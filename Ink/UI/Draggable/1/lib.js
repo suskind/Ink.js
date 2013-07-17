@@ -9,7 +9,7 @@ Ink.createModule("Ink.UI.Draggable","1",["Ink.Dom.Element_1", "Ink.Dom.Event_1",
      * @class Ink.UI.Draggable
      * @version 1
      * @constructor
-     * @param {String|DOMElement} selector Either a CSS Selector string, or the form's DOMElement
+     * @param {String|DOMElement} element ID of the element or DOM Element.
      * @param {Object} [options] Optional object for configuring the component
      *     @param {String}            [options.constraint]     - Movement constraint. None by default. Can be either vertical or horizontal.
      *     @param {Number}            [options.top]            - top limit for the draggable area
@@ -48,38 +48,38 @@ Ink.createModule("Ink.UI.Draggable","1",["Ink.Dom.Element_1", "Ink.Dom.Event_1",
          */
         init: function(element, options) {
             var o = Ink.extendObj( {
-                constraint:            false,
+                constraint:         false,
                 top:                0,
-                right:                Element.pageWidth(),
-                bottom:                Element.pageHeight(),
-                left:                0,
+                right:              Element.pageWidth(),
+                bottom:             Element.pageHeight(),
+                left:               0,
                 handler:            false,
-                revert:                false,
-                cursor:                'move',
-                zindex:                9999,
+                revert:             false,
+                cursor:             'move',
+                zindex:             9999,
                 onStart:            false,
-                onEnd:                false,
-                onDrag:                false,
-                onChange:            false,
-                droppableProxy:        false,
+                onEnd:              false,
+                onDrag:             false,
+                onChange:           false,
+                droppableProxy:     false,
                 mouseAnchor:        undefined,
-                skipChildren:        true,
-                debug:                false
+                skipChildren:       true,
+                debug:              false
             }, options || {});
 
             this.options = o;
             this.element = Ink.i(element);
 
-            this.handle                = false;
-            this.elmStartPosition    = false;
-            this.active                = false;
+            this.handle             = false;
+            this.elmStartPosition   = false;
+            this.active             = false;
             this.dragged            = false;
-            this.prevCoords            = false;
+            this.prevCoords         = false;
             this.placeholder        = false;
 
-            this.position            = false;
-            this.zindex                = false;
-            this.firstDrag            = true;
+            this.position           = false;
+            this.zindex             = false;
+            this.firstDrag          = true;
 
             if (o.fps) {
                 this.deltaMs = 1000 / o.fps;
@@ -87,18 +87,18 @@ Ink.createModule("Ink.UI.Draggable","1",["Ink.Dom.Element_1", "Ink.Dom.Event_1",
             }
 
             this.handlers = {};
-            this.handlers.start            = Ink.bindEvent(this._onStart,this);
+            this.handlers.start         = Ink.bindEvent(this._onStart,this);
             this.handlers.dragFacade    = Ink.bindEvent(this._onDragFacade,this);
-            this.handlers.drag            = Ink.bindEvent(this._onDrag,this);
-            this.handlers.end            = Ink.bindEvent(this._onEnd,this);
-            this.handlers.selectStart    = function(event) {    Event.stop(event);    return false;    };
+            this.handlers.drag          = Ink.bindEvent(this._onDrag,this);
+            this.handlers.end           = Ink.bindEvent(this._onEnd,this);
+            this.handlers.selectStart   = function(event) {    Event.stop(event);    return false;    };
 
             // set handler
             this.handle = (this.options.handler) ? Ink.i(this.options.handler) : this.element;
             this.handle.style.cursor = o.cursor;
 
-            if (o.right  !== false) {    this.options.right    = o.right  - Element.elementWidth( element);    }
-            if (o.bottom !== false) {    this.options.bottom    = o.bottom - Element.elementHeight(element);    }
+            if (o.right  !== false) {   this.options.right    = o.right  - Element.elementWidth( element);    }
+            if (o.bottom !== false) {   this.options.bottom   = o.bottom - Element.elementHeight(element);    }
 
             Event.observe(this.handle, 'touchstart', this.handlers.start);
             Event.observe(this.handle, 'mousedown', this.handlers.start);
@@ -167,15 +167,15 @@ Ink.createModule("Ink.UI.Draggable","1",["Ink.Dom.Element_1", "Ink.Dom.Event_1",
          */
         _cloneStyle: function(src, dst) {
             dst.className = src.className;
-            dst.style.borderWidth    = '0';
-            dst.style.padding        = '0';
-            dst.style.position        = 'absolute';
-            dst.style.width            = Element.elementWidth(src)        + 'px';
+            dst.style.borderWidth   = '0';
+            dst.style.padding       = '0';
+            dst.style.position      = 'absolute';
+            dst.style.width         = Element.elementWidth(src)        + 'px';
             dst.style.height        = Element.elementHeight(src)    + 'px';
-            dst.style.left            = Element.elementLeft(src)        + 'px';
-            dst.style.top            = Element.elementTop(src)        + 'px';
-            dst.style.cssFloat        = Css.getStyle(src, 'float');
-            dst.style.display        = Css.getStyle(src, 'display');
+            dst.style.left          = Element.elementLeft(src)        + 'px';
+            dst.style.top           = Element.elementTop(src)        + 'px';
+            dst.style.cssFloat      = Css.getStyle(src, 'float');
+            dst.style.display       = Css.getStyle(src, 'display');
         },
 
         /**
@@ -217,17 +217,17 @@ Ink.createModule("Ink.UI.Draggable","1",["Ink.Dom.Element_1", "Ink.Dom.Event_1",
                 this.zindex = Css.getStyle(this.element, 'zIndex');
 
                 var div = document.createElement('div');
-                div.style.position        = this.position;
-                div.style.width            = dims[0] + 'px';
+                div.style.position      = this.position;
+                div.style.width         = dims[0] + 'px';
                 div.style.height        = dims[1] + 'px';
-                div.style.marginTop        = Css.getStyle(this.element, 'margin-top');
-                div.style.marginBottom    = Css.getStyle(this.element, 'margin-bottom');
+                div.style.marginTop     = Css.getStyle(this.element, 'margin-top');
+                div.style.marginBottom  = Css.getStyle(this.element, 'margin-bottom');
                 div.style.marginLeft    = Css.getStyle(this.element, 'margin-left');
-                div.style.marginRight    = Css.getStyle(this.element, 'margin-right');
-                div.style.borderWidth    = '0';
-                div.style.padding        = '0';
-                div.style.cssFloat        = Css.getStyle(this.element, 'float');
-                div.style.display        = Css.getStyle(this.element, 'display');
+                div.style.marginRight   = Css.getStyle(this.element, 'margin-right');
+                div.style.borderWidth   = '0';
+                div.style.padding       = '0';
+                div.style.cssFloat      = Css.getStyle(this.element, 'float');
+                div.style.display       = Css.getStyle(this.element, 'display');
                 div.style.visibility    = 'hidden';
 
                 this.delta2 = [ this.delta.x - this.elmStartPosition[0], this.delta.y - this.elmStartPosition[1] ]; // diff between top-left corner of obj and mouse
@@ -235,7 +235,7 @@ Ink.createModule("Ink.UI.Draggable","1",["Ink.Dom.Element_1", "Ink.Dom.Event_1",
                     var parts = this.options.mouseAnchor.split(' ');
                     var ad = [dims[0], dims[1]];    // starts with 'right bottom'
                     if (parts[0] === 'left') {    ad[0] = 0;    } else if(parts[0] === 'center') {    ad[0] = parseInt(ad[0]/2, 10);    }
-                    if (parts[1] === 'top') {    ad[1] = 0;    } else if(parts[1] === 'center') {    ad[1] = parseInt(ad[1]/2, 10);    }
+                    if (parts[1] === 'top') {     ad[1] = 0;    } else if(parts[1] === 'center') {    ad[1] = parseInt(ad[1]/2, 10);    }
                     this.applyDelta = [this.delta2[0] - ad[0], this.delta2[1] - ad[1]];
                 }
 
@@ -246,17 +246,17 @@ Ink.createModule("Ink.UI.Draggable","1",["Ink.Dom.Element_1", "Ink.Dom.Event_1",
                 if (this.options.droppableProxy) {    // create new transparent div to optimize DOM traversal during drag
                     this.proxy = document.createElement('div');
                     dims = [
-                        window.innerWidth    || document.documentElement.clientWidth        || document.body.clientWidth,
-                        window.innerHeight    || document.documentElement.clientHeight    || document.body.clientHeight
+                        window.innerWidth     || document.documentElement.clientWidth   || document.body.clientWidth,
+                        window.innerHeight    || document.documentElement.clientHeight  || document.body.clientHeight
                     ];
                     var fs = this.proxy.style;
                     fs.width            = dims[0] + 'px';
-                    fs.height            = dims[1] + 'px';
-                    fs.position            = 'fixed';
-                    fs.left                = '0';
-                    fs.top                = '0';
-                    fs.zIndex            = this.options.zindex + 1;
-                    fs.backgroundColor    = '#FF0000';
+                    fs.height           = dims[1] + 'px';
+                    fs.position         = 'fixed';
+                    fs.left             = '0';
+                    fs.top              = '0';
+                    fs.zIndex           = this.options.zindex + 1;
+                    fs.backgroundColor  = '#FF0000';
                     Css.setOpacity(this.proxy, 0);
 
                     var firstEl = document.body.firstChild;
@@ -276,8 +276,8 @@ Ink.createModule("Ink.UI.Draggable","1",["Ink.Dom.Element_1", "Ink.Dom.Event_1",
 
                 this._onDrag(e);
 
-                Event.observe(document, 'mouseup',    this.handlers.end);
-                Event.observe(document, 'touchend',    this.handlers.end);
+                Event.observe(document, 'mouseup',      this.handlers.end);
+                Event.observe(document, 'touchend',     this.handlers.end);
 
                 return false;
             }
@@ -309,10 +309,10 @@ Ink.createModule("Ink.UI.Draggable","1",["Ink.Dom.Element_1", "Ink.Dom.Event_1",
             if (this.active) {
                 Event.stop(e);
                 this.dragged = true;
-                var mouseCoords    = this._getCoords(e),
-                    mPosX        = mouseCoords.x,
-                    mPosY        = mouseCoords.y,
-                    o            = this.options,
+                var mouseCoords = this._getCoords(e),
+                    mPosX       = mouseCoords.x,
+                    mPosY       = mouseCoords.y,
+                    o           = this.options,
                     newX        = false,
                     newY        = false;
 
@@ -327,11 +327,11 @@ Ink.createModule("Ink.UI.Draggable","1",["Ink.Dom.Element_1", "Ink.Dom.Event_1",
 
                     if (o.constraint === 'horizontal' || o.constraint === 'both') {
                         if (o.right !== false && newX > o.right) {        newX = o.right;        }
-                        if (o.left  !== false && newX < o.left) {        newX = o.left;        }
+                        if (o.left  !== false && newX < o.left)  {        newX = o.left;        }
                     }
                     if (o.constraint === 'vertical' || o.constraint === 'both') {
                         if (o.bottom !== false && newY > o.bottom) {    newY = o.bottom;    }
-                        if (o.top    !== false && newY < o.top) {        newY = o.top;        }
+                        if (o.top    !== false && newY < o.top) {       newY = o.top;        }
                     }
 
                     if (this.firstDrag) {

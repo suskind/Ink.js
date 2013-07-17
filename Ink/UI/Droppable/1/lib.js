@@ -35,7 +35,7 @@ Ink.createModule("Ink.UI.Droppable","1",["Ink.Dom.Element_1", "Ink.Dom.Event_1",
          * 
          * @method add
          * @param {String|DOMElement}       element    - target element
-         * @param {optional Object}         options    - options object
+         * @param {Object}                  [options]  - options object
          *     @param {String}       [options.hoverclass] - Classname applied when an acceptable draggable element is hovering the element
          *     @param {Array|String} [options.accept]     - Array or comma separated string of classnames for elements that can be accepted by this droppable
          *     @param {Function}     [options.onHover]    - callback called when an acceptable draggable element is hovering the droppable. Gets the draggable and the droppable element as parameters.
@@ -44,11 +44,11 @@ Ink.createModule("Ink.UI.Droppable","1",["Ink.Dom.Element_1", "Ink.Dom.Event_1",
          */
         add: function(element, options) {
             var opt = Ink.extendObj( {
-                hoverclass:        false,
-                accept:            false,
+                hoverclass:     false,
+                accept:         false,
                 onHover:        false,
-                onDrop:            false,
-                onDropOut:        false                
+                onDrop:         false,
+                onDropOut:      false                
             }, options || {});
 
             element = Ink.i(element);
@@ -66,8 +66,6 @@ Ink.createModule("Ink.UI.Droppable","1",["Ink.Dom.Element_1", "Ink.Dom.Event_1",
          * 
          * @method updateAll
          * @public
-         */
-        /**
          */
         updateAll: function() {
             for (var id in this._elements) {
@@ -90,10 +88,10 @@ Ink.createModule("Ink.UI.Droppable","1",["Ink.Dom.Element_1", "Ink.Dom.Event_1",
                 return; /*throw 'Data about element with id="' + element.id + '" was not found!';*/
             }
 
-            data.left    = Element.offsetLeft(element);
+            data.left   = Element.offsetLeft(element);
             data.top    = Element.offsetTop( element);
-            data.right    = data.left + Element.elementWidth( element);
-            data.bottom    = data.top  + Element.elementHeight(element);
+            data.right  = data.left + Element.elementWidth( element);
+            data.bottom = data.top  + Element.elementHeight(element);
 
             // if (this.debug) {
             //     // for debugging purposes
