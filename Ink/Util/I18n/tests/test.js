@@ -73,15 +73,15 @@ Ink.requireModules(['Ink.Util.I18n'], function () {
         var dict = {
             fr: {
                 _ordinals: {
-                    default: "e",
+                    "default": "<sup>e</sup>",
                     exceptions: {
-                        1: "er"
+                        1: "<sup>er</sup>"
                     }
                 }
             },
             en_US: {
                 _ordinals: {
-                    default: "th",
+                    "default": "th",
                     byLastDigit: {
                         1: "st",
                         2: "nd",
@@ -98,9 +98,9 @@ Ink.requireModules(['Ink.Util.I18n'], function () {
         };
 
         var i18n = new I18n(dict, 'fr');
-        equal(i18n.ordinal(1), 'er');
-        equal(i18n.ordinal(2), 'e');
-        equal(i18n.ordinal(11), 'e');
+        equal(i18n.ordinal(1), '<sup>er</sup>');
+        equal(i18n.ordinal(2), '<sup>e</sup>');
+        equal(i18n.ordinal(11), '<sup>e</sup>');
         
         i18n = new I18n(dict, 'en_US');
         equal(i18n.ordinal(1), 'st');
@@ -115,11 +115,11 @@ Ink.requireModules(['Ink.Util.I18n'], function () {
     test('ordinal (from passed options)', function () {
         // Examples of passing in the options directly
         var ptOrdinals = {
-            default: 'º'
+            default: '&ordm;'
         };
         var i18n = new I18n();
-        equal(i18n.ordinal(1, ptOrdinals), 'º'); // Returns 'º'
-        equal(i18n.ordinal(4, ptOrdinals), 'º'); // Returns 'º'
+        equal(i18n.ordinal(1, ptOrdinals), '&ordm;'); // Returns 'º'
+        equal(i18n.ordinal(4, ptOrdinals), '&ordm;'); // Returns 'º'
     });
 
     test('ordinal (with functions)', function () {

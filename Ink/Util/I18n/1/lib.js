@@ -152,7 +152,7 @@ Ink.createModule('Ink.Util.I18n', '1', [], function () {
          * Returns the ordinal suffix of `num` (For example, 1 > 'st', 2 > 'nd', 5 > 'th', ...).
          *
          * This works by using transforms (in the form of Objects or Functions) passed into the
-         * function or found in the special key `_ordinals`, from the language dictionary.
+         * function or found in the special key `_ordinals` in the active language dictionary.
          *
          * @method ordinal
          *
