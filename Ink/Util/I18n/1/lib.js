@@ -21,11 +21,18 @@ Ink.createModule('Ink.Util.I18n', '1', [], function () {
         this._init(langObject, langCode, translationStringsInRoot);
     }
 
+    function makeObj (key, val) { // To make an object from an arbitrary key and a value
+        var ret = {};
+        ret[key] = val;
+        return ret;
+    }
+
     I18n.prototype = {
         _init: function (langObject, langCode, translationStringsInRoot) {
             this._testMode = false;
             this._lang = langCode || 'pt_PT';
             this._strings = {};
+            this._otherDicts = [];
             this.append(langObject, translationStringsInRoot);  // Add the translation strings
         },
         /**
@@ -36,11 +43,11 @@ Ink.createModule('Ink.Util.I18n', '1', [], function () {
          * @param {Boolean} translationStringsInRoot indicates whether translation strings are in the root of langObject. This is turned off by default.
          */
         append: function (langObject, translationStringsInRoot) {
-            var keys = langObject[this._lang];
             if (translationStringsInRoot) {
-                keys = langObject;
+                langObject = makeObj(this._lang, langObject);
             }
-            Ink.extendObj(this._strings, keys);
+            this._otherDicts.push(langObject);
+            Ink.extendObj(this._strings, langObject[this._lang]);
         },
         /**
          * Get the language code
@@ -49,6 +56,22 @@ Ink.createModule('Ink.Util.I18n', '1', [], function () {
          * @method {String} getLang
          */
         getLang: function () {return this._lang;},
+        /**
+         * Set the language. If there are more dictionaries available in cache, they will be loaded.
+         *
+         * @param   lang    {String} Language code to set this instance to
+         */
+        setLang: function (lang) {
+            if (this._lang === lang) {
+                return;
+            }
+            this._lang = lang;
+            this._strings = {};
+            for (var i = 0, len = this._otherDicts.length; i < len; i++) {
+                Ink.extendObj(this._strings,
+                    this._otherDicts[i][lang] || {});
+            }
+        },
         /**
          * Sets or unsets test mode. In test mode, unknown strings are wrapped
          * in `[ ... ]`. This is useful for debugging your application and

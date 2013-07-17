@@ -54,7 +54,7 @@ Ink.requireModules(['Ink.Util.I18n'], function () {
     });
 
     test('replacements', function () {
-        equal(_('i have a {%s} for you', 'present'), 'tenho um present para ti');
+        equal(_('i have a {%s} for you', 'presente'), 'tenho um presente para ti');
         equal(_('1:, {%s:1}, 2: {%s:2}', 1, 2), '2: 2, 1: 1');
     });
 
@@ -73,5 +73,20 @@ Ink.requireModules(['Ink.Util.I18n'], function () {
         equal(i18n.ntext(args, 3), 'rd');
         equal(i18n.ntext(args, 4), 'th');
         equal(i18n.ntext(args, 5), 'th');
+    });
+
+    test('multilang', function () {
+        var i18n = make();
+        i18n.append({
+            pt_PT: {
+                yeah_text: 'pois'
+            },
+            en_US: {
+                yeah_text: 'yeah'
+            }
+        });
+        equal(i18n.text('yeah_text'), 'pois');
+        i18n.setLang('en_US');
+        equal(i18n.text('yeah_text'), 'yeah');
     });
 });
