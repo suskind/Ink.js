@@ -92,10 +92,8 @@ Ink.requireModules(['Ink.Util.I18n'], function (I18n) {
 
     document.write('<h3>Ink.Util.I18n.ntext();</h3>');
 
-    var count = 3; 
-    document.write(i18n.ntext(_('{%s} singular {%s}', count, 'A'), _('{%s} plural {%s}', count, 'B'), count)+'<br /><br />');
-
-    document.write(i18n.ntext([_('{%s} singular {%s}', 'A', 'B'), _('{%s} plural {%s}', 'A', 'B'), _('{%s} maisque {%s}', 'A', 'B')], 5)+'<br /><br />');
+    document.write(i18n.ntext('{%s} singular {%s}', '{%s} plural {%s}<br/><br/>', 5, 'A', 'B'));
+    document.write(i18n.ntext('{%s} singular {%s}', '{%s} plural {%s}<br/><br/>', 1, 'A', 'B'));
 
 
     /* ************************************************************* */
