@@ -1,7 +1,6 @@
 /**
  * @module Ink.Util.I18n_1
  * @author inkdev AT sapo.pt
- * @version 1
  */
 
 Ink.createModule('Ink.Util.I18n', '1', [], function () {
@@ -13,9 +12,35 @@ Ink.createModule('Ink.Util.I18n', '1', [], function () {
      * @class Ink.Util.I18n
      * @constructor
      *
-     * @param {Object} langObject object containing language objects identified by their language code
+     * @param {Object} langObject object mapping language codes (in the form of `pt_PT`, `pt_BR`, `fr`, `en_US`, etc.) to their Object dictionaries.
+     *     @param {Object} langObject.(dictionaries...) 
      * @param {String} [langCode='pt_PT'] language code of the target language
      * @param {Boolean} [translationStringsInRoot=false] indicates whether translation strings are in the root of langObject. This is turned off by default.
+     *
+     * @example
+     *      var dictionaries = {    // This could come from a JSONP request from your server
+     *          'pt_PT': {
+     *              'hello': 'olá',
+     *              'me': 'eu',
+     *              'i have a {%s} for you': 'tenho um {%s} para ti'
+     *          },
+     *          'pt_BR': {
+     *              'hello': 'oi',
+     *              'me': 'eu',
+     *              'i have a {%s} for you': 'tenho um {%s} para você'
+     *          }
+     *      };
+     *      Ink.requireModules(['Ink.Util.I18n_1'], function (I18n) {
+     *          var i18n = new I18n(dictionaries, 'pt_PT');
+     *          i18n.text('hello');  // returns 'olá'
+     *          i18n.text('i have a {%s} for you', 'IRON SWORD'); // returns 'tenho um IRON SWORD' para ti
+     *          
+     *          i18n.setLang('pt_BR');  // Changes language. pt_BR dictionary is loaded
+     *          i18n.text('hello');  // returns 'oi'
+     *
+     *          i18n.setLang('en_US');  // Missing language.
+     *          i18n.text('hello');  // returns 'hello'. If testMode is on, returns '[hello]'
+     *      });
      */
     function I18n (langObject, langCode, translationStringsInRoot) {
         this._init(langObject, langCode, translationStringsInRoot);
@@ -40,10 +65,16 @@ Ink.createModule('Ink.Util.I18n', '1', [], function () {
          *
          * @method append
          * @param {Object} baseLangObject object containing language objects identified by their language code
-         * @param {Boolean} translationStringsInRoot indicates whether translation strings are in the root of langObject. This is turned off by default.
+         * @param {Boolean} [translationStringsInRoot=false] indicates whether translation strings are in the root of langObject. This is turned off by default.
+         *
+         * @example
+         *     var i18n = new I18n({}, 'pt_PT');
+         *     i18n.append({'pt_PT': {
+         *         'sfraggles': 'braggles'
+         *     }});
+         *     equal(i18n.text('sfraggles'), 'braggles');
          */
         append: function (langObject, translationStringsInRoot) {
-            var keys = langObject[this._lang] || {};
             if (translationStringsInRoot) {
                 langObject = makeObj(this._lang, langObject);
             }
@@ -60,7 +91,8 @@ Ink.createModule('Ink.Util.I18n', '1', [], function () {
         /**
          * Set the language. If there are more dictionaries available in cache, they will be loaded.
          *
-         * @param   lang    {String} Language code to set this instance to
+         * @method  setLang
+         * @param   lang    {String} Language code to set this instance to.
          */
         setLang: function (lang) {
             if (this._lang === lang) {
@@ -85,17 +117,37 @@ Ink.createModule('Ink.Util.I18n', '1', [], function () {
             this._testMode = toggle || false;
         },
         /**
-         * Returns an alias to `text()`. The resulting function is
+         * Returns an alias to `text()`, for convenience. The resulting function is
          * traditionally assigned to "_".
          *
          * @method alias
-         * @returns {Function} an alias to `text()`
+         * @returns {Function} an alias to `text()`. You can also access the rest of the translation API through this alias.
+         *
+         * @example
+         *     var i18n = new I18n({
+         *         'pt_PT': {
+         *             'hi': 'olá',
+         *             '{%s} day': '{%s} dia',
+         *             '{%s} days': '{%s} dias',
+         *             '_ordinals': {
+         *                 'default': 'º'
+         *             }
+         *         }
+         *     }, 'pt_PT');
+         *     var _ = i18n.alias();
+         *     equal(_('hi'), 'olá');
+         *     equal(_('{%s} days', 3), '3 dias');
+         *     equal(_.ntext('{%s} day', '{%s} days', 2), '2 dias');
+         *     equal(_.ntext('{%s} day', '{%s} days', 1), '1 dia');
+         *     equal(_.ordinal(3), 'º');
          */
         alias: function () {
-            var that = this;
-            return function () {
-                return I18n.prototype.text.apply(that, [].slice.call(arguments));
-            };
+            var ret = Ink.bind(I18n.prototype.text, this);
+            ret.ntext = Ink.bind(I18n.prototype.ntext, this);
+            ret.append = Ink.bind(I18n.prototype.append, this);
+            ret.ordinal = Ink.bind(I18n.prototype.ordinal, this);
+            ret.testMode = Ink.bind(I18n.prototype.testMode, this);
+            return ret;
         },
         /**
          * Given a translation key, return a translated string, with replaced parameters.
@@ -157,19 +209,26 @@ Ink.createModule('Ink.Util.I18n', '1', [], function () {
          * @method ntext
          * @return {String}
          *
-         * @param {String} strSin word to use when count is 1
-         * @param {String} strPlur word to use otherwise
-         * @param {Number} count number which defines which word to use
+         * @param {String} strSin   word to use when count is 1
+         * @param {String} strPlur  word to use otherwise
+         * @param {Number} count    number which defines which word to use
+         * @param [...]             extra arguments, to be passed to `text()`
          *
          * @example
          *     i18n.ntext('platypus', 'platypuses', 1); // returns 'ornitorrinco'
          *     i18n.ntext('platypus', 'platypuses', 2); // returns 'ornitorrincos'
+         * 
+         * @example
+         *     // Extra arguments are passed to text()
+         *     i18n.ntext('{%s} platypus', '{%s} platypuses', 1, 1); // returns '1 ornitorrinco'
+         *     i18n.ntext('{%s} platypus', '{%s} platypuses', 2, 2); // returns '2 ornitorrincos'
          */
         ntext: function(strSin, strPlur, count) {
+            var argsForText = [].slice.call(arguments, 2);
             if (count === 1) {
-                return this.text(strSin);
+                return this.text.apply(this, [strSin].concat(argsForText));
             } else {
-                return this.text(strPlur);
+                return this.text.apply(this, [strPlur].concat(argsForText));
             }
         },
         /**
@@ -187,7 +246,7 @@ Ink.createModule('Ink.Util.I18n', '1', [], function () {
          *    Maps for translating. Each of these options' fallback is found in the current
          *    language's dictionary. The lookup order is the following:
          *   
-         *        1. `exceptions`.
+         *        1. `exceptions`
          *        2. `byLastDigit`
          *        3. `default`
          *   
@@ -208,7 +267,7 @@ Ink.createModule('Ink.Util.I18n', '1', [], function () {
          *     var i18n = new I18n({
          *         fr: {  // 1er, 2e, 3e, 4e, ...
          *             _ordinal: {  // The _ordinals key is special.
-         *                 default: "e", // Usually the suffix is "e" in french...
+         *                 'default': "e", // Usually the suffix is "e" in french...
          *                 exceptions: {
          *                     1: "er"   // ... Except for the number one.
          *                 }
@@ -216,7 +275,7 @@ Ink.createModule('Ink.Util.I18n', '1', [], function () {
          *         },
          *         en_US: {  // 1st, 2nd, 3rd, 4th, ..., 11th, 12th, ... 21st, 22nd...
          *             _ordinal: {
-         *                 default: "th",// Usually the digit is "th" in english...
+         *                 'default': "th",// Usually the digit is "th" in english...
          *                 byLastDigit: {
          *                     1: "st",  // When the last digit is 1, use "th"...
          *                     2: "nd",  // When the last digit is 2, use "nd"...
@@ -248,7 +307,7 @@ Ink.createModule('Ink.Util.I18n', '1', [], function () {
          *      
          *     // Examples of passing in the options directly
          *     var ptOrdinals = {
-         *         default: 'º'
+         *         'default': 'º'
          *     }
          *     var i18n2 = new I18n();
          *     i18n2.ordinal(1, ptOrdinals); // Returns 'º'

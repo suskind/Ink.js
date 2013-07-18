@@ -11,7 +11,9 @@ Ink.requireModules(['Ink.Util.I18n'], function () {
     var dict = {'pt_PT': {
         'me': 'eu',
         'i have a {%s} for you': 'tenho um {%s} para ti',
-        '1:, {%s:1}, 2: {%s:2}': '2: {%s:2}, 1: {%s:1}'
+        '1:, {%s:1}, 2: {%s:2}': '2: {%s:2}, 1: {%s:1}',
+        '{%s} day': '{%s} dia',
+        '{%s} days': '{%s} dias'
     }};
 
     var _ = make().alias();
@@ -67,6 +69,9 @@ Ink.requireModules(['Ink.Util.I18n'], function () {
 
         equal(i18n.ntext('animal', 'animals', 2),
             'animals');
+
+        equal(i18n.ntext('{%s} day', '{%s} days', 1), '1 dia');
+        equal(i18n.ntext('{%s} day', '{%s} days', 2), '2 dias');
     });
 
     test('ordinal (from dict)', function () {
@@ -166,5 +171,24 @@ Ink.requireModules(['Ink.Util.I18n'], function () {
         equal(i18n.text('yeah_text'), 'pois');
         i18n.setLang('en_US');
         equal(i18n.text('yeah_text'), 'yeah');
+    });
+
+    test('alias doctest', function () {
+        var i18n = new I18n({
+           'pt_PT': {
+               'hi': 'olá',
+               '{%s} day': '{%s} dia',
+               '{%s} days': '{%s} dias',
+               '_ordinals': {
+                   'default': 'º'
+               }
+           }
+        }, 'pt_PT');
+        var _ = i18n.alias();
+        equal(_('hi'), 'olá');
+        equal(_('{%s} days', 3), '3 dias');
+        equal(_.ntext('{%s} day', '{%s} days', 2), '2 dias');
+        equal(_.ntext('{%s} day', '{%s} days', 1), '1 dia');
+        equal(_.ordinal(3), 'º');
     });
 });
