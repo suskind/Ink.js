@@ -1920,23 +1920,23 @@ support.detectDuplicates = hasDuplicate;
 // EXPOSE
 
 /**
- * Alias for the Sizzle search engine
+ * Alias for the Sizzle selector engine
  *
  * @method select
  * @param {String} selector CSS selector to search for elements
  * @param {DOMElement} [context] By default the search is done in the document element. However, you can specify an element as search context
  * @param {Array} [results] By default this is considered an empty array. But if you want to merge it with other searches you did, pass their result array through here.
  * @param {Object} [seed]
- * @return {Array} Array of DOM Elements as results
+ * @return {Array} Array of resulting DOM Elements
  */
 
 /**
- * Retorna elementos que façam match com o 2º argumento da função
+ * Returns elements which match with the second argument to the function.
  *
  * @method matches
  * @param {String} selector CSS selector to search for elements
  * @param {Array} matches Elements to be 'matched' with
- * @result {Array} Elements that matched
+ * @return {Array} Elements that matched
  */
 
 return {
