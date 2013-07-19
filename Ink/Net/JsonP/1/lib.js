@@ -11,21 +11,38 @@ Ink.createModule('Ink.Net.JsonP', '1', [], function() {
      */
 
     /**
+     * This class takes care of the nitty-gritty details of doing jsonp requests: Storing
+     * a callback in a globally accessible manner, waiting for the timeout or completion
+     * of the request, and passing extra GET parameters to the server, is not so complicated
+     * but it's boring and repetitive to code and tricky to get right.
+     *
      * @class Ink.Net.JsonP
      * @constructor
      * @param {String} uri
      * @param {Object} options
-     * @param {Function}  [options.onComplete]        success callback
-     * @param {Function}  [options.onFailure]         failure callback
-     * @param {Object}    [options.failureObj]        object to be passed as argument to failure callback
-     * @param {Number}    [options.timeout]           timeout for request fail, in seconds. defaults to 10
-     * @param {Object}    [options.params]            object with the parameters and respective values to unfold
-     * @param {String}    [options.callbackParam]     parameter to use as callback. defaults to 'jsoncallback'
-     * @param {String}    [options.internalCallback]  x
+     * @param {Function}  options.onSuccess         success callback
+     * @param {Function}  [options.onFailure]       failure callback
+     * @param {Object}    [options.failureObj]      object to be passed as argument to failure callback
+     * @param {Number}    [options.timeout]         timeout for request fail, in seconds. defaults to 10
+     * @param {Object}    [options.params]          object with the parameters and respective values to unfold
+     * @param {String}    [options.callbackParam]   parameter to use as callback. defaults to 'jsoncallback'
+     * @param {String}    [options.internalCallback] *Advanced*: name of the callback function stored in the Ink.Net.JsonP object.
+     *
+     * @example
+     *      Ink.requireModules(['Ink.Net.JsonP_1'], function (JsonP) {
+     *          var jsonp = new JsonP('http://path.to.jsonp/endpoint', {
+     *              // When the JSONP response arrives, this callback is called:
+     *              onSuccess: function (gameData) {
+     *                  game.startGame(gameData);
+     *              },
+     *              // after options.timeout seconds, this callback gets called:
+     *              onFailure: function () {
+     *                  game.error('Could not load game data!');
+     *              },
+     *              timeout: 5
+     *          });
+     *      });
      */
-
-
-
     var JsonP = function(uri, options) {
         this.init(uri, options);
     };
