@@ -13,7 +13,7 @@ Ink.requireModules(['Ink.Net.JsonP_1', 'Ink.Dom.Selector_1'], function (JsonP, S
         stop();
         expect(1);
         var jsonp = new JsonP('test.jsonp', {
-            onComplete: function (object) {
+            onSuccess: function (object) {
                 equal(object.foo, 'bar');
                 start();
             }
@@ -24,7 +24,7 @@ Ink.requireModules(['Ink.Net.JsonP_1', 'Ink.Dom.Selector_1'], function (JsonP, S
         stop();
         expect(1);
         var jsonp = new JsonP('unknown jsonp file', {
-            onComplete: function () {
+            onSuccess: function () {
                 ok(false, 'should have failed because there is no JSONp file');
                 start();
             },
@@ -39,7 +39,7 @@ Ink.requireModules(['Ink.Net.JsonP_1', 'Ink.Dom.Selector_1'], function (JsonP, S
     test('JsonP cleans up its script tag', function () {
         expect(2);
         var jsonp = new JsonP('test.jsonp', {
-            onComplete: function () {
+            onSuccess: function () {
                 equal(Selector.select('script[src="'+jsonp.uri+'"]').length, 0);
                 start();
             }
