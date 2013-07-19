@@ -108,7 +108,6 @@ Ink.createModule('Ink.Net.JsonP', '1', [], function() {
             this.options.params[this.options.callbackParam] = 'Ink.Net.JsonP.' + this.options.internalCallback;
             this.options.params.rnd_seed = this.randVar;
             this.uri = this._addParamsToGet(this.uri, this.options.params);
-
             // create script tag
             var scriptEl = document.createElement('script');
             scriptEl.type = 'text/javascript';
@@ -129,9 +128,11 @@ Ink.createModule('Ink.Net.JsonP', '1', [], function() {
         _removeScriptTag: function() {
             var scriptEl;
             var scriptEls = document.getElementsByTagName('script');
+            var scriptUri;
             for (var i = 0, f = scriptEls.length; i < f; ++i) {
                 scriptEl = scriptEls[i];
-                if (scriptEl.src === this.uri) {
+                scriptUri = scriptEl.getAttribute('src') || scriptEl.src;
+                if (scriptUri !== null && scriptUri === this.uri) {
                     scriptEl.parentNode.removeChild(scriptEl);
                     return;
                 }
