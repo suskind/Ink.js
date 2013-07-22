@@ -18,15 +18,15 @@ Ink.createModule('Ink.Dom.Loaded', 1, [], function() {
     var Loaded = {
 
         /**
-         * Functions queue.
+         * Callbacks and their contexts. Array of 2-arrays.
          *
-         * @property _cbQueue
-         * @type {Array}
+         * []
+         *
+         * @attribute _contexts Array
          * @private
-         * @static
-         * @readOnly
+         * 
          */
-        _cbQueue: [], // Callbacks' queue
+        _contexts: [], // Callbacks' queue
 
         /**
          * Adds a new function that will be invoked once the document is ready
@@ -48,48 +48,63 @@ Ink.createModule('Ink.Dom.Loaded', 1, [], function() {
                 win = window;
             }
 
-            this._win  = win;
-            this._doc  = win.document;
-            this._root = this._doc.documentElement;
-            this._done = false;
-            this._top  = true;
+            var context;
 
-            this._handlers = {
-                checkState: Ink.bindEvent(this._checkState, this),
-                poll:       Ink.bind(this._poll, this)
-            };
+            for (var i = 0, len = this._contexts.length; i < len; i++) {
+                if (this._contexts[i][0] === win) {
+                    context = this._contexts[i][1];
+                    break;
+                }
+            }
+            if (!context) {
+                context = {
+                    cbQueue: [],
+                    win: win,
+                    doc: win.document,
+                    root: win.document.documentElement,
+                    done: false,
+                    top: true
+                };
+                context.handlers = {
+                    checkState: Ink.bindEvent(this._checkState, this, context),
+                    poll: Ink.bind(this._poll, this, context)
+                };
+                this._contexts.push(
+                    [win, context]  // Javascript Objects cannot map different windows to
+                                    // different values.
+                );
+            }
 
-            var   ael = this._doc.addEventListener;
-            this._add = ael ? 'addEventListener' : 'attachEvent';
-            this._rem = ael ? 'removeEventListener' : 'detachEvent';
-            this._pre = ael ? '' : 'on';
-            this._det = ael ? 'DOMContentLoaded' : 'onreadystatechange';
-            this._wet = this._pre + 'load';
+            var   ael = context.doc.addEventListener;
+            context.add = ael ? 'addEventListener' : 'attachEvent';
+            context.rem = ael ? 'removeEventListener' : 'detachEvent';
+            context.pre = ael ? '' : 'on';
+            context.det = ael ? 'DOMContentLoaded' : 'onreadystatechange';
+            context.wet = context.pre + 'load';
 
-            var csf = this._handlers.checkState;
+            var csf = context.handlers.checkState;
 
-            if (this._doc.readyState === 'complete'){
+            if (context.doc.readyState === 'complete'){
                 setTimeout(Ink.bind(function () {
-                    fn.call(this._win, 'lazy');
+                    fn.call(context.win, 'lazy');
                 }, this), 0);
             }
             else {
-                this._cbQueue.push(fn);
+                context.cbQueue.push(fn);
 
-                this._doc[this._add]( this._det , csf );
-                this._win[this._add]( this._wet , csf );
+                context.doc[context.add]( context.det , csf );
+                context.win[context.add]( context.wet , csf );
 
                 var frameElement = 1;
                 try{
-                    frameElement = this._win.frameElement;
+                    frameElement = context.win.frameElement;
                 } catch(e) {}
-
-                if ( !ael && this._root.doScroll ) { // IE HACK
+                if ( !ael && context.root && context.root.doScroll ) { // IE HACK
                     try {
-                        this._top = !frameElement;
+                        context.top = !frameElement;
                     } catch(e) { }
-                    if (this._top) {
-                        this._poll();
+                    if (context.top) {
+                        this._poll(context);
                     }
                 }
             }
@@ -102,13 +117,13 @@ Ink.createModule('Ink.Dom.Loaded', 1, [], function() {
          * @param {Event} event Triggered event
          * @private
          */
-        _checkState: function(event) {
-            if ( !event || (event.type === 'readystatechange' && this._doc.readyState !== 'complete')) {
+        _checkState: function(event, context) {
+            if ( !event || (event.type === 'readystatechange' && context.doc.readyState !== 'complete')) {
                 return;
             }
-            var where = (event.type === 'load') ? this._win : this._doc;
-            where[this._rem](this._pre+event.type, this._handlers.checkState, false);
-            this._ready();
+            var where = (event.type === 'load') ? context.win : context.doc;
+            where[context.rem](context.pre+event.type, context.handlers.checkState, false);
+            this._ready(context);
         },
 
         /**
@@ -122,13 +137,13 @@ Ink.createModule('Ink.Dom.Loaded', 1, [], function() {
          *
          * function _poll
          */
-        _poll: function() {
+        _poll: function(context) {
             try {
-                this._root.doScroll('left');
+                context.root.doScroll('left');
             } catch(e) {
-                return setTimeout(this._handlers.poll, 50);
+                return setTimeout(context.handlers.poll, 50);
             }
-            this._ready();
+            this._ready(context);
         },
 
         /**
@@ -137,13 +152,13 @@ Ink.createModule('Ink.Dom.Loaded', 1, [], function() {
          * @method _ready
          * @private
          */
-        _ready: function() {
-            if (!this._done) {
-                this._done = true;
-                for (var i = 0; i < this._cbQueue.length; ++i) {
-                    this._cbQueue[i].call(this._win);
+        _ready: function(context) {
+            if (!context.done) {
+                context.done = true;
+                for (var i = 0; i < context.cbQueue.length; ++i) {
+                    context.cbQueue[i].call(context.win);
                 }
-                this._cbQueue = [];
+                context.cbQueue = [];
             }
         }
     };

@@ -1,5 +1,5 @@
 /*globals equal,test,start,stop,expect,QUnit*/
-QUnit.config.testTimeout = 3000;
+QUnit.config.testTimeout = 4000;
 Ink.requireModules(['Ink.Dom.Loaded_1'], function (Loaded) {
     'use strict';
     test('several Loaded callbacks called in order', function () {
@@ -20,7 +20,7 @@ Ink.requireModules(['Ink.Dom.Loaded_1'], function (Loaded) {
         });
     });
     test('Several contexts', function () {
-        //expect(3);  // TODO insert this again
+        expect(2);
         stop(2);
         var iframe = document.createElement('iframe');
         iframe.src = 'iframe.html';
@@ -28,6 +28,7 @@ Ink.requireModules(['Ink.Dom.Loaded_1'], function (Loaded) {
         var iframeWindow = iframe.contentWindow;
         Loaded.run(iframeWindow, function () {
             equal(iframeWindow, this, 'being called with the iframe window');
+            iframe.parentNode.removeChild(iframe);
             start();
         });
         Loaded.run(window, function () {
@@ -61,5 +62,26 @@ Ink.requireModules(['Ink.Dom.Loaded_1'], function (Loaded) {
             start();
         });
         equal(++i, 1, 'called first');
+    });
+    test('Use timeout.php, a page that just sleeps a bit', function () {
+        expect(4);
+        stop(2);
+        var iframe,
+            testOrder = 0;
+        for (var i = 1; i <= 2; i++) {
+            iframe = document.createElement('iframe');
+            iframe.src = 'timeout.php?w=' + (i / 2.0);
+            document.getElementsByTagName('body')[0].appendChild(iframe);
+            var cb = makeCallback(iframe, i);
+            Loaded.run(iframe.contentWindow, cb);
+        }
+        function makeCallback(iframe, i) {
+            return function () {
+                equal(this, iframe.contentWindow, 'iframe content window');
+                equal(testOrder++, i - 1, 'called in order');
+                iframe.parentNode.removeChild(iframe);
+                start();
+            };
+        }
     });
 });
