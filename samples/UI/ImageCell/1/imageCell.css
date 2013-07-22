@@ -1,0 +1,14 @@
+.image-cell {
+    display:             inline-block;
+    overflow:            hidden;
+    background-color:    #000;
+    background-repeat:   no-repeat;
+    background-position: 50% 50%;
+}
+
+.image-cell > img {
+    width:      auto;
+    height:     auto;
+    max-width:  none;
+    max-height: none;
+}
