@@ -1,6 +1,8 @@
-/*globals equal,test,start,stop,expect*/
+/*globals equal,test,start,stop,expect,QUnit*/
+QUnit.config.testTimeout = 3000;
 Ink.requireModules(['Ink.Dom.Loaded_1'], function (Loaded) {
-   test('several Loaded callbacks called in order', function () {
+    'use strict';
+    test('several Loaded callbacks called in order', function () {
         expect(3);  // 3 assertions
         stop(3);  // 3 start()s
         var i = 0;
@@ -18,19 +20,18 @@ Ink.requireModules(['Ink.Dom.Loaded_1'], function (Loaded) {
         });
     });
     test('Several contexts', function () {
-        expect(2);
+        //expect(3);  // TODO insert this again
         stop(2);
         var iframe = document.createElement('iframe');
         iframe.src = 'iframe.html';
         document.getElementsByTagName('body')[0].appendChild(iframe);
         var iframeWindow = iframe.contentWindow;
-        console.log(iframeWindow)
         Loaded.run(iframeWindow, function () {
-            deepEqual(this, iframeWindow, 'being called with the iframe window');
+            equal(iframeWindow, this, 'being called with the iframe window');
             start();
         });
         Loaded.run(window, function () {
-            deepEqual(this, window, 'being called with this window');
+            equal(window, this, 'being called with this window');
             start();
         });
     });

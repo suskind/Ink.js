@@ -32,11 +32,11 @@ Ink.createModule('Ink.Dom.Loaded', 1, [], function() {
          * Adds a new function that will be invoked once the document is ready
          *
          * @method run
-         * @param {Object}   [win] Window object to attach/add the event
-         * @param {Function} fn  Callback function to be run after the page is loaded
+         * @param {Object}   [win=window]   Window object to attach/add the event
+         * @param {Function} fn             Callback function to be run after the page is loaded
          * @public
          * @example
-         *     Ink.requireModules(['Ink.Dom.Loaded_1'],function(Loaded){
+         *     Ink.requireModules(['Ink.Dom.Loaded_1'], function(Loaded){
          *         Loaded.run(function(){
          *             console.log('This will run when the page/document is ready/loaded');
          *         });
@@ -69,7 +69,9 @@ Ink.createModule('Ink.Dom.Loaded', 1, [], function() {
             var csf = this._handlers.checkState;
 
             if (this._doc.readyState === 'complete'){
-                fn.call(this._win, 'lazy');
+                setTimeout(Ink.bind(function () {
+                    fn.call(this._win, 'lazy');
+                }, this), 0);
             }
             else {
                 this._cbQueue.push(fn);
