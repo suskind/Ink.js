@@ -147,6 +147,21 @@ Ink.createModule('Ink.Util.Image', '1',
          */
         measureImage: function(o) {
             if (!o.uri) { throw new Error('url is required!'); }
+
+
+
+            // makes full URIs from current page
+            //console.log('MEASURE', o.uri);
+            if (o.uri.indexOf(':') === -1) {
+                var t = location.pathname.split('/');
+                t.pop();
+                t = t.join('/');
+                o.uri = [location.protocol, '//', location.host, t, '/', o.uri].join('');
+            }
+            //console.log('->', o.uri);
+
+
+
             if (!o.cb) { o.cb = function(){}; }
 
             if (!o.timeout) {

@@ -17,6 +17,7 @@ Ink.createModule('Ink.UI.Gallery', '1',
     var ver = parseInt(Brwsr.version, 10);
     var doesNotSupportBgSize = (Brwsr.IE    && ver < 9) ||
                                (Brwsr.GECKO && ver < 4);
+    //doesNotSupportBgSize=true; // uncomment to test fallback mode
 
 
 
@@ -39,19 +40,24 @@ Ink.createModule('Ink.UI.Gallery', '1',
         }
     };
 
+    var wrapAround = function(i, n) {
+        if (i < 0) {  return i + n; }
+        if (i >= n) { return i - n; }
+        return i;
+    };
+
 
 
     /**
      * @class Ink.UI.Gallery
      *
      * TODO
-     * - proxies to save bandwidth?
-     * - support for content other than images (clearify!)
+     * - support for content other than images (clarify!)
+     * - documented samples
      * - animate thumbnail change? (nice to have)
      * - different thumbnail placements (nice to have)
      * - vertical mode (nice to have)
      * - transitions (nice to have)
-     * - documentation, samples
      *
      * @constructor
      * @param  {String|DOMElement} selector
@@ -61,9 +67,10 @@ Ink.createModule('Ink.UI.Gallery', '1',
      * @param  {String}  [options.thumbMode]      either cover or contain. default is cover
      * @param  {String}  [options.mainMode]       either cover or contain. default is contain
      * @param  {Number}  [options.aspectRatio]    aspect ratio for the gallery. default is 4/3
+     * @param  {Number}  [options.autoNext]       number of seconds before next is automatically triggered. stops on first user interaction.
      * @param  {Boolean} [options.circular]       if true, gallery wraps around limits. default is true
      * @param  {Boolean} [options.adaptToResize]  if true, gallery updates on window size change
-     * @param  {Number}  [options.autoNext]       number of seconds before next is automatically triggered. stops on first user interaction.
+     * @param  {Boolean} [options.useProxies]     if true, image fetching is postponed
      */
     var Gallery = function(selector, options) {
 
@@ -78,6 +85,7 @@ Ink.createModule('Ink.UI.Gallery', '1',
             ,aspectRatio:   4/3
             ,adaptToResize: true
             ,circular:      true
+            ,useProxies:    false
         }, Elem.data(this._containerEl));
 
         this._options = Ink.extendObj(this._options, options || {});
@@ -289,6 +297,7 @@ Ink.createModule('Ink.UI.Gallery', '1',
 
         _goTo: function(i) {
             var prevI = this._currentIndex;
+            var l = this._model.length;
 
             if (i !== undefined) {
                 this._currentIndex = i;
@@ -313,6 +322,14 @@ Ink.createModule('Ink.UI.Gallery', '1',
             if (this._paginationEl) {
                 Css.removeClassName(this._pageEls[prevI], 'current');
                 Css.addClassName(   this._pageEls[i    ], 'current');
+            }
+
+            // fetch current, prev and next
+            if (this._options.useProxies) {
+                var t, ic;
+                t = wrapAround(i-1, l); ic = this._sTmp[t]; if (!t.uri) { ic.setURI( this._model[t].mainSrc ); }
+                t = wrapAround(i,   l); ic = this._sTmp[t]; if (!t.uri) { ic.setURI( this._model[t].mainSrc ); }
+                t = wrapAround(i+1, l); ic = this._sTmp[t]; if (!t.uri) { ic.setURI( this._model[t].mainSrc ); }
             }
         },
 
@@ -475,7 +492,7 @@ Ink.createModule('Ink.UI.Gallery', '1',
                 }
                 else {
                     ic = new ImageCell({
-                        uri:      o.mainSrc,
+                        uri:      this._options.useProxies ? undefined : o.mainSrc,
                         skipCss3: doesNotSupportBgSize,
                         cellDims: mainDims,
                         mode:     this._options.mainMode
