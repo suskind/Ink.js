@@ -46,11 +46,7 @@ Ink.createModule('Ink.UI.Gallery', '1',
      *
      * TODO
      * - swipe support
-     * - optional page indicator
-     * - optional caption
-     * - mark current thumb in some way
      * - proxies to save bandwidth?
-     * - prev/next vertical placement
      * - optional autonext timer
      * - animate thumbnail change? (nice to have)
      * - different thumbnail placements (nice to have)
@@ -116,11 +112,17 @@ Ink.createModule('Ink.UI.Gallery', '1',
         this._stageEl       = Ink.s('.stage',        this._containerEl);
         this._thumbHolderEl = Ink.s('.thumb-holder', this._containerEl);
         this._captionEl     = Ink.s('.caption',      this._containerEl);
+        this._paginationEl  = Ink.s('.pagination',   this._containerEl);
         this._prevEl = Ink.s('.prev', this._stageEl);
         this._nextEl = Ink.s('.next', this._stageEl);
 
         if (!this._stageEl) {
             throw new Error('Could not find any descendant element having the class stage!');
+        }
+
+        if (this._paginationEl) {
+            this._pageEl = Ink.s('*', this._paginationEl);
+            this._paginationEl.removeChild(this._pageEl);
         }
 
         Elem.removeTextNodeChildren(this._stageEl);
@@ -137,6 +139,10 @@ Ink.createModule('Ink.UI.Gallery', '1',
         }
         else {
             this._extractModel();
+        }
+
+        if (this._paginationEl) {
+            this._makePagination();
         }
 
         this._render();
@@ -214,6 +220,8 @@ Ink.createModule('Ink.UI.Gallery', '1',
 
 
         _goTo: function(i) {
+            var prevI = this._currentIndex;
+
             if (i !== undefined) {
                 this._currentIndex = i;
             }
@@ -226,10 +234,17 @@ Ink.createModule('Ink.UI.Gallery', '1',
             this._stageEl.style.marginLeft = '-' + (i * w) + 'px';
             if (this._thumbHolderEl) {
                 this._thumbHolderEl.scrollLeft = i * ww;
+                Css.removeClassName(this._tTmp[prevI].el, 'ink-inset');
+                Css.addClassName(   this._tTmp[i    ].el, 'ink-inset');
             }
 
             if (this._captionEl) {
                 this._captionEl.innerHTML = this._model[i].caption || '';
+            }
+
+            if (this._paginationEl) {
+                Css.removeClassName(this._pageEls[prevI], 'current');
+                Css.addClassName(   this._pageEls[i    ], 'current');
             }
         },
 
@@ -262,6 +277,16 @@ Ink.createModule('Ink.UI.Gallery', '1',
                 }
                 this._tTmp[i] = el;
                 prevTEl = el;
+            }
+        },
+
+        _makePagination: function() {
+            var el, i, l = this._model.length;
+            this._pageEls = new Array(l);
+            for (i = 0; i < l; ++i) {
+                el = this._pageEl.cloneNode(true);
+                this._paginationEl.appendChild(el);
+                this._pageEls[i] = el;
             }
         },
 
