@@ -83,13 +83,15 @@ Ink.createModule('Ink.Dom.Loaded', 1, [], function() {
             context.wet = context.pre + 'load';
 
             var csf = context.handlers.checkState;
+            var alreadyLoaded = (
+                context.doc.readyState === 'complete' &&
+                context.win.location.toString() !== 'about:blank');  // https://code.google.com/p/chromium/issues/detail?id=32357
 
-            if (context.doc.readyState === 'complete'){
+            if (alreadyLoaded){
                 setTimeout(Ink.bind(function () {
                     fn.call(context.win, 'lazy');
                 }, this), 0);
-            }
-            else {
+            } else {
                 context.cbQueue.push(fn);
 
                 context.doc[context.add]( context.det , csf );

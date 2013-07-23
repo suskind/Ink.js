@@ -1,4 +1,4 @@
-/*globals equal,test,start,stop,expect,QUnit*/
+/*globals equal,test,start,stop,expect,QUnit,ok*/
 QUnit.config.testTimeout = 4000;
 Ink.requireModules(['Ink.Dom.Loaded_1'], function (Loaded) {
     'use strict';
@@ -67,7 +67,7 @@ Ink.requireModules(['Ink.Dom.Loaded_1'], function (Loaded) {
         expect(4);
         stop(2);
         var iframe,
-            testOrder = 0;
+            startt = +new Date();
         for (var i = 1; i <= 2; i++) {
             iframe = document.createElement('iframe');
             iframe.src = 'timeout.php?w=' + (i / 2.0);
@@ -77,8 +77,9 @@ Ink.requireModules(['Ink.Dom.Loaded_1'], function (Loaded) {
         }
         function makeCallback(iframe, i) {
             return function () {
+                var dt = +new Date() - startt;
                 equal(this, iframe.contentWindow, 'iframe content window');
-                equal(testOrder++, i - 1, 'called in order');
+                ok(dt > i / 2.0, dt);
                 iframe.parentNode.removeChild(iframe);
                 start();
             };
