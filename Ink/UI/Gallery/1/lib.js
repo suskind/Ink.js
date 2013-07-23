@@ -4,12 +4,19 @@
  * @version 1
  */
 Ink.createModule('Ink.UI.Gallery', '1',
-    ['Ink.UI.Aux_1', 'Ink.Dom.Css_1', 'Ink.Dom.Element_1', 'Ink.Dom.Event_1', 'Ink.UI.ImageCell_1'],
-    function(Aux, Css, Elem, Evt, ImageCell) {
+    ['Ink.UI.Aux_1', 'Ink.Dom.Browser_1', 'Ink.Dom.Css_1', 'Ink.Dom.Element_1', 'Ink.Dom.Event_1', 'Ink.UI.ImageCell_1'],
+    function(Aux, Brwsr, Css, Elem, Evt, ImageCell) {
 
     'use strict';
 
     /*jshint laxcomma:true */
+
+
+
+    // http://caniuse.com/background-img-opts
+    var ver = parseInt(Brwsr.version, 10);
+    var doesNotSupportBgSize = (Brwsr.IE    && ver < 9) ||
+                               (Brwsr.GECKO && ver < 4);
 
 
 
@@ -23,21 +30,24 @@ Ink.createModule('Ink.UI.Gallery', '1',
      * - optional page indicator
      * - optional caption
      * - mark current thumb in some way
-     * - animate thumbnail change?
-     * - different thumbnail placements
+     * - proxies to save bandwidth?
+     * - prev/next vertical placement
      * - optional autonext timer
-     * - finish fullscreen mode
+     * - animate thumbnail change? (nice to have)
+     * - different thumbnail placements (nice to have)
+     * - vertical mode (nice to have)
+     * - transitions (nice to have)
      * - documentation, samples
      *
      * @constructor
      * @param  {String|DOMElement} selector
-     * @param  {Object}  options
-     * @param  {Array}  [options.thumbDims]      dimensions of thumbnails, in pixels. default is [128, 128]
-     * @param  {String} [options.thumbMode]      either cover or contain. default is cover
-     * @param  {String} [options.mainMode]       either cover or contain. default is contain
-     * @param  {Number} [options.aspectRatio]    aspect ratio for the gallery. default is 4/3
-     * @param  {Boolean} [options.circular]      if true, gallery wraps around limits. default is true
-     * @param  {Boolean} [options.adaptToResize] if true, gallery updates on window size change
+     * @param  {Object}   options
+     * @param  {Array}   [options.thumbDims]      dimensions of thumbnails, in pixels. default is [128, 128]
+     * @param  {String}  [options.thumbMode]      either cover or contain. default is cover
+     * @param  {String}  [options.mainMode]       either cover or contain. default is contain
+     * @param  {Number}  [options.aspectRatio]    aspect ratio for the gallery. default is 4/3
+     * @param  {Boolean} [options.circular]       if true, gallery wraps around limits. default is true
+     * @param  {Boolean} [options.adaptToResize]  if true, gallery updates on window size change
      */
     var Gallery = function(selector, options) {
 
@@ -224,6 +234,10 @@ Ink.createModule('Ink.UI.Gallery', '1',
 
         toggleFullScreen: function() {
             this._inFullScreen = !this._inFullScreen;
+            if (!this._inFullScreen) {
+                this._containerEl.style.width = '';
+            }
+
             Css.addRemoveClassName(this._containerEl, 'ink-galleryx-fullscreen', this._inFullScreen);
             this._render();
         },
@@ -248,17 +262,10 @@ Ink.createModule('Ink.UI.Gallery', '1',
             var l = this._model.length;
 
             var mainDims = [0, 0];
-            if (this._inFullScreen) { // TODO ONGOING
+            if (this._inFullScreen) {
                 mainDims[0] = window.innerWidth;
-                mainDims[1] = window.innerHeight;
-                if (mainDims[0] / mainDims[1] > this._options.aspectRatio) {
-                    mainDims[0] = mainDims[1] * this._options.aspectRatio;
-                }
-                else {
-                    mainDims[1] = mainDims[0] / this._options.aspectRatio;
-                }
-                var scl = (mainDims[1] - this._options.thumbDims[1]) / mainDims[1];
-                mainDims = [~~(mainDims[0] * scl), ~~(mainDims[1] * scl)];
+                mainDims[1] = window.innerHeight - this._options.thumbDims[1];
+                this._containerEl.style.width = mainDims[0] + 'px';
             }
             else {
                 mainDims[0] = this._containerEl.offsetWidth;
@@ -280,25 +287,33 @@ Ink.createModule('Ink.UI.Gallery', '1',
                 sEl = this._sTmp[i];
                 tEl = this._tTmp[i];
 
-                if (tEl) {
+                if (tEl instanceof ImageCell) {
+                    //this._tTmp[i].resize(this._options.thumbDims); // these haven't changed so no need to update!
+                }
+                else if (tEl) {
                     ic = new ImageCell({
                         uri:      o.thumbSrc,
-                        skipCss3: false,
+                        skipCss3: doesNotSupportBgSize,
                         cellDims: this._options.thumbDims,
                         mode:     this._options.thumbMode
                     });
                     this._thumbHolderEl.replaceChild(ic.el, tEl);
-                    this._tTmp[i] = ic.el;
+                    this._tTmp[i] = ic;
                 }
 
-                ic = new ImageCell({
-                    uri:      o.mainSrc,
-                    skipCss3: false,
-                    cellDims: mainDims,
-                    mode:     this._options.mainMode
-                });
-                this._stageEl.replaceChild(ic.el, sEl);
-                this._sTmp[i] = ic.el;
+                if (sEl instanceof ImageCell) {
+                    this._sTmp[i].resize(mainDims);
+                }
+                else {
+                    ic = new ImageCell({
+                        uri:      o.mainSrc,
+                        skipCss3: doesNotSupportBgSize,
+                        cellDims: mainDims,
+                        mode:     this._options.mainMode
+                    });
+                    this._stageEl.replaceChild(ic.el, sEl);
+                    this._sTmp[i] = ic;
+                }
             }
 
             // correct prev/next size (to keep hitbox not over thumbnails)
