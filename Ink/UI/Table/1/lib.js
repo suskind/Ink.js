@@ -412,11 +412,11 @@ Ink.createModule('Ink.UI.Table', '1', ['Ink.Net.Ajax_1','Ink.UI.Aux_1','Ink.Dom.
             /**
              * Setting the sortable columns and its event listeners
              */
-            var thead = Selector.select('thead', this._rootElement)[0] || null;
-            if (thead === null) {
+            var theads = Selector.select('thead', this._rootElement);
+            if (!theads.length) {
                 return;
             }
-            Event.observe(thead,'click',this._handlers.click);
+            Event.observe(theads[0],'click',this._handlers.click);
             this._headers = Selector.select('thead tr th',this._rootElement);
             InkArray.each(this._headers,Ink.bind(function(item, index){
                 var dataset = Element.data( item );
