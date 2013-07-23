@@ -45,7 +45,8 @@ Ink.requireModules(
                 "thumbSrc": "lorem/300-200-technics-1",
                 "caption": "Passion is seldom the end of any story, for it cannot long endure if it is not soon supplemented with true affection and mutual respect."
             }
-        ]
+        ],
+        autoNext: 2
     });
 
 });

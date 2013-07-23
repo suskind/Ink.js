@@ -45,9 +45,8 @@ Ink.createModule('Ink.UI.Gallery', '1',
      * @class Ink.UI.Gallery
      *
      * TODO
-     * - swipe support
      * - proxies to save bandwidth?
-     * - optional autonext timer
+     * - support for content other than images (clearify!)
      * - animate thumbnail change? (nice to have)
      * - different thumbnail placements (nice to have)
      * - vertical mode (nice to have)
@@ -64,6 +63,7 @@ Ink.createModule('Ink.UI.Gallery', '1',
      * @param  {Number}  [options.aspectRatio]    aspect ratio for the gallery. default is 4/3
      * @param  {Boolean} [options.circular]       if true, gallery wraps around limits. default is true
      * @param  {Boolean} [options.adaptToResize]  if true, gallery updates on window size change
+     * @param  {Number}  [options.autoNext]       number of seconds before next is automatically triggered. stops on first user interaction.
      */
     var Gallery = function(selector, options) {
 
@@ -171,22 +171,53 @@ Ink.createModule('Ink.UI.Gallery', '1',
         var fn = function(ev) { Evt.stop(ev); return false; };
         Evt.observe(this._containerEl, 'dragstart',   fn);
         Evt.observe(this._containerEl, 'selectstart', fn); // IE
+
+
+
+        if (this._options.autoNext) {
+            this._autoNextTimer = setInterval(Ink.bind(this.next, this), this._options.autoNext * 1000);
+        }
     };
 
     Gallery.prototype = {
 
+        /**
+         * Returns the length of the collection being displayed
+         *
+         * @method getLength
+         * @return {Number} number of elements in display
+         */
         getLength: function() {
             return this._model.length;
         },
 
+        /**
+         * Returns the index of the element being displayed
+         *
+         * @method getIndex
+         * @return {Number} index of element being displayed
+         */
         getIndex: function() {
             return this._currentIndex;
         },
 
+        /**
+         * Returns information relative to the element being displayed
+         *
+         * @method getItem
+         * @return {Object} model information of the element being displayed
+         */
         getItem: function() {
             return Aux.clone( this._model[ this._currentIndex ] );
         },
 
+        /**
+         * changes the item in display
+         *
+         * @method goTo
+         * @param  {Number}   index       index of the item we want displayed
+         * @param  {Boolean} [isRelative] if true, adds to the current index
+         */
         goTo: function(index, isRelative) {
             var i = this._currentIndex;
             var l = this._model.length;
@@ -211,18 +242,39 @@ Ink.createModule('Ink.UI.Gallery', '1',
             this._goTo(i);
         },
 
+        /**
+         * shows previous item
+         *
+         * @method previous
+         */
         previous: function() {
             this.goTo(-1, true);
         },
 
+        /**
+         * shows next item
+         *
+         * @method next
+         */
         next: function() {
             this.goTo(1, true);
         },
 
+        /**
+         * returs the state of the full screen feature
+         *
+         * @method isInFullScreen
+         * @return {Boolean} true if gallery is currently in full screen
+         */
         isInFullScreen: function() {
             return this._inFullScreen;
         },
 
+        /**
+         * toggles between normal and full screen modes
+         *
+         * @method toggleFullScreen
+         */
         toggleFullScreen: function() {
             this._inFullScreen = !this._inFullScreen;
             if (!this._inFullScreen) {
@@ -364,6 +416,11 @@ Ink.createModule('Ink.UI.Gallery', '1',
             }
         },
 
+        _disableAutoNext: function() {
+            clearInterval(this._autoNextTimer);
+            delete this._autoNextTimer;
+        },
+
         _render: function() {
             var l = this._model.length;
 
@@ -443,6 +500,10 @@ Ink.createModule('Ink.UI.Gallery', '1',
         },
 
         _onClick: function(ev) {
+            if (this._autoNextTimer) {
+                this._disableAutoNext();
+            }
+
             var el = Evt.element(ev);
 
             //console.log('click', el);
@@ -462,6 +523,10 @@ Ink.createModule('Ink.UI.Gallery', '1',
         },
 
         _onSwipe: function(sw, o) {
+            if (this._autoNextTimer) {
+                this._disableAutoNext();
+            }
+
             Evt.stop(o.upEvent);
             var dx = o.dr[0];
             dx = (dx > 0) ? -1 : 1;
