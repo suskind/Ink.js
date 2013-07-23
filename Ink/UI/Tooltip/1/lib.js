@@ -225,7 +225,8 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
                 var bodies = document.getElementsByTagName('body');
                 var insertInto = bodies && bodies.length ? bodies[0] : document.documentElement;
 
-                InkElement.insertTop(tooltip, insertInto);
+                // InkElement.insertTop(tooltip, insertInto);
+                insertInto.appendChild(tooltip);  // TODO use above line instead when Ink CSS does not meddle too much with element positioning.
             };
             
             if (where === 'mousemove' || where === 'mousefix') {
