@@ -45,7 +45,6 @@ Ink.createModule('Ink.UI.Gallery', '1',
      * @class Ink.UI.Gallery
      *
      * TODO
-     * - test without thumbnails
      * - swipe support
      * - optional page indicator
      * - optional caption
@@ -62,6 +61,7 @@ Ink.createModule('Ink.UI.Gallery', '1',
      * @constructor
      * @param  {String|DOMElement} selector
      * @param  {Object}   options
+     * @param  {Array}   [options.model]          when defined, no DOM extraction is done. Object should have mainSrc and optionally thumbSrc
      * @param  {Array}   [options.thumbDims]      dimensions of thumbnails, in pixels. default is [128, 128]
      * @param  {String}  [options.thumbMode]      either cover or contain. default is cover
      * @param  {String}  [options.mainMode]       either cover or contain. default is contain
@@ -116,15 +116,14 @@ Ink.createModule('Ink.UI.Gallery', '1',
         this._prevEl = Ink.s('.prev', this._stageEl);
         this._nextEl = Ink.s('.next', this._stageEl);
 
-        Elem.removeTextNodeChildren(this._stageEl);
-        Elem.removeTextNodeChildren(this._thumbHolderEl);
-
         if (!this._stageEl) {
             throw new Error('Could not find any descendant element having the class stage!');
         }
 
-        if (!this._thumbHolderEl) {
-            throw new Error('Could not find any descendant element having the class thumb-holder!');
+        Elem.removeTextNodeChildren(this._stageEl);
+
+        if (this._thumbHolderEl) {
+            Elem.removeTextNodeChildren(this._thumbHolderEl);
         }
 
 
@@ -151,9 +150,6 @@ Ink.createModule('Ink.UI.Gallery', '1',
 
 
         this._currentIndex = 0;
-
-
-        console.log(this);
     };
 
     Gallery.prototype = {
@@ -229,7 +225,9 @@ Ink.createModule('Ink.UI.Gallery', '1',
             var w = this._mainDims[0];
             var ww = this._options.thumbDims[0];
             this._stageEl.style.marginLeft = '-' + (i * w) + 'px';
-            this._thumbHolderEl.scrollLeft = i * ww;
+            if (this._thumbHolderEl) {
+                this._thumbHolderEl.scrollLeft = i * ww;
+            }
         },
 
         _makeTempElements: function() {
@@ -247,6 +245,10 @@ Ink.createModule('Ink.UI.Gallery', '1',
                 }
                 this._sTmp[i] = el;
                 prevSEl = el;
+
+                if (!this._thumbHolderEl) {
+                    continue;
+                }
 
                 el = document.createElement('div');
                 if (prevTEl) {
@@ -289,6 +291,10 @@ Ink.createModule('Ink.UI.Gallery', '1',
             }
 
             // b) traverse .thumb-holder children
+            if (!this._thumbHolderEl) {
+                return;
+            }
+
             var i = 0;
             el = this._thumbHolderEl.firstChild;
             while (el) {
@@ -317,7 +323,7 @@ Ink.createModule('Ink.UI.Gallery', '1',
             var mainDims = [0, 0];
             if (this._inFullScreen) {
                 mainDims[0] = window.innerWidth;
-                mainDims[1] = window.innerHeight - this._options.thumbDims[1];
+                mainDims[1] = window.innerHeight - (this._thumbHolderEl ? this._options.thumbDims[1] : 0);
                 this._containerEl.style.width = mainDims[0] + 'px';
             }
             else {

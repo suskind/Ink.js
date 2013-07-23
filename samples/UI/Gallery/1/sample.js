@@ -11,7 +11,7 @@ Ink.requireModules(
 		window.g = new Gal(ctn, {});
 	});*/
 
-    window.g1 = new Gal('#g1', {});
+    window.g1 = new Gal('#g1');
 
     window.g2 = new Gal('#g2', {
         model: [
@@ -38,6 +38,32 @@ Ink.requireModules(
             {
                 "mainSrc": "lorem/600-400-technics-1",
                 "thumbSrc": "lorem/300-200-technics-1"
+            }
+        ],
+        thumbDims: [64, 64]
+    });
+
+    window.g3 = new Gal('#g3');
+
+    window.g4 = new Gal('#g4', {
+        model: [
+            {
+                "mainSrc": "lorem/600-400-sports-1"
+            },
+            {
+                "mainSrc": "lorem/400-600-food-1"
+            },
+            {
+                "mainSrc": "lorem/600-400-nature-1"
+            },
+            {
+                "mainSrc": "lorem/400-600-people-1"
+            },
+            {
+                "mainSrc": "lorem/600-400-business-1"
+            },
+            {
+                "mainSrc": "lorem/600-400-technics-1"
             }
         ]
     });
