@@ -25,7 +25,8 @@ Ink.createModule('Ink.UI.ImageCell', '1',
 
     /**
      * Abstracts an image container with the common layouts: cover/contain (see)
-     * Can use CSS3 background-size or a measured image (measured automatically)
+     * Can use CSS3 background-size or a measured image (measured automatically).
+     * Can be instantiated without uri to serve as proxy. Use setURI later to update it.
      *
      * @class Ink.Util.Image
      * @version 1
