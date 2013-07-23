@@ -4,8 +4,8 @@
  * @version 1
  */
 Ink.createModule('Ink.UI.Gallery', '1',
-    ['Ink.UI.Aux_1', 'Ink.Dom.Browser_1', 'Ink.Dom.Css_1', 'Ink.Dom.Element_1', 'Ink.Dom.Event_1', 'Ink.UI.ImageCell_1'],
-    function(Aux, Brwsr, Css, Elem, Evt, ImageCell) {
+    ['Ink.UI.Aux_1', 'Ink.Dom.Browser_1', 'Ink.Dom.Css_1', 'Ink.Dom.Element_1', 'Ink.Dom.Event_1', 'Ink.UI.ImageCell_1', 'Ink.Util.Swipe_1'],
+    function(Aux, Brwsr, Css, Elem, Evt, ImageCell, Swipe) {
 
     'use strict';
 
@@ -155,6 +155,22 @@ Ink.createModule('Ink.UI.Gallery', '1',
         if (this._options.adaptToResize) {
             Evt.observe(window, 'resize', Ink.bindEvent(this._onResize, this) );
         }
+
+        new Swipe(this._containerEl, {
+            callback:       Ink.bind(this._onSwipe, this),
+            forceAxis:      'x',
+            minDuration:    0.01, // in seconds
+            maxDuration:    0.5,
+            minDist:        4, // in pixels
+            maxDist:        400,
+            stopEvents:     false,
+            storeGesture:   false
+        });
+
+        // to reduce interferences with other events
+        var fn = function(ev) { Evt.stop(ev); return false; };
+        Evt.observe(this._containerEl, 'dragstart',   fn);
+        Evt.observe(this._containerEl, 'selectstart', fn); // IE
     };
 
     Gallery.prototype = {
@@ -443,6 +459,13 @@ Ink.createModule('Ink.UI.Gallery', '1',
                 var i = Aux.childIndex(el);
                 this._goTo(i);
             }
+        },
+
+        _onSwipe: function(sw, o) {
+            Evt.stop(o.upEvent);
+            var dx = o.dr[0];
+            dx = (dx > 0) ? -1 : 1;
+            this.goTo(dx, true);
         },
 
         _onResize: function() {
