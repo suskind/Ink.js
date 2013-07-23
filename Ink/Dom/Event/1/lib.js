@@ -303,6 +303,21 @@ Ink.createModule('Ink.Dom.Event', 1, [], function() {
     },
 
     /**
+     * Stops event propagation
+     *
+     * @function stopPropagation
+     * @param {Object} event  event handle
+     */
+    stopPropagation: function(event) {
+        if(event.cancelBubble !== null) {
+            event.cancelBubble = true;
+        }
+        if(event.stopPropagation) {
+            event.stopPropagation();
+        }
+    },
+
+    /**
      * Stops event default behaviour
      *
      * @function stopDefault

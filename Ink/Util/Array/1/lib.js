@@ -144,7 +144,7 @@ Ink.createModule('Ink.Util.Array', '1', [], function() {
         },
 
         /**
-         * Runs a functions through each of the elements of an array
+         * Runs a function through each of the elements of an array
          *
          * @method each
          * @param {Array} arr Array to be cycled/iterated
@@ -278,7 +278,7 @@ Ink.createModule('Ink.Util.Array', '1', [], function() {
          *         testArray.myMethod = function(){
          *             console.log('stuff');
          *         }
-         *         
+         *
          *         console.log( InkArray.convert( testArray ) ); // Result: [ 'value1', 'value2' ]
          *     });
          */
