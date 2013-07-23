@@ -20,12 +20,32 @@ Ink.createModule('Ink.UI.Gallery', '1',
 
 
 
+    var insertAtStart = function(container, element) {
+        var firstChild = container.firstChild;
+        if (!firstChild) {
+            container.appendChild(element);
+        }
+        else {
+            container.insertBefore(element, firstChild);
+        }
+    };
+
+    var insertAfter = function(container, element, afterEl) {
+        if (container.lastChild === afterEl) {
+            container.appendChild(element);
+        }
+        else {
+            container.insertBefore(element, afterEl.nextSibling);
+        }
+    };
+
+
+
     /**
      * @class Ink.UI.Gallery
      *
      * TODO
      * - test without thumbnails
-     * - sample with JSON model
      * - swipe support
      * - optional page indicator
      * - optional caption
@@ -109,59 +129,13 @@ Ink.createModule('Ink.UI.Gallery', '1',
 
 
 
-        // extract model
-        this._model = [];
-        this._sTmp = [];
-        this._tTmp = [];
-
-
-
-        // a) traverse .stage children
-        var o, el = this._stageEl.firstChild;
-        while (el) {
-            if ( el.nodeType !== 1 /*||
-                 Css.hasClassName(el, 'prev') ||
-                 Css.hasClassName(el, 'next')*/ ) {
-                el = el.nextSibling;
-                continue;
-            }
-
-            o = {};
-
-            if (el.nodeName.toLowerCase() === 'img') {
-                o.mainSrc = el.getAttribute('src');
-                this._model.push(o);
-                this._sTmp.push(el); // we store the elements to replace them
-            }
-
-            //console.log('s', el);
-
-            el = el.nextSibling;
+        if (this._options.model) {
+            this._model = Aux.clone(this._options.model);
+            this._makeTempElements();
         }
-
-
-        // b) traverse .thumb-holder children
-        var i = 0;
-        el = this._thumbHolderEl.firstChild;
-        while (el) {
-            if (el.nodeType !== 1) {
-                el = el.nextSibling;
-                continue;
-            }
-
-            o = this._model[i++];
-
-            if (el.nodeName.toLowerCase() === 'img') {
-                o.thumbSrc = el.getAttribute('src');
-                this._tTmp.push(el); // we store the elements to replace them
-            }
-
-            //console.log('t', el);
-
-            el = el.nextSibling;
+        else {
+            this._extractModel();
         }
-
-
 
         this._render();
 
@@ -258,9 +232,88 @@ Ink.createModule('Ink.UI.Gallery', '1',
             this._thumbHolderEl.scrollLeft = i * ww;
         },
 
+        _makeTempElements: function() {
+            var el, prevSEl, prevTEl, i, l = this._model.length;
+            this._sTmp = new Array(l);
+            this._tTmp = new Array(l);
+
+            for (i = 0; i < l; ++i) {
+                el = document.createElement('div');
+                if (prevSEl) {
+                    insertAfter(this._stageEl, el, prevSEl);
+                }
+                else {
+                    insertAtStart(this._stageEl, el);
+                }
+                this._sTmp[i] = el;
+                prevSEl = el;
+
+                el = document.createElement('div');
+                if (prevTEl) {
+                    insertAfter(this._thumbHolderEl, el, prevTEl);
+                }
+                else {
+                    insertAtStart(this._thumbHolderEl, el);
+                }
+                this._tTmp[i] = el;
+                prevTEl = el;
+            }
+        },
+
+        _extractModel: function() {
+            this._model = [];
+            this._sTmp = [];
+            this._tTmp = [];
+
+            // a) traverse .stage children
+            var o, el = this._stageEl.firstChild;
+            while (el) {
+                if ( el.nodeType !== 1 /*||
+                     Css.hasClassName(el, 'prev') ||
+                     Css.hasClassName(el, 'next')*/ ) {
+                    el = el.nextSibling;
+                    continue;
+                }
+
+                o = {};
+
+                if (el.nodeName.toLowerCase() === 'img') {
+                    o.mainSrc = el.getAttribute('src');
+                    this._model.push(o);
+                    this._sTmp.push(el); // we store the elements to replace them
+                }
+
+                //console.log('s', el);
+
+                el = el.nextSibling;
+            }
+
+            // b) traverse .thumb-holder children
+            var i = 0;
+            el = this._thumbHolderEl.firstChild;
+            while (el) {
+                if (el.nodeType !== 1) {
+                    el = el.nextSibling;
+                    continue;
+                }
+
+                o = this._model[i++];
+
+                if (el.nodeName.toLowerCase() === 'img') {
+                    o.thumbSrc = el.getAttribute('src');
+                    this._tTmp.push(el); // we store the elements to replace them
+                }
+
+                //console.log('t', el);
+
+                el = el.nextSibling;
+            }
+        },
+
         _render: function() {
             var l = this._model.length;
 
+            // measure mainDims and prepare stageEl
             var mainDims = [0, 0];
             if (this._inFullScreen) {
                 mainDims[0] = window.innerWidth;
@@ -281,6 +334,8 @@ Ink.createModule('Ink.UI.Gallery', '1',
 
             this._stageEl.style.height = mainDims[1] + 'px';
 
+
+            // update DOM
             var o, i, sEl, tEl, ic;
             for (i = 0; i < l; ++i) {
                 o = this._model[i];
