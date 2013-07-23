@@ -110,9 +110,12 @@ Ink.createModule('Ink.UI.Gallery', '1',
 
 
 
+        this._currentIndex = 0;
+
         // find meaningful markup elements
         this._stageEl       = Ink.s('.stage',        this._containerEl);
         this._thumbHolderEl = Ink.s('.thumb-holder', this._containerEl);
+        this._captionEl     = Ink.s('.caption',      this._containerEl);
         this._prevEl = Ink.s('.prev', this._stageEl);
         this._nextEl = Ink.s('.next', this._stageEl);
 
@@ -146,10 +149,6 @@ Ink.createModule('Ink.UI.Gallery', '1',
         if (this._options.adaptToResize) {
             Evt.observe(window, 'resize', Ink.bindEvent(this._onResize, this) );
         }
-
-
-
-        this._currentIndex = 0;
     };
 
     Gallery.prototype = {
@@ -228,6 +227,10 @@ Ink.createModule('Ink.UI.Gallery', '1',
             if (this._thumbHolderEl) {
                 this._thumbHolderEl.scrollLeft = i * ww;
             }
+
+            if (this._captionEl) {
+                this._captionEl.innerHTML = this._model[i].caption || '';
+            }
         },
 
         _makeTempElements: function() {
@@ -268,7 +271,7 @@ Ink.createModule('Ink.UI.Gallery', '1',
             this._tTmp = [];
 
             // a) traverse .stage children
-            var o, el = this._stageEl.firstChild;
+            var t, o, el = this._stageEl.firstChild;
             while (el) {
                 if ( el.nodeType !== 1 /*||
                      Css.hasClassName(el, 'prev') ||
@@ -281,6 +284,10 @@ Ink.createModule('Ink.UI.Gallery', '1',
 
                 if (el.nodeName.toLowerCase() === 'img') {
                     o.mainSrc = el.getAttribute('src');
+                    t = el.getAttribute('alt');
+                    if (t) {
+                        o.caption = t;
+                    }
                     this._model.push(o);
                     this._sTmp.push(el); // we store the elements to replace them
                 }
@@ -339,6 +346,9 @@ Ink.createModule('Ink.UI.Gallery', '1',
             }
 
             this._stageEl.style.height = mainDims[1] + 'px';
+            if (this._captionEl) {
+                this._captionEl.style.top = mainDims[1] + 'px';
+            }
 
 
             // update DOM
@@ -378,13 +388,15 @@ Ink.createModule('Ink.UI.Gallery', '1',
             }
 
             // correct prev/next size (to keep hitbox not over thumbnails)
-            var s;
-            s = this._prevEl.style;
-            s.height = 'auto';
-            s.bottom = this._options.thumbDims[1] + 'px';
-            s = this._nextEl.style;
-            s.height = 'auto';
-            s.bottom = this._options.thumbDims[1] + 'px';
+            if (this._thumbHolderEl) {
+                var s;
+                s = this._prevEl.style;
+                s.height = 'auto';
+                s.bottom = this._options.thumbDims[1] + 'px';
+                s = this._nextEl.style;
+                s.height = 'auto';
+                s.bottom = this._options.thumbDims[1] + 'px';
+            }
 
             this._goTo();
         },
