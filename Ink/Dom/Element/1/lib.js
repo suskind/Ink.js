@@ -17,11 +17,11 @@ Ink.createModule('Ink.Dom.Element', 1, [], function() {
     var Element = {
 
         /**
-         * Shortcut for document.getElementById
+         * Shortcut for `document.getElementById`
          *
          * @function get
-         * @param {String|Array} elm  Receives either an id or an Array of ids
-         * @return Either the DOM element for the given id or an array of elements for the given ids
+         * @param {String|DOMElement} elm   Either an ID of an element, or an element.
+         * @return {DOMElement|null} The DOM element with the given id or null when it was not found
          */
         get: function(elm) {
             if(typeof elm !== 'undefined') {
@@ -55,10 +55,10 @@ Ink.createModule('Ink.Dom.Element', 1, [], function() {
         },
 
         /**
-         * Removes DOM Element from DOM
+         * Removes a DOM Element from the DOM
          *
          * @function remove
-         * @param  {DOMElement} el
+         * @param {DOMElement} elm  The element to remove
          */
         remove: function(el) {
             var parEl;
@@ -68,7 +68,7 @@ Ink.createModule('Ink.Dom.Element', 1, [], function() {
         },
 
         /**
-         * Scrolls to an element
+         * Scrolls the window to an element
          *
          * @function scrollTo
          * @param {DOMElement|String} elm  Element where to scroll
@@ -334,8 +334,8 @@ Ink.createModule('Ink.Dom.Element', 1, [], function() {
          * Removes all nodes children and adds the text
          *
          * @function setTextContent
-         * @param {DOMNode} node from which to retreive text from. Can be any node type.
-         * @param {String}  text to be appended to the node.
+         * @param {DOMNode} node    node to add the text to. Can be any node type.
+         * @param {String}  text    text to be appended to the node.
          */
         setTextContent: function(node, text){
             node = Ink.i(node);
@@ -374,7 +374,7 @@ Ink.createModule('Ink.Dom.Element', 1, [], function() {
          * Tells if element is a clickable link
          *
          * @function isLink
-         * @param {DOMNode} node to check if it's link
+         * @param {DOMNode} node    node to check if it's link
          * @return {Boolean}
          */
         isLink: function(element){
@@ -422,7 +422,7 @@ Ink.createModule('Ink.Dom.Element', 1, [], function() {
         /**
          * Get first child in document order of node type 1
          * @function firstElementChild
-         * @param {DOMNode} parent node
+         * @param {DOMNode} elm parent node
          * @return {DOMNode} the element child
          */
         firstElementChild: function(elm){
@@ -442,7 +442,7 @@ Ink.createModule('Ink.Dom.Element', 1, [], function() {
         /**
          * Get last child in document order of node type 1
          * @function lastElementChild
-         * @param {DOMNode} parent node
+         * @param {DOMNode} elm parent node
          * @return {DOMNode} the element child
          */
         lastElementChild: function(elm){

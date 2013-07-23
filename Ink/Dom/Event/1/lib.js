@@ -71,10 +71,14 @@ Ink.createModule('Ink.Dom.Event', 1, [], function() {
     },
 
     /**
+     * Navigate up the DOM tree, looking for a tag with the name `elmTagName`.
+     *
+     * If such tag is not found, `document` is returned.
+     *
      * @function findElement
-     * @param {Object}  ev          event object
-     * @param {String}  elmTagName  tag name to find
-     * @param {Boolean} [force]     force the return of the wanted type of tag, or false otherwise
+     * @param {Object}  ev              event object
+     * @param {String}  elmTagName      tag name to find
+     * @param {Boolean} [force=false]   If this is true, never return `document`, and returns `false` instead.
      * @return {DOMElement} the first element which matches given tag name or the document element if the wanted tag is not found
      */
     findElement: function(ev, elmTagName, force)
@@ -372,7 +376,7 @@ Ink.createModule('Ink.Dom.Event', 1, [], function() {
     /**
      * @function isLeftClick
      * @param {Object} ev  event object
-     * @return {Boolea} True if there is a left click on the event
+     * @return {Boolean} True if the event is a left mouse click
      */
     isLeftClick: function(ev) {
         if (window.addEventListener) {

@@ -82,7 +82,7 @@ Ink.createModule('Ink.Dom.Browser', '1', [], function() {
         CHROME: false,
 
         /**
-         * The specific browser model. False if it is unable to get it.
+         * The specific browser model. False if it is unavailable.
          *
          * @property model
          * @type {Boolean|String}
@@ -92,7 +92,7 @@ Ink.createModule('Ink.Dom.Browser', '1', [], function() {
         model: false,
 
         /**
-         * The browser version. False if it is unable to get it.
+         * The browser version. False if it is unavailable.
          *
          * @property version
          * @type {Boolean|String}
@@ -102,7 +102,7 @@ Ink.createModule('Ink.Dom.Browser', '1', [], function() {
         version: false,
 
         /**
-         * The user agent string. False if it is unable to get it.
+         * The user agent string. False if it is unavailable.
          *
          * @property userAgent
          * @type {Boolean|String}
@@ -112,7 +112,9 @@ Ink.createModule('Ink.Dom.Browser', '1', [], function() {
         userAgent: false,
 
         /**
-         * Initialization function for the Browser object
+         * Initialization function for the Browser object.
+         *
+         * Is called automatically when this module is loaded, and calls setDimensions, setBrowser and setReferrer.
          *
          * @method init
          * @public
@@ -125,7 +127,7 @@ Ink.createModule('Ink.Dom.Browser', '1', [], function() {
         },
 
         /**
-         * Stores window dimensions
+         * Retrieves and stores window dimensions in this object. Called automatically when this module is loaded.
          *
          * @method setDimensions
          * @public
@@ -150,7 +152,7 @@ Ink.createModule('Ink.Dom.Browser', '1', [], function() {
         },
 
         /**
-         * Stores the referrer
+         * Stores the referrer. Called automatically when this module is loaded.
          *
          * @method setReferrer
          * @public
@@ -161,7 +163,7 @@ Ink.createModule('Ink.Dom.Browser', '1', [], function() {
         },
 
         /**
-         * Detects the browser and stores the found properties
+         * Detects the browser and stores the found properties. Called automatically when this module is loaded.
          *
          * @method detectBrowser
          * @public
@@ -238,10 +240,27 @@ Ink.createModule('Ink.Dom.Browser', '1', [], function() {
         },
 
         /**
-         * Debug function to help checking values.
+         * Debug function which displays browser (and Ink.Dom.Browser) information as an alert message.
          *
          * @method debug
          * @public
+         *
+         * @example
+         *  
+         *  The following code
+         *
+         *      Ink.requireModules(['Ink.Dom.Browser_1'], function (Browser) {
+         *          Browser.debug();
+         *      });
+         *
+         *  Alerts (On Firefox 22):
+         *
+         *      known browsers: (ie, gecko, opera, safari, konqueror) 
+         *      false,true,false,false,false
+         *      model -> firefox
+         *      version -> 22.0
+         *      
+         *      original UA -> Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:22.0) Gecko/20100101 Firefox/22.0
          */
         debug: function()
         {

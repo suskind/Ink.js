@@ -1,0 +1,114 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>Ink.Util.I18n</title>
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="content-language" content="pt-pt" />
+
+<script type="text/javascript" src="/Ink/1/"></script>
+<script type="text/javascript" src="/Ink/Util/I18n/1/"></script>
+
+<script type="text/javascript">
+
+window.words = {
+    pt_PT: {
+       'Nome': 'Nome',
+       'Mais Recentes': 'Mais Recentes',
+       'Faltam {%s} caracteres': 'Faltam {%s} caracteres',
+       'Coment&aacute;rio enviado em {%s} &agrave;s {%s}': 'Coment&aacute;rio enviado em {%s} às {%s}',
+       'Confirmo que o coment&aacute;rio respeita os <a href="{%s}">termos de utiliza&ccedil;&atilde;o</a>': 'Confirmo que o coment&aacute;rio respeita os <a href="{%s}">termos de utiliza&ccedil;&atilde;o</a>',
+       '{%s} singular {%s}': '{%s} singular {%s}',
+       '{%s} plural {%s}': '{%s} plural {%s}',
+       '{%s} maisque {%s}': '{%s} maisque {%s}',
+       '{%s:1} abril {%s:2}': 'dia {%s:1} de abril de {%s:2}',
+       '{%s:1} teste vars {%s} {%s:2}': '{%s:1} teste vars {%s} {%s:2}',
+       '{%s:1} teste vars {%s} {%s:3} {%s:2} {%s} {%s:4}': '{%s:1} teste vars {%s} {%s:3} {%s:2} {%s} {%s:4}',
+       '{%s:1} teste vars {%s} {%s:3} {%s} {%s} {%s:4}': '{%s:1} teste vars {%s} {%s:3} {%s} {%s} {%s:4}',
+       'debug': false
+    },
+    en_US: {
+       'Nome': 'Name',
+       'Mais Recentes': 'Recent',
+       'Faltam {%s} caracteres': '{%s} characters to go',
+       'Coment&aacute;rio enviado em {%s} &agrave;s {%s}': 'Comment posted in {%s} at {%s}',
+       'Confirmo que o coment&aacute;rio respeita os <a href="{%s}">termos de utiliza&ccedil;&atilde;o</a>': 'I confirm the comment respects the <a href="{%s}">terms of use</a>',
+       '{%s} singular {%s}': '{%s} singular {%s}',
+       '{%s} plural {%s}': '{%s} plural {%s}',
+       '{%s} maisque {%s}': '{%s} maisque {%s}',
+       '{%s:1} abril {%s:2}': 'year {%s:2} april day {%s:1}',
+       '{%s:1} teste vars {%s} {%s:2}': '{%s:1} teste en vars {%s} {%s:2}',
+       '{%s:1} teste vars {%s} {%s:3} {%s:2} {%s} {%s:4}': '{%s:1} teste en vars {%s} {%s:3} {%s:2} {%s} {%s:4}',
+       '{%s:1} teste vars {%s} {%s:3} {%s} {%s} {%s:4}': '{%s:1} teste vars {%s} {%s:3} {%s} {%s} {%s:4}',
+       'debug': false
+   }
+};
+
+</script>
+</head>
+
+<body> 
+
+<script type="text/javascript">
+
+Ink.requireModules(['Ink.Util.I18n'], function (I18n) {
+    // var i18n = new Ink.Util.I18n(words, 'pt_PT');
+    var i18n = new I18n(words, 'en_US');
+
+    document.write('<h1>Ink.Util.I18n</h1>');
+
+    document.write('<hr/>');
+
+    document.write('<h3>Ink.Util.I18n.alias()</h3>');
+
+
+    var _ = i18n.alias(); 
+
+    /* ************************************************************* */
+
+    document.write('<h3>Ink.Util.I18n.text()</h3>');
+
+    document.write(i18n.text('Nome')+'<br /><br />');
+
+    document.write('<h3>Using _()</h3>');
+
+    document.write(_('Mais Recentes')+'<br /><br />');
+
+    document.write(_('Faltam {%s} caracteres', '56')+'<br /><br />');
+
+    document.write(_('Coment&aacute;rio enviado em {%s} &agrave;s {%s}', '2010-03-27', '15:45')+'<br /><br />');
+
+    document.write(_('Confirmo que o coment&aacute;rio respeita os <a href="{%s}">termos de utiliza&ccedil;&atilde;o</a>', 'http://www.sapo.pt/')+'<br /><br />');
+
+    /* ************************************************************* */
+
+    document.write('<h3>Using {%s:index}</h3>');
+
+    document.write(_('{%s:1} abril {%s:2}', '25', '2010')+'<br /><br />');
+    //
+    //document.write(_.text('{%s:1} teste vars {%s} {%s:3} {%s:2} {%s} {%s:4}', 'A', 'B', 'C', 'D', 'E', 'F')+'<br /><br />');
+
+    /* ************************************************************* */
+
+    document.write('<h3>Ink.Util.I18n.ntext();</h3>');
+
+    document.write(i18n.ntext('{%s} singular {%s}', '{%s} plural {%s}<br/><br/>', 5, 'A', 'B'));
+    document.write(i18n.ntext('{%s} singular {%s}', '{%s} plural {%s}<br/><br/>', 1, 'A', 'B'));
+
+
+    /* ************************************************************* */
+
+    document.write('<h3>String not defined</h3>');
+
+    document.write(_('teste sem estar definido {%s} {%s}', 'X', 'Y')+'<br /><br />');
+});
+
+</script>
+
+</body>
+</html>
+
+
+
+
+
