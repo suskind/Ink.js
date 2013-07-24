@@ -8,11 +8,18 @@
 <script type="text/javascript">
     Ink.setPath('Ink', '/Ink/');
 </script>
+<link rel="stylesheet" href="http://cdn.ink.sapo.pt/2.1.1/css/ink.css"></script>
 <link rel="stylesheet" href="style.css"></script>
 <style type="text/css">
 .tooltip-list {
     width: 300px;
     border: 1px solid gray;
+}
+.box {
+    width: 10px;
+    height: 10px;
+    display: block;
+    border: 1px solid red;
 }
 </style>
 </head>
@@ -66,7 +73,6 @@
     <li data-tip-where="mousefix">data-tip-where="mousefix"</li>
 </ul>
 
-
 <p>A tooltip delay is useful when you don't want the tooltip to get the user's attention unnecessarily.</p>
 
 <ul class="tooltip-list">
@@ -111,6 +117,35 @@
     <p><b class="biggles">Biggles:</b> I know, I know! Nobody expects the Spanish Inquisition.</p>
 </div>
 
+<p>Also within elements with margins, padding, floating, borders, and relative positioning.</p>
+
+<div class="tooltip-list" style="overflow: hidden">
+    <div class="box tooltip" style="float: left"></div>
+    <div class="box tooltip" style="float: left"></div>
+</div>
+
+<div class="tooltip-list" style="overflow:hidden">
+    <div class="box tooltip" style="float: left; width: 30%"></div>
+    <div class="box tooltip" style="float: left; width: 60%"></div>
+</div>
+
+<div class="tooltip-list" style="overflow:hidden">
+    <div class="box tooltip" style="float: right; width: 30%"></div>
+    <div class="box tooltip" style="float: right; width: 60%"></div>
+</div>
+
+<div class="tooltip-list" style="overflow:hidden">
+    <div class="box tooltip" style="float: left; width: 30%"></div>
+    <div class="box tooltip" style="float: right; width: 60%"></div>
+</div>
+
+<div class="tooltip-list" style="overflow:hidden">
+    <div class="box tooltip" style="float: right; width: 30%"></div>
+    <div class="box tooltip" style="float: left; width: 60%"></div>
+</div>
+
+
+
 
 <p>You can specify whether you want it to fade in and out, and how much time (in seconds) you want it to take.</p>
 
@@ -145,6 +180,7 @@
         new Tooltip('.tooltip-list li', {text: 'This is a tooltip!'});
         new Tooltip('.biggles', {text: 'Biggles'});
         new Tooltip('.ximinez', {text: 'Ximinez'});
+        new Tooltip('.tooltip', {text: 'This is a tooltip!'});
     });
 </script>
 

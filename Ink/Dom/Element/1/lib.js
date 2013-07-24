@@ -277,7 +277,7 @@ Ink.createModule('Ink.Dom.Element', 1, [], function() {
          * @param {DOMElement}         newElm     element to be inserted
          * @param {DOMElement|String}  targetElm  key element
          */
-        insertTop: function(newElm,targetElm) {
+        insertTop: function(newElm,targetElm) {  // TODO check first child exists
             /*jshint boss:true */
             if (targetElm = this.get(targetElm)) {
                 targetElm.insertBefore(newElm, targetElm.firstChild);
