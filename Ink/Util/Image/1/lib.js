@@ -25,7 +25,7 @@ Ink.createModule('Ink.Util.Image', '1',
         var now = new Date().getTime();
         for (uri in IMG_PENDING) {
             if (!IMG_PENDING.hasOwnProperty(uri)) { continue; }
-            
+
             cbs = IMG_PENDING[uri];
 
             for (i = 0, f = cbs.length; i < f; ++i) {
@@ -65,7 +65,7 @@ Ink.createModule('Ink.Util.Image', '1',
 
         /**
          * Calculates the maximum size a rectagle can have maintaining aspect ratio.
-         * 
+         *
          * @method maximizeBox
          * @param  {Number[2]}  maxSz            the maximum size to fill
          * @param  {Number[2]}  realSz           the original size of the element
@@ -98,9 +98,48 @@ Ink.createModule('Ink.Util.Image', '1',
 
 
         /**
+         * Calculates the box and pad configuration to mimic cover layout (see background-size: cover CSS3 prop)
+         *
+         * @method coverBox
+         * @param  {Number[2]}  maxSz   the maximum size to fill
+         * @param  {Number[2]}  realSz  the original size of the element
+         * @return {Array[2]}           returns 2 array pairs: the suggested element size and padding to remain centered
+         * @static
+         */
+        coverBox: function(maxSz, realSz) {
+            var w = realSz[0];
+            var h = realSz[1];
+            var boxSz;
+
+            var arImg = w / h;
+            var arMax = maxSz[0] / maxSz[1];
+
+            if (arImg > arMax) { //fix height
+                boxSz = [
+                    maxSz[1] * arImg,
+                    maxSz[1]
+                ];
+            }
+            else { // fix width
+                boxSz = [
+                    maxSz[0],
+                    maxSz[0] / arImg
+                ];
+            }
+
+            var padSz = [
+                    parseInt( (maxSz[0] - boxSz[0]) / 2 , 10 ),
+                    parseInt( (maxSz[1] - boxSz[1]) / 2 , 10 )
+            ];
+
+            return [boxSz, padSz];
+        },
+
+
+        /**
          * @method measureImage
          * @param  {Object}     o
-         * @param  {String}     o.uri  
+         * @param  {String}     o.uri
          * @param  {Function}   o.cb
          * @param  {Number}    [o.timeout]  in seconds. defaults to 10
          * @async
@@ -108,6 +147,21 @@ Ink.createModule('Ink.Util.Image', '1',
          */
         measureImage: function(o) {
             if (!o.uri) { throw new Error('url is required!'); }
+
+
+
+            // makes full URIs from current page
+            //console.log('MEASURE', o.uri);
+            if (o.uri.indexOf(':') === -1) {
+                var t = location.pathname.split('/');
+                t.pop();
+                t = t.join('/');
+                o.uri = [location.protocol, '//', location.host, t, '/', o.uri].join('');
+            }
+            //console.log('->', o.uri);
+
+
+
             if (!o.cb) { o.cb = function(){}; }
 
             if (!o.timeout) {
@@ -146,7 +200,7 @@ Ink.createModule('Ink.Util.Image', '1',
             IMG_ELS[o.uri]     = imgEl;
 
             // once loaded, remove it and notify callback(s)
-            
+
             Evt.observe(imgEl, 'load',
                 Ink.bind(
                     function() {
@@ -209,7 +263,7 @@ Ink.createModule('Ink.Util.Image', '1',
                 IImg.measureImage({
                     uri: uris[i],
                     cb:  innerCb
-                });    
+                });
             }
         }
 

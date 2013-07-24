@@ -153,7 +153,7 @@ Ink.createModule('Ink.Util.Swipe', '1', ['Ink.Dom.Event_1'], function(Event) {
         _onUp: function(ev) {
             if (!this._isOn || event.changedTouches.length !== 1) { return; }
 
-            if( this._options.stopEvents === true ){
+            if (this._options.stopEvents) {
                 Event.stop(ev);
             }
             ev = ev.changedTouches[0];   // TODO SHOULD CHECK IT IS THE SAME TOUCH
@@ -177,6 +177,7 @@ Ink.createModule('Ink.Util.Swipe', '1', ['Ink.Dom.Event_1'], function(Event) {
             if (o.forceAxis   && axis !== o.forceAxis) {   return; }
 
             var O = {
+                upEvent:   ev,
                 elementId: this._element.id,
                 duration:  dt,
                 dr:        dr,

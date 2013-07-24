@@ -3,754 +3,562 @@
  * @author inkdev AT sapo.pt
  * @version 1
  */
-Ink.createModule('Ink.UI.Gallery', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Dom.Css_1','Ink.Dom.Element_1','Ink.Dom.Selector_1','Ink.Util.Array_1','Ink.Util.Swipe_1'], function(Aux, Event, Css, Element, Selector, InkArray, Swipe ) {
+Ink.createModule('Ink.UI.Gallery', '1',
+    ['Ink.UI.Aux_1', 'Ink.Dom.Browser_1', 'Ink.Dom.Css_1', 'Ink.Dom.Element_1', 'Ink.Dom.Event_1', 'Ink.UI.ImageCell_1', 'Ink.Util.Swipe_1'],
+    function(Aux, Brwsr, Css, Elem, Evt, ImageCell, Swipe) {
+
     'use strict';
-    
-    /**
-     * Function to calculate the size based on a given max. size and image size.
-     * 
-     * @function maximizeBox
-     * @param  {Number} maxSz
-     * @param  {Number} imageSz
-     * @param  {Boolean} forceMaximize
-     * @return {Number}
-     * @private
-     */
-    var maximizeBox = function(maxSz, imageSz, forceMaximize) {
-        var w = imageSz[0];
-        var h = imageSz[1];
 
-        if (forceMaximize || (w > maxSz[0] || h > maxSz[1]) ) {
-            var arImg = w / h;
-            var arMax = maxSz[0] / maxSz[1];
-            var s = (arImg > arMax) ? maxSz[0] / w : maxSz[1] / h;
-            return [parseInt(w * s + 0.5, 10), parseInt(h * s + 0.5, 10)];
+    /*jshint laxcomma:true */
+
+
+
+    // http://caniuse.com/background-img-opts
+    var ver = parseInt(Brwsr.version, 10);
+    var doesNotSupportBgSize = (Brwsr.IE    && ver < 9) ||
+                               (Brwsr.GECKO && ver < 4);
+    //doesNotSupportBgSize=true; // uncomment to test fallback mode
+
+
+
+    var insertAtStart = function(container, element) {
+        var firstChild = container.firstChild;
+        if (!firstChild) {
+            container.appendChild(element);
         }
-
-        return imageSz;
-    };
-    
-    /**
-     * @function maximizeBox
-     * @param  {Object} o
-     * @param  {Function} cb Callback function to run on each image loaded.
-     * @private
-     */
-    var getDimsAsync = function(o, cb) {
-        cb = Ink.bind(cb,o);
-
-        var dims = [o.img.offsetWidth, o.img.offsetHeight];
-        if (dims[0] && dims[1]) {
-            cb(dims);
+        else {
+            container.insertBefore(element, firstChild);
         }
-        o.img.onload = Ink.bindEvent(function() {
-            cb([this.img.offsetWidth, this.img.offsetHeight]);
-        },o);
     };
+
+    var insertAfter = function(container, element, afterEl) {
+        if (container.lastChild === afterEl) {
+            container.appendChild(element);
+        }
+        else {
+            container.insertBefore(element, afterEl.nextSibling);
+        }
+    };
+
+    var wrapAround = function(i, n) {
+        if (i < 0) {  return i + n; }
+        if (i >= n) { return i - n; }
+        return i;
+    };
+
+
 
     /**
      * @class Ink.UI.Gallery
+     *
+     * TODO
+     * - support for content other than images (clarify!)
+     * - documented samples
+     * - animate thumbnail change? (nice to have)
+     * - different thumbnail placements (nice to have)
+     * - vertical mode (nice to have)
+     * - transitions (nice to have)
+     *
      * @constructor
-     * @version 1
-     * @uses Ink.UI.Aux
-     * @uses Ink.Dom.Event
-     * @uses Ink.Dom.Css
-     * @uses Ink.Dom.Element
-     * @uses Ink.Dom.Selector
-     * @uses Ink.Util.Array
-     * @uses Ink.Util.Swipe
-     * @param {String|DOMElement} selector
-     * @param {Object} [options] Options for the gallery
-     *      @param {Number}   [options.fullImageMaxWidth]       Default value is 400.
-     *      @param {Number}   [options.thumbnailMaxWidth]       Max. width of the thumbnail. Default value is 106.
-     *      @param {Number}   [options.layout]                  This determines what layout the gallery will have. Numeric value between 0 and 3.
-     *      @param {Boolean}  [options.circular]                Determines if the gallery behaves in a circular never ending cycle.
-     *      @param {Boolean}  [options.fixImageSizes]           Specifies if the images should be forced to have the gallery size.
-     * @example
-     *     <ul class="ink-gallery-source">
-     *         <li class="hentry hmedia">
-     *             <a rel="enclosure" href="http://imgs.sapo.pt/ink/assets/imgs_gal/1.1.png">
-     *                 <img alt="s1" src="http://imgs.sapo.pt/ink/assets/imgs_gal/thumb1.png">
-     *             </a>
-     *             <a class="bookmark" href="http://imgs.sapo.pt/ink/assets/imgs_gal/1.1.png">
-     *                 <span class="entry-title">s1</span>
-     *             </a>
-     *             <span class="entry-content"><p>hello world 1</p></span>
-     *         </li>
-     *         <li class="hentry hmedia">
-     *             <a rel="enclosure" href="http://imgs.sapo.pt/ink/assets/imgs_gal/1.2.png">
-     *                 <img alt="s1" src="http://imgs.sapo.pt/ink/assets/imgs_gal/thumb2.png">
-     *             </a>
-     *             <a class="bookmark" href="http://imgs.sapo.pt/ink/assets/imgs_gal/1.2.png">
-     *                 <span class="entry-title">s2</span>
-     *             </a>
-     *             <span class="entry-content"><p>hello world 2</p></span>
-     *         </li>
-     *     </ul>
-     *     <script>
-     *         Ink.requireModules(['Ink.Dom.Selector_1','Ink.UI.Gallery_1'],function( Selector, Gallery ){
-     *             var galleryElement = Ink.s('ul.ink-gallery-source');
-     *             var galleryObj = new Gallery( galleryElement );
-     *         });
-     *     </script>
+     * @param  {String|DOMElement} selector
+     * @param  {Object}   options
+     * @param  {Array}   [options.model]          when defined, no DOM extraction is done. Object should have mainSrc and optionally thumbSrc
+     * @param  {Array}   [options.thumbDims]      dimensions of thumbnails, in pixels. default is [128, 128]
+     * @param  {String}  [options.thumbMode]      either cover or contain. default is cover
+     * @param  {String}  [options.mainMode]       either cover or contain. default is contain
+     * @param  {Number}  [options.aspectRatio]    aspect ratio for the gallery. default is 4/3
+     * @param  {Number}  [options.autoNext]       number of seconds before next is automatically triggered. stops on first user interaction.
+     * @param  {Boolean} [options.circular]       if true, gallery wraps around limits. default is true
+     * @param  {Boolean} [options.adaptToResize]  if true, gallery updates on window size change
+     * @param  {Boolean} [options.useProxies]     if true, image fetching is postponed
      */
     var Gallery = function(selector, options) {
 
-        this._element = Aux.elOrSelector(selector, '1st argument');
+        // parse container and options
+        this._containerEl = Aux.elOrSelector(selector, '1st argument');
 
         this._options = Ink.extendObj({
-            fullImageMaxWidth:   600,
-            fullImageMaxHeight:  400,
-            thumbnailMaxWidth:   106,
-            layout:              0,
-            circular:            false,
-            fixImageSizes:       false
-        }, Element.data(this._element));
+             thumbDims:     [128, 128]
+            ,thumbMode:     'cover'
+            ,mainMode:      'contain'
+            ,direction:     'x'             // TODO not yet in use
+            ,aspectRatio:   4/3
+            ,adaptToResize: true
+            ,circular:      true
+            ,useProxies:    false
+        }, Elem.data(this._containerEl));
 
         this._options = Ink.extendObj(this._options, options || {});
 
-        this._handlers = {
-            navClick:        Ink.bindEvent(this._onNavClick,this),
-            paginationClick: Ink.bindEvent(this._onPaginationClick,this),
-            thumbsClick:     Ink.bindEvent(this._onThumbsClick,this),
-            focusBlur:       Ink.bindEvent(this._onFocusBlur,this),
-            keyDown:         Ink.bindEvent(this._onKeyDown,this)
-        };
+        var ops = this._options;
 
-        this._isFocused = false;
-        this._model = [];
-
-        if (this._options.model instanceof Array) {
-            this._model = this._options.model;
-            this._createdFrom = 'JSON';
+        // boolean
+        if (typeof ops.circular === 'string' && ops.circular !== 'true') {
+            ops.circular = false;
         }
-        else if (this._element.nodeName.toLowerCase() === 'ul') {
-            this._createdFrom = 'DOM';
+        if (typeof ops.adaptToResize === 'string' && ops.adaptToResize !== 'true') {
+            ops.adaptToResize = false;
+        }
+
+        // int,int
+        if (typeof ops.thumbDims === 'string') {
+            ops.thumbDims = ops.thumbDims.split(',');
+            ops.thumbDims[0] = parseInt(ops.thumbDims[0], 10);
+            ops.thumbDims[1] = parseInt(ops.thumbDims[1], 10);
+        }
+
+        // float
+        if (typeof ops.aspectRatio === 'string') {
+            ops.aspectRatio = parseFloat( ops.aspectRatio );
+        }
+
+
+
+        this._currentIndex = 0;
+
+        // find meaningful markup elements
+        this._stageEl       = Ink.s('.stage',        this._containerEl);
+        this._thumbHolderEl = Ink.s('.thumb-holder', this._containerEl);
+        this._captionEl     = Ink.s('.caption',      this._containerEl);
+        this._paginationEl  = Ink.s('.pagination',   this._containerEl);
+        this._prevEl = Ink.s('.prev', this._stageEl);
+        this._nextEl = Ink.s('.next', this._stageEl);
+
+        if (!this._stageEl) {
+            throw new Error('Could not find any descendant element having the class stage!');
+        }
+
+        if (this._paginationEl) {
+            this._pageEl = Ink.s('*', this._paginationEl);
+            this._paginationEl.removeChild(this._pageEl);
+        }
+
+        Elem.removeTextNodeChildren(this._stageEl);
+
+        if (this._thumbHolderEl) {
+            Elem.removeTextNodeChildren(this._thumbHolderEl);
+        }
+
+
+
+        if (this._options.model) {
+            this._model = Aux.clone(this._options.model);
+            this._makeTempElements();
         }
         else {
-            throw new TypeError('You must pass a selector expression/DOM element as 1st option or provide a model on 2nd argument!');
+            this._extractModel();
         }
 
-        this._index      = 0;
-        this._thumbIndex = 0;
-
-        if( !isNaN(this._options.layout) ){
-
-            this._options.layout = parseInt(this._options.layout,10);
-            if (this._options.layout === 0) {
-                this._showThumbs            = false;
-                this._showDescription       = false;
-                this._paginationHasPrevNext = false;
-            }
-            else if (this._options.layout === 1 || this._options.layout === 2 || this._options.layout === 3) {
-                this._showThumbs            = true;
-                this._showDescription       = true;
-                this._paginationHasPrevNext = true;
-            }
-            else {
-                throw new TypeError('supported layouts are 0-3!');
-            }
+        if (this._paginationEl) {
+            this._makePagination();
         }
 
-        if (this._element.getAttribute('data-fix-image-sizes') !== null) {
-            this._options.fixImageSizes = true;
+        this._render();
+
+
+
+        // events
+        Evt.observe(this._containerEl, 'click', Ink.bindEvent(this._onClick, this) );
+
+        if (this._options.adaptToResize) {
+            Evt.observe(window, 'resize', Ink.bindEvent(this._onResize, this) );
         }
 
-        this._init();
+        new Swipe(this._containerEl, {
+            callback:       Ink.bind(this._onSwipe, this),
+            forceAxis:      'x',
+            minDuration:    0.01, // in seconds
+            maxDuration:    0.5,
+            minDist:        4, // in pixels
+            maxDist:        400,
+            stopEvents:     false,
+            storeGesture:   false
+        });
+
+        // to reduce interferences with other events
+        var fn = function(ev) { Evt.stop(ev); return false; };
+        Evt.observe(this._containerEl, 'dragstart',   fn);
+        Evt.observe(this._containerEl, 'selectstart', fn); // IE
+
+
+
+        if (this._options.autoNext) {
+            this._autoNextTimer = setInterval(Ink.bind(this.next, this), this._options.autoNext * 1000);
+        }
     };
 
     Gallery.prototype = {
 
         /**
-         * Init function called from the constructor.
-         *
-         * @method  _init
-         * @private
-         */
-        _init: function() {
-            // extract model
-            if (this._createdFrom === 'DOM') {
-                this._extractModelFromDOM();
-            }
-
-            // generate and apply DOM
-            var el = this._generateMarkup();
-            var parentEl = this._element.parentNode;
-
-            if (!this._notFirstInit) {
-                Aux.storeIdAndClasses(this._element, this);
-                this._notFirstInit = true;
-            }
-
-            parentEl.insertBefore(el, this._element);
-            parentEl.removeChild(this._element);
-            this._element = el;
-
-            Aux.restoreIdAndClasses(this._element, this);
-
-            // subscribe events
-            Event.observe(this._paginationEl, 'click',     this._handlers.paginationClick);
-            Event.observe(this._navEl,        'click',     this._handlers.navClick);
-
-            if (this._showThumbs) {
-                Event.observe(this._thumbsUlEl,   'click',     this._handlers.thumbsClick);
-            }
-
-            Event.observe(this._element,      'mouseover', this._handlers.focusBlur);
-            Event.observe(this._element,      'mouseout',  this._handlers.focusBlur);
-            Event.observe(document,           'keydown',   this._handlers.keyDown);
-
-            Aux.registerInstance(this, this._element, 'gallery');
-        },
-
-        /**
-         * Updates the model from the UL representation
-         *
-         * @method _extractModelFromDOM
-         * @private
-         */
-        _extractModelFromDOM: function() {
-            /*global console:false */
-            var m = [];
-            var dims;
-
-            var liEls = Selector.select('> li', this._element);
-            InkArray.each(liEls,function(liEl) {
-                try {
-                    var d = {
-                        image_full:  '',
-                        image_thumb: '',
-                        title_text:  '',
-                        title_link:  '',
-                        description: '',
-                        content_overlay: document.createDocumentFragment()
-                    };
-
-                    var enclosureAEl       = Selector.select('> a[rel=enclosure]',          liEl)[0];
-                    var thumbImgEl         = Selector.select('> img',                       enclosureAEl)[0];
-                    var bookmarkAEl        = Selector.select('> a[class=bookmark]',         liEl)[0];
-                    var titleSpanEl        = Selector.select('span[class=entry-title]',     liEl)[0];
-                    var entryContentSpanEl = Selector.select('> span[class=entry-content]', liEl)[0];
-                    var contentOverlayEl   = Selector.select('> .content-overlay',          liEl)[0];
-
-                    dims = enclosureAEl.getAttribute('data-dims');
-                    if (dims !== null) {
-                        dims = dims.split(',');
-                        dims[0] = parseInt(dims[0], 10);
-                        dims[1] = parseInt(dims[1], 10);
-                    }
-                    if (dims && !isNaN(dims[0]) && !isNaN(dims[1])) { d.dims = dims; }
-
-                    d.image_full  = enclosureAEl.getAttribute('href');
-                    d.image_thumb = thumbImgEl.getAttribute('src');
-                    if (bookmarkAEl) {
-                        d.title_link  = bookmarkAEl.getAttribute('href');
-                    }
-                    d.title_text  = titleSpanEl.innerHTML;
-                    if (entryContentSpanEl) {
-                        d.description = entryContentSpanEl.innerHTML;
-                    }
-
-                    if(contentOverlayEl){
-                        d.content_overlay.appendChild(contentOverlayEl);
-                    }
-
-                    m.push(d);
-                } catch(ex) {
-                    console.error('problematic element:');
-                    console.error(liEl);
-                    console.error(ex);
-                    throw new Error('Problem parsing gallery data from DOM!');
-                }
-            });
-
-            this._model = m;
-        },
-
-        /**
-         * Returns the top element for the gallery DOM representation
-         *
-         * @method _generateMarkup
-         * @private
-         * @return {DOMElement} Returns the Gallery element totally rendered.
-         */
-        _generateMarkup: function() {
-            /*jshint maxstatements:80 */
-            var el = document.createElement('div');
-            el.className = 'ink-gallery';
-
-            var stageEl = document.createElement('div');
-            stageEl.className = 'stage';
-
-            // nav
-            var navEl = document.createElement('nav');
-            navEl.innerHTML = [
-                '<ul class="unstyled">',
-                    '<li><a href="#" class="next"></a></li>',
-                    '<li><a href="#" class="previous"></a></li>',
-                '</ul>'
-            ].join('');
-            this._navEl = navEl;
-
-            // slider
-            var sliderEl = document.createElement('div');
-            sliderEl.className = 'slider';
-
-            var ulEl = document.createElement('ul');
-            this._sliderUlEl = ulEl;
-
-            var that = this;
-
-            var W = this._options.fullImageMaxWidth;
-            var H = this._options.fullImageMaxHeight;
-
-            InkArray.each(this._model,function(d, i) {
-                var liEl = document.createElement('li');
-                var imgEl = document.createElement('img');
-                imgEl.setAttribute('name', 'image ' + (i + 1));
-                imgEl.setAttribute('src',  d.image_full);
-                imgEl.setAttribute('alt',  d.title_text);
-                //imgEl.style.maxWidth = that._options.fullImageMaxWidth + 'px';
-                //imgEl.setAttribute('width', that._options.fullImageMaxWidth);       // TODO?
-                liEl.appendChild(imgEl);
-
-                if(d.content_overlay){
-                    if(d.content_overlay.nodeType === 1 || d.content_overlay.nodeType === 11){
-                        d.content_overlay = liEl.appendChild(d.content_overlay);
-                    } else if(typeof d.content_overlay === 'string'){
-                        var contentOverlayEl = document.createElement('div');
-
-                        contentOverlayEl.className = 'content-overlay';
-                        contentOverlayEl.innerHTML = d.content_overlay;
-
-                        d.content_overlay = liEl.appendChild(contentOverlayEl);
-                    }
-                }
-
-                ulEl.appendChild(liEl);
-
-                if (that._options.fixImageSizes) {
-                    var dimsCb = function(dims) {
-                        //console.log(this, dims);
-                        var imgEl = this.img;
-                        var data  = this.data;
-
-                        if (!data.dims) { data.dims = dims; }
-
-                        var dims2 = maximizeBox([W, H], dims);
-
-                        var w = dims2[0];
-                        var h = dims2[1];
-                        var dw = Math.floor( (W - w)/2 );
-                        var dh = Math.floor( (H - h)/2 );
-
-                        if (w !== W || h !== H) {
-                            imgEl.setAttribute('width',  w);
-                            imgEl.setAttribute('height', h);
-
-                            var s = imgEl.style;
-                            if (dw > 0) { s.paddingLeft   = dw + 'px'; }
-                            if (dh > 0) { s.paddingBottom = dh + 'px'; }
-                        }
-                    };
-
-                    if (d.dims) { dimsCb.call( {img:imgEl, data:d}, d.dims); }
-                    else {        getDimsAsync({img:imgEl, data:d}, dimsCb); }
-                }
-            });
-
-            sliderEl.appendChild(ulEl);
-            this._sliderEl = sliderEl;
-
-            // description
-            var articleTextDivEl;
-            if (this._showDescription) {
-                var d = this._model[this._index];
-                articleTextDivEl = document.createElement('div');
-                articleTextDivEl.className = ['article_text', 'example' + (this._options.layout === 3 ? 2 : this._options.layout)].join(' ');
-                if (d.title_link) {
-                    articleTextDivEl.innerHTML = ['<h1><a href="', d.title_link, '">', d.title_text, '</a></h1>', d.description].join('');
-                }
-                else {
-                    articleTextDivEl.innerHTML = ['<h1>', d.title_text, '</h1>', d.description].join('');
-                }
-                this._articleTextDivEl = articleTextDivEl;
-            }
-
-            // thumbs
-            var thumbsDivEl;
-            if (this._showThumbs) {
-                thumbsDivEl = document.createElement('div');
-                thumbsDivEl.className = 'thumbs';
-                ulEl = document.createElement('ul');
-                ulEl.className = 'unstyled';
-
-                InkArray.each(this._model,function(d, i) {
-                    var liEl = document.createElement('li');
-                    var aEl = document.createElement('a');
-                    aEl.setAttribute('href', '#');
-                    var imgEl = document.createElement('img');
-                    imgEl.setAttribute('name', 'thumb ' + (i + 1));
-                    imgEl.setAttribute('src', d.image_thumb);
-                    imgEl.setAttribute('alt', (i + 1));
-                    var spanEl = document.createElement('span');
-                    spanEl.innerHTML = d.title_text;
-                    aEl.appendChild(imgEl);
-                    aEl.appendChild(spanEl);
-                    liEl.appendChild(aEl);
-                    ulEl.appendChild(liEl);
-                });
-                thumbsDivEl.appendChild(ulEl);
-
-                this._thumbsDivEl = thumbsDivEl;
-                this._thumbsUlEl = ulEl;
-            }
-
-
-            // pagination
-            var paginationEl = document.createElement('div');
-            paginationEl.className = 'pagination';
-
-            var aEl;
-            if (this._paginationHasPrevNext) {
-                aEl = document.createElement('a');
-                aEl.setAttribute('href', '#');
-                aEl.className = 'previous';
-                paginationEl.appendChild(aEl);
-            }
-
-            InkArray.each(this._model,function(d, i) {
-                var aEl = document.createElement('a');
-                aEl.setAttribute('href', '#');
-                aEl.setAttribute('data-index', i);
-                if (i === that._index) { aEl.className = 'active'; }
-                paginationEl.appendChild(aEl);
-            });
-
-            if (this._paginationHasPrevNext) {
-                aEl = document.createElement('a');
-                aEl.setAttribute('href', '#');
-                aEl.className = 'next';
-                paginationEl.appendChild(aEl);
-            }
-
-            this._paginationEl = paginationEl;
-
-            // last appends...
-            if (this._options.layout === 0) {
-                stageEl.appendChild(navEl);
-                stageEl.appendChild(sliderEl);
-                stageEl.appendChild(paginationEl);
-                el.appendChild(stageEl);
-            }
-            else if (this._options.layout === 1 || this._options.layout === 2 || this._options.layout === 3) {
-                stageEl.appendChild(navEl);
-                stageEl.appendChild(sliderEl);
-                stageEl.appendChild(articleTextDivEl);
-                el.appendChild(stageEl);
-
-                if (this._options.layout === 3) {
-                    //this._thumbsUlEl.appendChild(paginationEl);
-                    this._thumbsUlEl.className = 'thumbs unstyled';
-                    Css.addClassName(el, 'rightNav');
-                    el.appendChild(this._thumbsUlEl);
-                }
-                else {
-                    thumbsDivEl.appendChild(paginationEl);
-                    el.appendChild(thumbsDivEl);
-                }
-            }
-
-            this._swipeDir = 'x';
-            this._swipeThumbsDir = this._options.layout === 0 ? '' : (this._options.layout === 3 ? 'y' : 'x');
-
-            if (Swipe._supported) {
-                new Swipe(el, {
-                    callback:    Ink.bind(function(sw, o) {
-                        var th =              this._isMeOrParent(o.target, this._thumbsUlEl);
-                        var sl = th ? false : this._isMeOrParent(o.target, el);//this._sliderUlEl);
-                        if ( (!th && !sl) || (th && !this._swipeThumbsDir) ) { return; }
-                        if ( (sl && o.axis !== this._swipeDir) || (th && o.axis !== this._swipeThumbsDir) ) { return; }
-                        if (o.dr[0] < 0) { if (th) { this.thumbNext();     } else { this.next();     } }
-                        else {             if (th) { this.thumbPrevious(); } else { this.previous(); } }
-                    },this),
-                    maxDuration: 0.4,
-                    minDist:     50
-                });
-            }
-
-            return el;
-        },
-
-        /**
-         * Verifies if a given element is equals to its parent
-         *
-         * @method _isMeOrParent
-         * @param  {DOMElement}  el       Element to be compared with the parent element
-         * @param  {DOMElement}  parentEl Parent element to be compared with the element
-         * @return {Boolean|undefined}          In case the 'el' variable is not defined, it returns undefined. Otherwise, it will return true or false depending on the comparison.
-         * @private
-         */
-        _isMeOrParent: function(el, parentEl) {
-            if (!el) {return;}
-            do {
-                if (el === parentEl) { return true; }
-                el = el.parentNode;
-            } while (el);
-            return false;
-        },
-
-        /**
-         * Navigation click handler
-         *
-         * @method _onNavClick
-         * @param {Event} ev
-         * @private
-         */
-        _onNavClick: function(ev) {
-            var tgtEl = Event.element(ev);
-            var delta;
-            if      (Css.hasClassName(tgtEl, 'previous')) { delta = -1; }
-            else if (Css.hasClassName(tgtEl, 'next')) {     delta =  1; }
-            else { return; }
-
-            Event.stop(ev);
-            this.goTo(delta, true);
-        },
-
-        /**
-         * Pagination click handler
-         *
-         * @method _onPaginationClick
-         * @param {Event} ev
-         * @private
-         */
-        _onPaginationClick: function(ev) {
-            var tgtEl = Event.element(ev);
-            var i = tgtEl.getAttribute('data-index');
-            var isRelative = false;
-            if      (Css.hasClassName(tgtEl, 'previous')) { i = -1; isRelative = true; }
-            else if (Css.hasClassName(tgtEl, 'next')) {     i =  1; isRelative = true; }
-            else if (i === null) { return; }
-            else { i = parseInt(i, 10); }
-            Event.stop(ev);
-
-            if (isRelative) { this.thumbGoTo(i, true); }
-            else {            this.goTo(i);            }
-        },
-
-        /**
-         * Thumbs click handler
-         *
-         * @method _onThumbsClick
-         * @param {Event} ev
-         * @private
-         */
-        _onThumbsClick: function(ev) {
-            var tgtEl = Event.element(ev);
-            if      (tgtEl.nodeName.toLowerCase() === 'img') {}
-            else if (tgtEl.nodeName.toLowerCase() === 'span') {
-                tgtEl = Selector.select('> img', tgtEl.parentNode)[0];
-            }
-            else { return; }
-
-            Event.stop(ev);
-            var i = parseInt(tgtEl.getAttribute('alt'), 10) - 1;
-            this.goTo(i);
-        },
-
-        /**
-         * Focus handler
-         *
-         * @method _onFocusBlur
-         * @param  {Event} ev
-         * @private
-         */
-        _onFocusBlur: function(ev) {
-            this._isFocused = (ev.type === 'mouseover');
-        },
-
-        /**
-         * Key handler
-         *
-         * @method _onKeyDown
-         * @param  {Event} ev
-         * @private
-         */
-        _onKeyDown: function(ev) {
-            if (!this._isFocused) { return; }
-            var kc = ev.keyCode;
-            if      (kc === 37) { this.previous(); }
-            else if (kc === 39) { this.next();     }
-            else { return; }
-            Event.stop(ev);
-        },
-
-        /**
-         * Validates the number of the item against the gallery items.
-         *
-         * @method _validateValue
-         * @param  {Number}  i  The number of the item being validated
-         * @param  {Boolean} [isRelative]
-         * @param  {Boolean} [isThumb]
-         * @return {Number|Boolean}
-         * @private
-         */
-        _validateValue: function(i, isRelative, isThumb) {
-            // check arguments
-            if (!Aux.isInteger(i)) {
-                throw new TypeError('1st parameter must be an integer number!');
-            }
-            if ( isRelative !== undefined &&
-                 isRelative !== false     &&
-                 isRelative !== true ) {
-                throw new TypeError('2nd parameter must either be boolean or ommitted!');
-            }
-
-            var val = isThumb ? this._thumbIndex : this._index;
-
-            // compute new index
-            if (isRelative) { i += val; }
-
-            if (this._options.circular) {
-                if      (i < 0) {                   i = this._model.length - 1; }
-                else if (i >= this._model.length) { i = 0;                      }
-            }
-            else {
-                if (i < 0 || i >= this._model.length || i === val) { return false; }
-            }
-
-            return i;
-        },
-
-
-
-        /**************
-         * PUBLIC API *
-         **************/
-
-        /**
-         * Returns the index of the current image
-         *
-         * @method getIndex
-         * @return {Number} Index of the current image
-         * @public
-         */
-        getIndex: function() {
-            return this._index;
-        },
-
-        /**
-         * Returns the number of images in the gallery
+         * Returns the length of the collection being displayed
          *
          * @method getLength
-         * @return {Number} Number of images in the gallery
-         * @public
+         * @return {Number} number of elements in display
          */
         getLength: function() {
             return this._model.length;
         },
 
         /**
-         * Moves gallery to the nth - 1 image
+         * Returns the index of the element being displayed
+         *
+         * @method getIndex
+         * @return {Number} index of element being displayed
+         */
+        getIndex: function() {
+            return this._currentIndex;
+        },
+
+        /**
+         * Returns information relative to the element being displayed
+         *
+         * @method getItem
+         * @return {Object} model information of the element being displayed
+         */
+        getItem: function() {
+            return Aux.clone( this._model[ this._currentIndex ] );
+        },
+
+        /**
+         * changes the item in display
          *
          * @method goTo
-         * @param  {Number} i Absolute or relative index
-         * @param  {Boolean} [isRelative] pass true for relative movement, otherwise absolute
-         * @public
+         * @param  {Number}   index       index of the item we want displayed
+         * @param  {Boolean} [isRelative] if true, adds to the current index
          */
-        goTo: function(i, isRelative) {
-            i = this._validateValue(i, isRelative, false);
-            if (i === false) { return; }
-            this._index = i;
+        goTo: function(index, isRelative) {
+            var i = this._currentIndex;
+            var l = this._model.length;
+            var circ = this._options.circular;
 
-            // update DOM representation
-            var paginationAEls = Selector.select('> a', this._paginationEl);
-            var that = this;
-            InkArray.each(paginationAEls,function(aEl, i) {
-                Css.setClassName(aEl, 'active', (i - (that._paginationHasPrevNext ? 1 : 0)) === that._index);
-            });
-
-            this._sliderUlEl.style.marginLeft = ['-', this._options.fullImageMaxWidth * this._index, 'px'].join('');
-
-            if (this._showDescription) {
-                var d = this._model[this._index];
-                if (d.title_link) {
-                    this._articleTextDivEl.innerHTML = ['<h1><a href="', d.title_link, '">', d.title_text, '</a></h1>', d.description].join('');
-                }
-                else {
-                    this._articleTextDivEl.innerHTML = ['<h1>', d.title_text, '</h1>', d.description].join('');
-                }
+            if (isRelative) {
+                i += index;
             }
+            else {
+                i = index;
+            }
+
+            if (i < 0) {
+                if (!circ) { return; }
+                i += l;
+            }
+            else if (i >= l) {
+                if (!circ) { return; }
+                i -= l;
+            }
+
+            this._goTo(i);
         },
 
         /**
-         * Moves gallery to the nth - 1 thumb
-         *
-         * @method thumbGoTo
-         * @param  {Number} i Absolute or relative index
-         * @param  {Boolean} [isRelative] pass true for relative movement, otherwise absolute
-         * @public
-         */
-        thumbGoTo: function(i, isRelative) {
-            i = this._validateValue(i, isRelative, true);
-            if (i === false) { return; }
-            this._thumbIndex = i;
-
-            // update DOM representation
-            var prop = 'margin' + (this._swipeThumbsDir === 'x' ? 'Left' : 'Top');
-            this._thumbsUlEl.style[prop] = ['-', this._options.thumbnailMaxWidth * this._thumbIndex, 'px'].join('');
-        },
-
-        /**
-         * Move to the previous image
+         * shows previous item
          *
          * @method previous
-         * @public
          */
         previous: function() {
             this.goTo(-1, true);
         },
 
         /**
-         * Move to the next image
+         * shows next item
          *
          * @method next
-         * @public
          */
         next: function() {
             this.goTo(1, true);
         },
 
         /**
-         * Move to the previous thumb
+         * returs the state of the full screen feature
          *
-         * @method thumbPrevious
-         * @public
+         * @method isInFullScreen
+         * @return {Boolean} true if gallery is currently in full screen
          */
-        thumbPrevious: function() {
-            this.thumbGoTo(-1, true);
+        isInFullScreen: function() {
+            return this._inFullScreen;
         },
 
         /**
-         * Move to the next thumb
+         * toggles between normal and full screen modes
          *
-         * @method thumbNext
-         * @public
+         * @method toggleFullScreen
          */
-        thumbNext: function() {
-            this.thumbGoTo(1, true);
+        toggleFullScreen: function() {
+            this._inFullScreen = !this._inFullScreen;
+            if (!this._inFullScreen) {
+                this._containerEl.style.width = '';
+            }
+
+            Css.addRemoveClassName(this._containerEl, 'ink-galleryx-fullscreen', this._inFullScreen);
+            this._render();
         },
 
-        /**
-         * Unregisters the component and removes its markup from the DOM
-         *
-         * @method destroy
-         * @public
-         */
-        destroy: Aux.destroyComponent
+
+
+        _goTo: function(i) {
+            var prevI = this._currentIndex;
+            var l = this._model.length;
+
+            if (i !== undefined) {
+                this._currentIndex = i;
+            }
+            else {
+                i = this._currentIndex;
+            }
+
+            var w = this._mainDims[0];
+            var ww = this._options.thumbDims[0];
+            this._stageEl.style.marginLeft = '-' + (i * w) + 'px';
+            if (this._thumbHolderEl) {
+                this._thumbHolderEl.scrollLeft = i * ww;
+                Css.removeClassName(this._tTmp[prevI].el, 'ink-inset');
+                Css.addClassName(   this._tTmp[i    ].el, 'ink-inset');
+            }
+
+            if (this._captionEl) {
+                this._captionEl.innerHTML = this._model[i].caption || '';
+            }
+
+            if (this._paginationEl) {
+                Css.removeClassName(this._pageEls[prevI], 'current');
+                Css.addClassName(   this._pageEls[i    ], 'current');
+            }
+
+            // fetch current, prev and next
+            if (this._options.useProxies) {
+                var t, ic;
+                t = wrapAround(i-1, l); ic = this._sTmp[t]; if (!t.uri) { ic.setURI( this._model[t].mainSrc ); }
+                t = wrapAround(i,   l); ic = this._sTmp[t]; if (!t.uri) { ic.setURI( this._model[t].mainSrc ); }
+                t = wrapAround(i+1, l); ic = this._sTmp[t]; if (!t.uri) { ic.setURI( this._model[t].mainSrc ); }
+            }
+        },
+
+        _makeTempElements: function() {
+            var el, prevSEl, prevTEl, i, l = this._model.length;
+            this._sTmp = new Array(l);
+            this._tTmp = new Array(l);
+
+            for (i = 0; i < l; ++i) {
+                el = document.createElement('div');
+                if (prevSEl) {
+                    insertAfter(this._stageEl, el, prevSEl);
+                }
+                else {
+                    insertAtStart(this._stageEl, el);
+                }
+                this._sTmp[i] = el;
+                prevSEl = el;
+
+                if (!this._thumbHolderEl) {
+                    continue;
+                }
+
+                el = document.createElement('div');
+                if (prevTEl) {
+                    insertAfter(this._thumbHolderEl, el, prevTEl);
+                }
+                else {
+                    insertAtStart(this._thumbHolderEl, el);
+                }
+                this._tTmp[i] = el;
+                prevTEl = el;
+            }
+        },
+
+        _makePagination: function() {
+            var el, i, l = this._model.length;
+            this._pageEls = new Array(l);
+            for (i = 0; i < l; ++i) {
+                el = this._pageEl.cloneNode(true);
+                this._paginationEl.appendChild(el);
+                this._pageEls[i] = el;
+            }
+        },
+
+        _extractModel: function() {
+            this._model = [];
+            this._sTmp = [];
+            this._tTmp = [];
+
+            // a) traverse .stage children
+            var t, o, el = this._stageEl.firstChild;
+            while (el) {
+                if ( el.nodeType !== 1 /*||
+                     Css.hasClassName(el, 'prev') ||
+                     Css.hasClassName(el, 'next')*/ ) {
+                    el = el.nextSibling;
+                    continue;
+                }
+
+                o = {};
+
+                if (el.nodeName.toLowerCase() === 'img') {
+                    o.mainSrc = el.getAttribute('src');
+                    t = el.getAttribute('alt');
+                    if (t) {
+                        o.caption = t;
+                    }
+                    this._model.push(o);
+                    this._sTmp.push(el); // we store the elements to replace them
+                }
+
+                //console.log('s', el);
+
+                el = el.nextSibling;
+            }
+
+            // b) traverse .thumb-holder children
+            if (!this._thumbHolderEl) {
+                return;
+            }
+
+            var i = 0;
+            el = this._thumbHolderEl.firstChild;
+            while (el) {
+                if (el.nodeType !== 1) {
+                    el = el.nextSibling;
+                    continue;
+                }
+
+                o = this._model[i++];
+
+                if (el.nodeName.toLowerCase() === 'img') {
+                    o.thumbSrc = el.getAttribute('src');
+                    this._tTmp.push(el); // we store the elements to replace them
+                }
+
+                //console.log('t', el);
+
+                el = el.nextSibling;
+            }
+        },
+
+        _disableAutoNext: function() {
+            clearInterval(this._autoNextTimer);
+            delete this._autoNextTimer;
+        },
+
+        _render: function() {
+            var l = this._model.length;
+
+            // measure mainDims and prepare stageEl
+            var mainDims = [0, 0];
+            if (this._inFullScreen) {
+                mainDims[0] = window.innerWidth;
+                mainDims[1] = window.innerHeight - (this._thumbHolderEl ? this._options.thumbDims[1] : 0);
+                this._containerEl.style.width = mainDims[0] + 'px';
+            }
+            else {
+                mainDims[0] = this._containerEl.offsetWidth;
+                mainDims[1] = ~~(mainDims[0] * 1/this._options.aspectRatio);
+            }
+
+            this._mainDims = mainDims;
+
+            if (this._options.direction === 'x') {
+                Css.addClassName(this._stageEl, 'horizontal');
+                this._stageEl.style.width = (mainDims[0] * l) + 'px';
+            }
+
+            this._stageEl.style.height = mainDims[1] + 'px';
+            if (this._captionEl) {
+                this._captionEl.style.top = mainDims[1] + 'px';
+            }
+
+
+            // update DOM
+            var o, i, sEl, tEl, ic;
+            for (i = 0; i < l; ++i) {
+                o = this._model[i];
+                sEl = this._sTmp[i];
+                tEl = this._tTmp[i];
+
+                if (tEl instanceof ImageCell) {
+                    //this._tTmp[i].resize(this._options.thumbDims); // these haven't changed so no need to update!
+                }
+                else if (tEl) {
+                    ic = new ImageCell({
+                        uri:      o.thumbSrc,
+                        skipCss3: doesNotSupportBgSize,
+                        cellDims: this._options.thumbDims,
+                        mode:     this._options.thumbMode
+                    });
+                    this._thumbHolderEl.replaceChild(ic.el, tEl);
+                    this._tTmp[i] = ic;
+                }
+
+                if (sEl instanceof ImageCell) {
+                    this._sTmp[i].resize(mainDims);
+                }
+                else {
+                    ic = new ImageCell({
+                        uri:      this._options.useProxies ? undefined : o.mainSrc,
+                        skipCss3: doesNotSupportBgSize,
+                        cellDims: mainDims,
+                        mode:     this._options.mainMode
+                    });
+                    this._stageEl.replaceChild(ic.el, sEl);
+                    this._sTmp[i] = ic;
+                }
+            }
+
+            // correct prev/next size (to keep hitbox not over thumbnails)
+            if (this._thumbHolderEl) {
+                var s;
+                s = this._prevEl.style;
+                s.height = 'auto';
+                s.bottom = this._options.thumbDims[1] + 'px';
+                s = this._nextEl.style;
+                s.height = 'auto';
+                s.bottom = this._options.thumbDims[1] + 'px';
+            }
+
+            this._goTo();
+        },
+
+        _onClick: function(ev) {
+            if (this._autoNextTimer) {
+                this._disableAutoNext();
+            }
+
+            var el = Evt.element(ev);
+
+            //console.log('click', el);
+
+            var hasPrev = Css.hasClassName(el, 'prev');
+            var hasNext = Css.hasClassName(el, 'next');
+
+            Evt.stop(ev);
+
+            if (hasPrev || hasNext) {
+                this.goTo(hasPrev ? -1 : 1, true);
+            }
+            else if (Css.hasClassName(el, 'image-cell')) {
+                var i = Aux.childIndex(el);
+                this._goTo(i);
+            }
+        },
+
+        _onSwipe: function(sw, o) {
+            if (this._autoNextTimer) {
+                this._disableAutoNext();
+            }
+
+            Evt.stop(o.upEvent);
+            var dx = o.dr[0];
+            dx = (dx > 0) ? -1 : 1;
+            this.goTo(dx, true);
+        },
+
+        _onResize: function() {
+            if (this._containerEl.offsetWidth !== this._mainDims[0]) {
+                this._render();
+            }
+        }
 
     };
+
+
 
     return Gallery;
 
