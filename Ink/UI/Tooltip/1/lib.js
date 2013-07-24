@@ -239,6 +239,11 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
                 var tleft = targetElementPos[0],
                     ttop = targetElementPos[1];
 
+                if (tleft instanceof Array) {  // Work around a bug in Ink.Dom.Element.offsetLeft which made it return the result of offset() instead. TODO remove this check when fix is merged
+                    ttop = tleft[1];
+                    tleft = tleft[0];
+                }
+
                 var centerh = (InkElement.elementWidth(this.element) / 2) - (InkElement.elementWidth(tooltip) / 2),
                     centerv = (InkElement.elementHeight(this.element) / 2) - (InkElement.elementHeight(tooltip) / 2);
                 var spacing = this._getIntOpt('spacing');
@@ -262,6 +267,7 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
                 }
 
                 var scrl = this._getLocalScroll();
+
                 tooltip.style.left = (tleft - scrl[0]) + 'px';
                 tooltip.style.top = (ttop - scrl[1]) + 'px';
             }
