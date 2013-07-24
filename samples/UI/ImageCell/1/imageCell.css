@@ -1,3 +1,8 @@
+/* to allow empty div.image-cells to remain aligned to the ones with img elements */
+* > .image-cell {
+    vertical-align: top;
+}
+
 .image-cell {
     display:             inline-block;
     overflow:            hidden;

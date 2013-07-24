@@ -12,6 +12,13 @@ Ink.createModule('Ink.UI.ImageCell', '1',
         if (err) { console.log(err); }
 
         this.dimensions = o.dimensions;
+        if (!this.imgEl) {
+            this.imgEl = document.createElement('img');
+            this.el.appendChild(this.imgEl);
+        }
+        this.imgEl.src = o.uri;
+
+        //console.log('measured', this.dimensions, this.uri);
         this._relayout();
     };
 
@@ -19,7 +26,8 @@ Ink.createModule('Ink.UI.ImageCell', '1',
 
     /**
      * Abstracts an image container with the common layouts: cover/contain (see)
-     * Can use CSS3 background-size or a measured image (measured automatically)
+     * Can use CSS3 background-size or a measured image (measured automatically).
+     * Can be instantiated without uri to serve as proxy. Use setURI later to update it.
      *
      * @class Ink.Util.Image
      * @version 1
@@ -35,7 +43,7 @@ Ink.createModule('Ink.UI.ImageCell', '1',
         this.el.className = 'image-cell';
 
         var s;
-        if (!this.skipCss3) {
+        if (!this.skipCss3 && this.uri) {
             s = this.el.style;
             s.backgroundImage = 'url(' + this.uri + ')';
         }
@@ -46,11 +54,12 @@ Ink.createModule('Ink.UI.ImageCell', '1',
     ImageCell.prototype = {
 
         /**
-         * use this whenever you need to change dimensions or update after a change in
+         * Use this whenever you need to change dimensions or update after a change in
          * any of the properties: this.skipCss3, this.mode
          *
          * @method resize
          * @param  {Array}  [cellDims]  new cell dimensions, if needs change
+         * @return {ImageCell} the instance itself
          */
         resize: function(cellDims) {
             if (cellDims) {
@@ -61,7 +70,7 @@ Ink.createModule('Ink.UI.ImageCell', '1',
             s.width  = cellDims[0] + 'px';
             s.height = cellDims[1] + 'px';
 
-            if (this.skipCss3 && !this.imgEl) {
+            if (this.skipCss3 && !this.imgEl && this.uri) {
                 this.imgEl = document.createElement('img');
                 this.imgEl.src = this.uri;
                 this.el.appendChild(this.imgEl);
@@ -70,17 +79,47 @@ Ink.createModule('Ink.UI.ImageCell', '1',
             else if (!this.skipCss3 && this.imgEl) {
                 this.el.removeChild(this.imgEl);
                 delete this.imgEl;
-                s.backgroundImage = 'url(' + this.uri + ')';
+                if (this.uri) {
+                    s.backgroundImage = 'url(' + this.uri + ')';
+                }
             }
 
-            if (this.skipCss3 && !this.dimensions) {
-                return Img.measureImage({
-                    uri:  this.uri,
-                    cb:   Ink.bind(onImageDimsCb, this)
-                });
+            if (this.skipCss3 && !this.dimensions && this.uri) {
+                return this._measure();
             }
 
             this._relayout();
+
+            return this;
+        },
+
+        /**
+         * Use this to update/set the image URI
+         *
+         * @method setURI
+         * @param  {String} uri
+         * @return {ImageCell} the instance itself
+         */
+        setURI: function(uri) {
+            if (!uri || this.uri === uri) { return; }
+
+            this.uri = uri;
+
+            if (this.skipCss3) {
+                this._measure();
+            }
+            else {
+                this.el.style.backgroundImage = 'url(' + this.uri + ')';
+            }
+
+            return this;
+        },
+
+        _measure: function() {
+            Img.measureImage({
+                uri:  this.uri,
+                cb:   Ink.bind(onImageDimsCb, this)
+            });
         },
 
         _relayout: function() {
@@ -89,7 +128,7 @@ Ink.createModule('Ink.UI.ImageCell', '1',
                 s = this.el.style;
                 s.backgroundSize = this.mode;
             }
-            else {
+            else if (this.dimensions) {
                 s = this.imgEl.style;
                 var dims = this.dimensions;
 

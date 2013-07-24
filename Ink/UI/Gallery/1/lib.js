@@ -17,6 +17,7 @@ Ink.createModule('Ink.UI.Gallery', '1',
     var ver = parseInt(Brwsr.version, 10);
     var doesNotSupportBgSize = (Brwsr.IE    && ver < 9) ||
                                (Brwsr.GECKO && ver < 4);
+    //doesNotSupportBgSize=true; // uncomment to test fallback mode
 
 
 
@@ -39,19 +40,44 @@ Ink.createModule('Ink.UI.Gallery', '1',
         }
     };
 
+    var wrapAround = function(i, n) {
+        if (i < 0) {  return i + n; }
+        if (i >= n) { return i - n; }
+        return i;
+    };
+
 
 
     /**
      * @class Ink.UI.Gallery
      *
-     * TODO
-     * - proxies to save bandwidth?
-     * - support for content other than images (clearify!)
+     * The selector is expected to point at a DOM element with the class `ink-galleryx`
+     * Gallery tries to identify special classes and give them behaviour.
+     * Currently it supports:
+     * - stage (wrapper for the main content)
+     *     - content can be either `img` elements of other elements as long as having the class `item`
+     *     - `prev` and `next` classes provide elements for changing the currently visible item
+     *     - the `pagination` class, is existent, is used to display the current item in the collection. its first child is used as bullet for display.
+     *     - the `caption` class, if existent, is used to display caption information related to the currently visible item
+     *
+     * The supported data used from `img` elements is its `src` and `alt` attributes (`alt` provides caption information).
+     * Besides explicit items inside the markup, one can populate the gallery from JavaScript via the model option.
+     *
+     * The remaining options can be provided either as JavaScript options or data attributes.
+     * Example: you want to change the gallery aspect ratio - either set `data-aspect-ratio` or the JS option `aspectRatio`.
+     *
+     * TODO CSS-related
+     * - layout prev/next vertically
+     * - layout caption bottom without height
+     * - move gallery-related css to ink
+     *
+     * TODO JS
+     * - support changing page by clicking on the pagination bullets
+     * - documented samples
      * - animate thumbnail change? (nice to have)
      * - different thumbnail placements (nice to have)
      * - vertical mode (nice to have)
      * - transitions (nice to have)
-     * - documentation, samples
      *
      * @constructor
      * @param  {String|DOMElement} selector
@@ -61,9 +87,10 @@ Ink.createModule('Ink.UI.Gallery', '1',
      * @param  {String}  [options.thumbMode]      either cover or contain. default is cover
      * @param  {String}  [options.mainMode]       either cover or contain. default is contain
      * @param  {Number}  [options.aspectRatio]    aspect ratio for the gallery. default is 4/3
+     * @param  {Number}  [options.autoNext]       number of seconds before next is automatically triggered. stops on first user interaction.
      * @param  {Boolean} [options.circular]       if true, gallery wraps around limits. default is true
      * @param  {Boolean} [options.adaptToResize]  if true, gallery updates on window size change
-     * @param  {Number}  [options.autoNext]       number of seconds before next is automatically triggered. stops on first user interaction.
+     * @param  {Boolean} [options.useProxies]     if true, image fetching is postponed
      */
     var Gallery = function(selector, options) {
 
@@ -78,6 +105,7 @@ Ink.createModule('Ink.UI.Gallery', '1',
             ,aspectRatio:   4/3
             ,adaptToResize: true
             ,circular:      true
+            ,useProxies:    false
         }, Elem.data(this._containerEl));
 
         this._options = Ink.extendObj(this._options, options || {});
@@ -289,6 +317,7 @@ Ink.createModule('Ink.UI.Gallery', '1',
 
         _goTo: function(i) {
             var prevI = this._currentIndex;
+            var l = this._model.length;
 
             if (i !== undefined) {
                 this._currentIndex = i;
@@ -313,6 +342,14 @@ Ink.createModule('Ink.UI.Gallery', '1',
             if (this._paginationEl) {
                 Css.removeClassName(this._pageEls[prevI], 'current');
                 Css.addClassName(   this._pageEls[i    ], 'current');
+            }
+
+            // fetch current, prev and next
+            if (this._options.useProxies) {
+                var t, ic;
+                t = wrapAround(i-1, l); ic = this._sTmp[t]; if (!t.uri) { ic.setURI( this._model[t].mainSrc ); }
+                t = wrapAround(i,   l); ic = this._sTmp[t]; if (!t.uri) { ic.setURI( this._model[t].mainSrc ); }
+                t = wrapAround(i+1, l); ic = this._sTmp[t]; if (!t.uri) { ic.setURI( this._model[t].mainSrc ); }
             }
         },
 
@@ -384,6 +421,10 @@ Ink.createModule('Ink.UI.Gallery', '1',
                     this._model.push(o);
                     this._sTmp.push(el); // we store the elements to replace them
                 }
+                else if (Css.hasClassName(el, 'item')) {
+                    this._model.push({});
+                    this._sTmp.push(el);
+                }
 
                 //console.log('s', el);
 
@@ -424,11 +465,13 @@ Ink.createModule('Ink.UI.Gallery', '1',
         _render: function() {
             var l = this._model.length;
 
+            var hh = this._thumbHolderEl ? this._options.thumbDims[1] : 0;
+
             // measure mainDims and prepare stageEl
             var mainDims = [0, 0];
             if (this._inFullScreen) {
                 mainDims[0] = window.innerWidth;
-                mainDims[1] = window.innerHeight - (this._thumbHolderEl ? this._options.thumbDims[1] : 0);
+                mainDims[1] = window.innerHeight - hh;
                 this._containerEl.style.width = mainDims[0] + 'px';
             }
             else {
@@ -444,13 +487,11 @@ Ink.createModule('Ink.UI.Gallery', '1',
             }
 
             this._stageEl.style.height = mainDims[1] + 'px';
-            if (this._captionEl) {
-                this._captionEl.style.top = mainDims[1] + 'px';
-            }
+
 
 
             // update DOM
-            var o, i, sEl, tEl, ic;
+            var o, i, sEl, tEl, ic, s;
             for (i = 0; i < l; ++i) {
                 o = this._model[i];
                 sEl = this._sTmp[i];
@@ -470,12 +511,17 @@ Ink.createModule('Ink.UI.Gallery', '1',
                     this._tTmp[i] = ic;
                 }
 
-                if (sEl instanceof ImageCell) {
+                if (Css.hasClassName(sEl, 'item')) {
+                    s = sEl.style;
+                    s.width  = mainDims[0] + 'px';
+                    s.height = mainDims[1] + 'px';
+                }
+                else if (sEl instanceof ImageCell) {
                     this._sTmp[i].resize(mainDims);
                 }
                 else {
                     ic = new ImageCell({
-                        uri:      o.mainSrc,
+                        uri:      this._options.useProxies ? undefined : o.mainSrc,
                         skipCss3: doesNotSupportBgSize,
                         cellDims: mainDims,
                         mode:     this._options.mainMode
@@ -485,15 +531,28 @@ Ink.createModule('Ink.UI.Gallery', '1',
                 }
             }
 
-            // correct prev/next size (to keep hitbox not over thumbnails)
-            if (this._thumbHolderEl) {
-                var s;
+            var h;
+            if (this._prevEl) {
                 s = this._prevEl.style;
                 s.height = 'auto';
-                s.bottom = this._options.thumbDims[1] + 'px';
+                s.paddingTop = 0;
+                h = this._prevEl.offsetHeight;
+                console.log(mainDims[1], h, (mainDims[1] - h) / 2 );
+                s.paddingTop = ~~( (mainDims[1] - h) / 2 ) + 'px';
+                s.height = mainDims[1] + 'px';
+            }
+            if (this._nextEl) {
                 s = this._nextEl.style;
                 s.height = 'auto';
-                s.bottom = this._options.thumbDims[1] + 'px';
+                s.paddingTop = 0;
+                h = this._nextEl.offsetHeight;
+                console.log(mainDims[1], h, (mainDims[1] - h) / 2 );
+                s.paddingTop = ~~( (mainDims[1] - h) / 2 ) + 'px';
+                s.height = mainDims[1] + 'px';
+            }
+
+            if (this._captionEl && this._thumbHolderEl) {
+                this._captionEl.style.bottom = this._options.thumbDims[1] + 'px';
             }
 
             this._goTo();
@@ -505,21 +564,26 @@ Ink.createModule('Ink.UI.Gallery', '1',
             }
 
             var el = Evt.element(ev);
-
             //console.log('click', el);
 
             var hasPrev = Css.hasClassName(el, 'prev');
             var hasNext = Css.hasClassName(el, 'next');
 
-            Evt.stop(ev);
-
             if (hasPrev || hasNext) {
                 this.goTo(hasPrev ? -1 : 1, true);
             }
-            else if (Css.hasClassName(el, 'image-cell')) {
+            else if (Css.hasClassName(el, 'resize')) {
+                Css.toggleClassName(el, 'icon-resize-full');
+                Css.toggleClassName(el, 'icon-resize-small');
+                this.toggleFullScreen();
+            }
+            else if ( Css.hasClassName(el.parentNode, 'pagination') ||
+                      Css.hasClassName(el, 'image-cell') ) {
                 var i = Aux.childIndex(el);
                 this._goTo(i);
             }
+
+            Evt.stop(ev);
         },
 
         _onSwipe: function(sw, o) {

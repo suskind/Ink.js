@@ -177,6 +177,7 @@ Ink.createModule('Ink.Dom.Element', 1, [], function() {
             do {
                 cs = window.getComputedStyle ? window.getComputedStyle(el, null) : el.currentStyle;
                 dRes = [el.offsetLeft | 0, el.offsetTop | 0];
+
                 bRes = [getPropPx(cs, bProp[0]), getPropPx(cs, bProp[1])];
                 if( InkBrowser.OPERA ){
                     res[0] += dRes[0];
@@ -276,7 +277,7 @@ Ink.createModule('Ink.Dom.Element', 1, [], function() {
          * @param {DOMElement}         newElm     element to be inserted
          * @param {DOMElement|String}  targetElm  key element
          */
-        insertTop: function(newElm,targetElm) {
+        insertTop: function(newElm,targetElm) {  // TODO check first child exists
             /*jshint boss:true */
             if (targetElm = this.get(targetElm)) {
                 targetElm.insertBefore(newElm, targetElm.firstChild);
@@ -1251,7 +1252,7 @@ Ink.createModule('Ink.Dom.Element', 1, [], function() {
          *
          * @function data
          * @param {String|DomElement} selector Element or CSS selector
-         * @return {Object} Object with the data-* properties or empty if none found.
+         * @return {Object} Object with the data-* properties. If no data-attributes are present, an empty object is returned.
         */
         data: function( selector ){
             if( typeof selector !== 'object' && typeof selector !== 'string'){
