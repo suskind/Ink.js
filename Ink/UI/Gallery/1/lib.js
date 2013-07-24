@@ -51,8 +51,28 @@ Ink.createModule('Ink.UI.Gallery', '1',
     /**
      * @class Ink.UI.Gallery
      *
-     * TODO
-     * - support for content other than images (clarify!)
+     * The selector is expected to point at a DOM element with the class `ink-galleryx`
+     * Gallery tries to identify special classes and give them behaviour.
+     * Currently it supports:
+     * - stage (wrapper for the main content)
+     *     - content can be either `img` elements of other elements as long as having the class `item`
+     *     - `prev` and `next` classes provide elements for changing the currently visible item
+     *     - the `pagination` class, is existent, is used to display the current item in the collection. its first child is used as bullet for display.
+     *     - the `caption` class, if existent, is used to display caption information related to the currently visible item
+     *
+     * The supported data used from `img` elements is its `src` and `alt` attributes (`alt` provides caption information).
+     * Besides explicit items inside the markup, one can populate the gallery from JavaScript via the model option.
+     *
+     * The remaining options can be provided either as JavaScript options or data attributes.
+     * Example: you want to change the gallery aspect ratio - either set `data-aspect-ratio` or the JS option `aspectRatio`.
+     *
+     * TODO CSS-related
+     * - layout prev/next vertically
+     * - layout caption bottom without height
+     * - move gallery-related css to ink
+     *
+     * TODO JS
+     * - support changing page by clicking on the pagination bullets
      * - documented samples
      * - animate thumbnail change? (nice to have)
      * - different thumbnail placements (nice to have)
@@ -401,6 +421,10 @@ Ink.createModule('Ink.UI.Gallery', '1',
                     this._model.push(o);
                     this._sTmp.push(el); // we store the elements to replace them
                 }
+                else if (Css.hasClassName(el, 'item')) {
+                    this._model.push({});
+                    this._sTmp.push(el);
+                }
 
                 //console.log('s', el);
 
@@ -467,7 +491,7 @@ Ink.createModule('Ink.UI.Gallery', '1',
 
 
             // update DOM
-            var o, i, sEl, tEl, ic;
+            var o, i, sEl, tEl, ic, s;
             for (i = 0; i < l; ++i) {
                 o = this._model[i];
                 sEl = this._sTmp[i];
@@ -487,7 +511,12 @@ Ink.createModule('Ink.UI.Gallery', '1',
                     this._tTmp[i] = ic;
                 }
 
-                if (sEl instanceof ImageCell) {
+                if (Css.hasClassName(sEl, 'item')) {
+                    s = sEl.style;
+                    s.width  = mainDims[0] + 'px';
+                    s.height = mainDims[1] + 'px';
+                }
+                else if (sEl instanceof ImageCell) {
                     this._sTmp[i].resize(mainDims);
                 }
                 else {
@@ -504,7 +533,6 @@ Ink.createModule('Ink.UI.Gallery', '1',
 
             // correct prev/next size (to keep hitbox not over thumbnails)
             if (this._thumbHolderEl) {
-                var s;
                 s = this._prevEl.style;
                 s.height = 'auto';
                 s.bottom = this._options.thumbDims[1] + 'px';
@@ -522,21 +550,26 @@ Ink.createModule('Ink.UI.Gallery', '1',
             }
 
             var el = Evt.element(ev);
-
             //console.log('click', el);
 
             var hasPrev = Css.hasClassName(el, 'prev');
             var hasNext = Css.hasClassName(el, 'next');
 
-            Evt.stop(ev);
-
             if (hasPrev || hasNext) {
                 this.goTo(hasPrev ? -1 : 1, true);
             }
-            else if (Css.hasClassName(el, 'image-cell')) {
+            else if (Css.hasClassName(el, 'resize')) {
+                Css.toggleClassName(el, 'icon-resize-full');
+                Css.toggleClassName(el, 'icon-resize-small');
+                this.toggleFullScreen();
+            }
+            else if ( Css.hasClassName(el.parentNode, 'pagination') ||
+                      Css.hasClassName(el, 'image-cell') ) {
                 var i = Aux.childIndex(el);
                 this._goTo(i);
             }
+
+            Evt.stop(ev);
         },
 
         _onSwipe: function(sw, o) {

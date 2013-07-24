@@ -92,6 +92,8 @@ footer p {
     white-space: nowrap;
     -webkit-overflow-scrolling: touch;
     height: auto;
+    background-color: #000;
+    z-index: 1;
 }
 
 .ink-galleryx .thumb-holder:hover,
@@ -119,6 +121,7 @@ footer p {
     right: 0;
     top: 0;
     bottom: 0;
+    z-index: 1;
 }
 
 .ink-galleryx .caption {
@@ -140,16 +143,33 @@ footer p {
     top: 0;
     text-align: center;
     color: #FFF;
+    z-index: 1;
 }
 
 .ink-galleryx .pagination > * {
     margin: 0 0.1em;
     opacity: 0.5;
+    cursor: pointer;
 }
 
 .ink-galleryx .pagination > .current {
     opacity: 1;
 }
+
+.ink-galleryx .resize {
+    position: absolute;
+    right: 0;
+    top: 0;
+    color: #FFF;
+}
+
+.ink-galleryx .item {
+    display: inline-block;
+    vertical-align: top;
+    text-decoration: none;
+    padding: 0.5em;
+}
+
 
 
 .ink-inset {

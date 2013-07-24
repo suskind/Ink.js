@@ -14,9 +14,10 @@ Ink.createModule('Ink.UI.ImageCell', '1',
         this.dimensions = o.dimensions;
         if (!this.imgEl) {
             this.imgEl = document.createElement('img');
-            this.imgEl.src = o.uri;
             this.el.appendChild(this.imgEl);
         }
+        this.imgEl.src = o.uri;
+
         //console.log('measured', this.dimensions, this.uri);
         this._relayout();
     };
