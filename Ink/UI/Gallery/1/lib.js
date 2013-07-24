@@ -465,11 +465,13 @@ Ink.createModule('Ink.UI.Gallery', '1',
         _render: function() {
             var l = this._model.length;
 
+            var hh = this._thumbHolderEl ? this._options.thumbDims[1] : 0;
+
             // measure mainDims and prepare stageEl
             var mainDims = [0, 0];
             if (this._inFullScreen) {
                 mainDims[0] = window.innerWidth;
-                mainDims[1] = window.innerHeight - (this._thumbHolderEl ? this._options.thumbDims[1] : 0);
+                mainDims[1] = window.innerHeight - hh;
                 this._containerEl.style.width = mainDims[0] + 'px';
             }
             else {
@@ -485,9 +487,7 @@ Ink.createModule('Ink.UI.Gallery', '1',
             }
 
             this._stageEl.style.height = mainDims[1] + 'px';
-            if (this._captionEl) {
-                this._captionEl.style.top = mainDims[1] + 'px';
-            }
+
 
 
             // update DOM
@@ -531,14 +531,28 @@ Ink.createModule('Ink.UI.Gallery', '1',
                 }
             }
 
-            // correct prev/next size (to keep hitbox not over thumbnails)
-            if (this._thumbHolderEl) {
+            var h;
+            if (this._prevEl) {
                 s = this._prevEl.style;
                 s.height = 'auto';
-                s.bottom = this._options.thumbDims[1] + 'px';
+                s.paddingTop = 0;
+                h = this._prevEl.offsetHeight;
+                console.log(mainDims[1], h, (mainDims[1] - h) / 2 );
+                s.paddingTop = ~~( (mainDims[1] - h) / 2 ) + 'px';
+                s.height = mainDims[1] + 'px';
+            }
+            if (this._nextEl) {
                 s = this._nextEl.style;
                 s.height = 'auto';
-                s.bottom = this._options.thumbDims[1] + 'px';
+                s.paddingTop = 0;
+                h = this._nextEl.offsetHeight;
+                console.log(mainDims[1], h, (mainDims[1] - h) / 2 );
+                s.paddingTop = ~~( (mainDims[1] - h) / 2 ) + 'px';
+                s.height = mainDims[1] + 'px';
+            }
+
+            if (this._captionEl && this._thumbHolderEl) {
+                this._captionEl.style.bottom = this._options.thumbDims[1] + 'px';
             }
 
             this._goTo();
