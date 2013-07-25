@@ -32,7 +32,7 @@ Ink.createModule('Ink.Dom.FormSerialize', 1, [], function () {
          *     <script type="text/javascript">
          *         Ink.requireModules(['Ink.Dom.FormSerialize_1', 'Ink.Dom.Event_1'], function (FormSerialize, InkEvent) {
          *             InkEvent.observe('frm', 'submit', function (event) {
-         *                 FormSerialize.serialize('frm'); // -> {field1:"123"}
+         *                 var formData = FormSerialize.serialize('frm'); // -> {field1:"123"}
          *                 InkEvent.stop(event);
          *             });
          *         });
