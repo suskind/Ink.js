@@ -1,9 +1,8 @@
 /**
  * @module Ink.UI.Close_1
  * @author inkdev AT sapo.pt
- * @version 1
  */
-Ink.createModule('Ink.UI.Close', '1', ['Ink.Dom.Event_1','Ink.Dom.Css_1','Ink.Util.Array_1'], function(Event, Css, InkArray ) {
+Ink.createModule('Ink.UI.Close', '1', ['Ink.Dom.Event_1','Ink.Dom.Css_1'], function(InkEvent, Css) {
     'use strict';
 
     /**
@@ -16,10 +15,8 @@ Ink.createModule('Ink.UI.Close', '1', ['Ink.Dom.Event_1','Ink.Dom.Css_1','Ink.Ut
      * 
      * @class Ink.UI.Close
      * @constructor
-     * @version 1
      * @uses Ink.Dom.Event
      * @uses Ink.Dom.Css
-     * @uses Ink.Util.Array
      * @example
      *     <script>
      *         Ink.requireModules(['Ink.UI.Close_1'],function( Close ){
@@ -28,22 +25,27 @@ Ink.createModule('Ink.UI.Close', '1', ['Ink.Dom.Event_1','Ink.Dom.Css_1','Ink.Ut
      *     </script>
      */
     var Close = function() {
+        InkEvent.observe(document.body, 'click', function(ev) {
+            var el = InkEvent.element(ev);
 
-        Event.observe(document.body, 'click', function(ev) {
-            var el = Event.element(ev);
-            if (!Css.hasClassName(el, 'ink-close') && !Css.hasClassName(el, 'ink-dismiss')) { return; }
+            while (el !== null) {
+                if (Css.hasClassName(el, 'ink-close') || Css.hasClassName(el, 'ink-dismiss')) {
+                    break;
+                }
+                el = el.parentNode;
+            }
+            if (el === null) {
+                return;  // ink-close or ink-dismiss class not found
+            }
 
-            var classes;
-            do { 
-                if (!el.className) { continue; }
-                classes = el.className.split(' ');
-                if (!classes) { continue; }
-                if ( InkArray.inArray('ink-alert',       classes) ||
-                     InkArray.inArray('ink-alert-block', classes) ) { break; }
+            do {
+                if (Css.hasClassName(el, 'ink-alert') || Css.hasClassName(el, 'ink-alert-block')) {
+                    break;
+                }
             } while ((el = el.parentNode));
 
             if (el) {
-                Event.stop(ev);
+                InkEvent.stop(ev);
                 el.parentNode.removeChild(el);
             }
         });
