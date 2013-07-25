@@ -616,7 +616,9 @@ Ink.createModule('Ink.Dom.Element', 1, [], function() {
         },
 
         /**
-         * Searches up the DOM tree for an element of specified class name
+         * Searches up the DOM tree for an element of specified class name.
+         *
+         * If the target `element` already has the required `className`, it is returned.
          *
          * @function findUpwardsByClass
          * @param {DOMElement}  element

@@ -2,7 +2,7 @@
  * @module Ink.UI.Close_1
  * @author inkdev AT sapo.pt
  */
-Ink.createModule('Ink.UI.Close', '1', ['Ink.Dom.Event_1','Ink.Dom.Css_1'], function(InkEvent, Css) {
+Ink.createModule('Ink.UI.Close', '1', ['Ink.Dom.Event_1','Ink.Dom.Element'], function(InkEvent, InkElement) {
     'use strict';
 
     /**
@@ -16,7 +16,7 @@ Ink.createModule('Ink.UI.Close', '1', ['Ink.Dom.Event_1','Ink.Dom.Css_1'], funct
      * @class Ink.UI.Close
      * @constructor
      * @uses Ink.Dom.Event
-     * @uses Ink.Dom.Css
+     * @uses Ink.Dom.Element
      * @example
      *     <script>
      *         Ink.requireModules(['Ink.UI.Close_1'],function( Close ){
@@ -28,25 +28,20 @@ Ink.createModule('Ink.UI.Close', '1', ['Ink.Dom.Event_1','Ink.Dom.Css_1'], funct
         InkEvent.observe(document.body, 'click', function(ev) {
             var el = InkEvent.element(ev);
 
-            while (el !== null) {
-                if (Css.hasClassName(el, 'ink-close') || Css.hasClassName(el, 'ink-dismiss')) {
-                    break;
-                }
-                el = el.parentNode;
-            }
-            if (el === null) {
+            el = InkElement.findUpwardsByClass(el, 'ink-close') ||
+                 InkElement.findUpwardsByClass(el, 'ink-dismiss');
+
+            if (!el) {
                 return;  // ink-close or ink-dismiss class not found
             }
 
-            do {
-                if (Css.hasClassName(el, 'ink-alert') || Css.hasClassName(el, 'ink-alert-block')) {
-                    break;
-                }
-            } while ((el = el.parentNode));
+            var toRemove = el;
+            toRemove = InkElement.findUpwardsByClass(el, 'ink-alert') ||
+                       InkElement.findUpwardsByClass(el, 'ink-alert-block');
 
-            if (el) {
+            if (toRemove) {
                 InkEvent.stop(ev);
-                el.parentNode.removeChild(el);
+                InkElement.remove(toRemove);
             }
         });
     };
