@@ -9,35 +9,67 @@
             Ink.setPath('Ink', '/Ink/');
         </script> 
         
-        <link rel="stylesheet" href="style.css">
+        <style type="text/css">
+            .draggable {
+                border-style: solid;
+                border-color: #1F0050;
+                border-width: 2px;
+                background-color: #DDD;
+                width:  200px;
+                height: 100px;
+                overflow: hidden;
+            }
+
+            .draggable_handler {
+                height:  20px;
+                width:  100%;
+                background-color: #CCF;
+            }
+
+            .drops {
+                margin-left:    25%;
+                margin-top:        10%
+            }
+
+            .droppable {
+                color: #777;
+                border: 1px dotted #777;
+                width: 50%;
+                height: 200px;
+            }
+
+            .droppable_hover {
+                border: 2px solid #FAA;
+            }
+        </style>
     </head>
 
 <body>
     <h1>Droppable - 2</h1>
     
     <div class="drops">
-        <div id="drop1" class="component_droppable">Drop #1</div>
-        <div id="drop2" class="component_droppable">Drop #2</div>
+        <div id="drop1" class="droppable">Drop #1</div>
+        <div id="drop2" class="droppable">Drop #2</div>
     </div>
     
-    <div id="drag0" class="component_draggable">
-        <div id="handler" class="component_draggable_handler">without anchor</div>
+    <div id="drag0" class="draggable">
+        <div id="handler" class="draggable_handler">without anchor</div>
         <p>
             The Quick Brown Fox
             jumps over the lazy dog
         </p>
     </div>
     
-    <div id="drag1" class="component_draggable">
-        <div id="handler" class="component_draggable_handler">with 'left top' anchor</div>
+    <div id="drag1" class="draggable">
+        <div id="handler" class="draggable_handler">with 'left top' anchor</div>
         <p>
             The Quick Brown Fox
             jumps over the lazy dog
         </p>
     </div>
     
-    <div id="drag2" class="component_draggable">
-        <div id="handler" class="component_draggable_handler">with 'center center' anchor</div>
+    <div id="drag2" class="draggable">
+        <div id="handler" class="draggable_handler">with 'center center' anchor</div>
         <p>
             The Quick Brown Fox
             jumps over the lazy dog
@@ -66,14 +98,14 @@
             }
             
             Droppable.add('drop1', {
-                    hoverclass: 'component_droppable_hover',
-                    accept: 'component_draggable',
+                    hoverclass: 'droppable_hover',
+                    accept: 'draggable',
                     onDrop: onDrop
                 });
 
             Droppable.add('drop2', {
-                    hoverclass: 'component_droppable_hover',
-                    accept: 'component_draggable',
+                    hoverclass: 'droppable_hover',
+                    accept: 'draggable',
                     onDrop: onDrop
                 });
         });
