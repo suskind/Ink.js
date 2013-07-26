@@ -8,7 +8,8 @@
         <script type="text/javascript">
             Ink.setPath('Ink', '/Ink/');
         </script>
-
+        
+        <link rel="stylesheet" type="text/css" href="http://cdn.ink.sapo.pt/2.1.1/css/ink.css"/>
         <style>
             body {
                 font-family: Helvetica, Arial, sans-serif;
@@ -20,7 +21,6 @@
                 border-color: #1F0050;
                 border-width: 2px;
                 background-color: #DDD;
-                height: 100px;
                 width:  200px;
                 overflow: hidden;
             }
@@ -39,16 +39,14 @@
         <div id="drag1" class="draggable">
             <div id="handler" class="draggable_handler">drag1 w/revert</div>
             <p>
-                The Quick Brown Fox
-                jumps over the lazy dog
+                With the `revert` option, the draggable always goes back to where it started.
             </p>
         </div>
         
         <div id="drag2" class="draggable">
             <div id="handler" class="draggable_handler">drag2</div>
             <p>
-                The Quick Brown Fox
-                jumps over the lazy dog
+                Setting `revert` to `false` makes the draggable stay in place when you drop it.
             </p>
         </div>
         
