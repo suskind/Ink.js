@@ -4,7 +4,7 @@ body {
     font-size: 16px;
 }
 
-.sapo_component_draggable {
+.component_draggable {
     border-style: solid;
     border-color: #1F0050;
     border-width: 2px;
@@ -14,7 +14,7 @@ body {
     overflow: hidden;
 }
 
-.sapo_component_draggable_handler {
+.component_draggable_handler {
     height:  20px;
     width:  100%;
     background-color: #CCF;
@@ -25,13 +25,13 @@ body {
     margin-top:        10%
 }
 
-.sapo_component_droppable {
+.component_droppable {
     color: #777;
     border: 1px dotted #777;
     width: 50%;
     height: 200px;
 }
 
-.sapo_component_droppable_hover {
+.component_droppable_hover {
     border: 2px solid #FAA;
 }

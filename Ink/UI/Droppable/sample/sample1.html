@@ -16,20 +16,20 @@
         <h1>Droppable - 1</h1>
         
         <div class="drops">
-            <div id="drop1" class="sapo_component_droppable">Drop #1</div>
-            <div id="drop2" class="sapo_component_droppable">Drop #2</div>
+            <div id="drop1" class="component_droppable">Drop #1</div>
+            <div id="drop2" class="component_droppable">Drop #2</div>
         </div>
         
-        <div id="drag1" class="sapo_component_draggable">
-            <div id="handler" class="sapo_component_draggable_handler">drag 1 w/revert</div>
+        <div id="drag1" class="component_draggable">
+            <div id="handler" class="component_draggable_handler">drag 1 w/revert</div>
             <p>
                 The Quick Brown Fox
                 jumps over the lazy dog
             </p>
         </div>
         
-        <div id="drag2" class="sapo_component_draggable">
-            <div id="handler" class="sapo_component_draggable_handler">drag 2</div>
+        <div id="drag2" class="component_draggable">
+            <div id="handler" class="component_draggable_handler">drag 2</div>
             <p>
                 The Quick Brown Fox
                 jumps over the lazy dog
@@ -64,8 +64,8 @@
                 
                 Droppable.add(
                     'drop1',
-                    {    hoverclass: 'sapo_component_droppable_hover',
-                        accept:        'sapo_component_draggable',
+                    {    hoverclass: 'component_droppable_hover',
+                        accept:        'component_draggable',
                         onHover:    onHover,
                         onDrop:        onDrop, 
                         onDropOut:     onDropOut    }            
@@ -73,8 +73,8 @@
         
                 Droppable.add(
                     'drop2',
-                    {    hoverclass:    'sapo_component_droppable_hover',
-                        accept:        'sapo_component_draggable',
+                    {    hoverclass:    'component_droppable_hover',
+                        accept:        'component_draggable',
                         onHover:    onHover,
                         onDrop:        onDrop    }            
                 );
