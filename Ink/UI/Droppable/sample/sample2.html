@@ -4,16 +4,17 @@
         <meta charset="UTF-8">
         <title>Droppable - 2</title>
         
+        <link rel="stylesheet" href="http://cdn.ink.sapo.pt/2.1.1/css/ink.css">
+        <link rel="stylesheet" type="text/css" href="http://ink.local/css/ink.css"/>
+
         <script type="text/javascript" src="/Ink/1/"></script> 
         <script type="text/javascript">
             Ink.setPath('Ink', '/Ink/');
         </script> 
         
         <style type="text/css">
-            .draggable {
-                border-style: solid;
-                border-color: #1F0050;
-                border-width: 2px;
+            .draggable.ink-button {
+                display: block;
                 background-color: #DDD;
                 width:  200px;
                 height: 100px;
@@ -48,11 +49,15 @@
     <h1>Droppable - 2</h1>
     
     <div class="drops">
-        <div id="drop1" class="droppable">Drop #1</div>
-        <div id="drop2" class="droppable">Drop #2</div>
+        <div id="drop1" class="droppable ink-alert block">
+            <h4>Drop #1</h4>
+        </div>
+        <div id="drop2" class="droppable ink-alert block">
+            <h4>Drop #2</h4>
+        </div>
     </div>
     
-    <div id="drag0" class="draggable">
+    <div id="drag0" class="draggable ink-button">
         <div id="handler" class="draggable_handler">without anchor</div>
         <p>
             The Quick Brown Fox
@@ -60,7 +65,7 @@
         </p>
     </div>
     
-    <div id="drag1" class="draggable">
+    <div id="drag1" class="draggable ink-button">
         <div id="handler" class="draggable_handler">with 'left top' anchor</div>
         <p>
             The Quick Brown Fox
@@ -68,7 +73,7 @@
         </p>
     </div>
     
-    <div id="drag2" class="draggable">
+    <div id="drag2" class="draggable ink-button">
         <div id="handler" class="draggable_handler">with 'center center' anchor</div>
         <p>
             The Quick Brown Fox

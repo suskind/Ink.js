@@ -4,6 +4,7 @@
         <meta charset="UTF-8">
         <title>Droppable - 1</title>
         
+        <link rel="stylesheet" href="http://cdn.ink.sapo.pt/2.1.1/css/ink.css">
         <script type="text/javascript" src="/Ink/1/"></script>
         <script type="text/javascript">
             Ink.setPath('Ink', '/Ink/');
@@ -53,11 +54,15 @@
         <h1>Droppable - 1</h1>
         
         <div class="drops">
-            <div id="drop1" class="droppable">Drop #1</div>
-            <div id="drop2" class="droppable">Drop #2</div>
+            <div id="drop1" class="droppable ink-alert block">
+                <h4>Drop #1</h4>
+            </div>
+            <div id="drop2" class="droppable ink-alert block">
+                <h4>Drop #2</h4>
+            </div>
         </div>
         
-        <div id="drag1" class="draggable">
+        <div id="drag1" class="draggable ink-button">
             <div id="handler" class="draggable_handler">drag 1 w/revert</div>
             <p>
                 The Quick Brown Fox
@@ -65,7 +70,7 @@
             </p>
         </div>
         
-        <div id="drag2" class="draggable">
+        <div id="drag2" class="draggable ink-button">
             <div id="handler" class="draggable_handler">drag 2</div>
             <p>
                 The Quick Brown Fox
