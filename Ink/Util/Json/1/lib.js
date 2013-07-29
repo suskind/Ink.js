@@ -119,7 +119,7 @@ Ink.createModule('Ink.Util.Json', '1', [], function() {
                 }
                 return formated;
             } else {
-                return param;
+                return this._format(param);
             }
         },
 
@@ -132,6 +132,16 @@ Ink.createModule('Ink.Util.Json', '1', [], function() {
 
             if(typeof(param) == 'object' && param !== null && param.constructor == Object) {
                 hasKey = true;
+            }
+
+            if (typeof param === 'string') {
+                return '"' + param + '"';
+            } else if (typeof param === 'number' && (isNaN(param) || !isFinite(param))) {  // Odd numbers go null
+                return 'null';
+            } else if (typeof param === 'undefined') {  // And so does undefined
+                return 'null';
+            } else if (typeof param === 'number' || typeof param === 'boolean' || param === null) {  // These have reliable string conversion
+                return '' + param;
             }
 
             for(var key in param) {
@@ -175,6 +185,8 @@ Ink.createModule('Ink.Util.Json', '1', [], function() {
                         } else {
                             formated += '{'+this._removeLastComma(this._format(tmpValue))+'},';
                         }
+                    } else if (typeof tmpValue === 'undefined') {
+                        
                     }
                 }
             }

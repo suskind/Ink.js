@@ -9,6 +9,10 @@ Ink.requireModules(['Ink.Util.Json'], function (Json) {
 
     var s = function (asda) {return Json.get(asda, false)}
 
+    function JSONEqual(a, b, msg) {
+        deepEqual(eval('(' + a + ')'), b, msg)
+    }
+
     test('Stringify primitive values', function () {
         equal(s(''), '""');
         equal(s('á'), '"á"');
@@ -17,28 +21,39 @@ Ink.requireModules(['Ink.Util.Json'], function (Json) {
         equal(s(false), 'false');
         equal(s(null), 'null');
         equal(s(NaN), 'null');
-        equal(s(true), 'true');
-        equal(s(false), 'false');
-        equal(s(null), 'null');
-        equal(s(NaN), 'null');
+        equal(s(Infinity), 'null');
+        equal(s(-Infinity), 'null');
+        
+        var arr = ['', 'á', 1, true, false, null, NaN, Infinity, -Infinity];
+        JSONEqual(s(arr), arr);
+        var obj = {1: '', 2: 'á', 3: true, 4: false, 5: null, 6: Infinity, 7: -Infinity};
+        JSONEqual(s(obj), obj);
     });
 
     test('Serialize objects', function () {
-        equal(s({a: 'c'}), '{"a": "c"}');
-        equal(s({a: 'a'}), '{"a": "a"}');
-        equal(s({d: 123, e: false, f: null, g: []}),
-            '{"d": 123,"e": false,"f": null,"g": []}');
+        JSONEqual(s({a: 'c'}), {"a": "c"});
+        JSONEqual(s({a: 'a'}), {"a": "a"});
+        JSONEqual(s({d: 123, e: false, f: null, g: []}),
+            {"d": 123,"e": false,"f": null,"g": []});
+        JSONEqual(s({1: 2}), {1: 2});
     });
 
     test('Serialize arrays', function () {
-        equal(s([1, false, 1, 'CTHULHU']),
-            '[1,false,1,"CTHULHU"]');
-        equal(s([undefined, 1, {}]),
-            '[1,false,1,"CTHULHU"]');
+        JSONEqual(s([1, false, 1, 'CTHULHU']),
+            [1,false,1,"CTHULHU"]);
+        JSONEqual(s([undefined, 1, {}]),
+            [null, 1, {}]);
     });
 
     test('Nesting!', function () {
-        equal(undefined, undefined);
+        var nested = [
+            {
+                cthulhu: ['fthagn']
+            },
+            "r'lyeh",
+            123
+        ];
+        JSONEqual(s(nested), nested);
     });
 
     test('Stringify large objects', function () {
