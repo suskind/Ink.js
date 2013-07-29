@@ -6,8 +6,9 @@ Ink.requireModules(['Ink.Util.Json'], function (Json) {
     Json._nativeJSON = null;
     var nativeJSON = window.nativeJSON;
     var crockfordJSON = window.JSON;
-
-    var s = function (asda) {return Json.get(asda, false);};
+    
+    // shortcut for Json.stringify
+    var s = function (input) {return Json.stringify(input, false);};
 
     function JSONEqual(a, b, msg) {
         try {
@@ -27,11 +28,6 @@ Ink.requireModules(['Ink.Util.Json'], function (Json) {
         equal(s(NaN), 'null');
         equal(s(Infinity), 'null');
         equal(s(-Infinity), 'null');
-        
-        var arr = ['', 'á', 1, true, false, null, NaN, Infinity, -Infinity];
-        JSONEqual(s(arr), arr);
-        var obj = {1: '', 2: 'á', 3: true, 4: false, 5: null, 6: Infinity, 7: -Infinity};
-        JSONEqual(s(obj), obj);
     });
 
     test('Serialize objects', function () {
@@ -72,6 +68,10 @@ Ink.requireModules(['Ink.Util.Json'], function (Json) {
         serialize(s, hugeObject, 'our JSON stuffs');
         serialize(nativeJSON.stringify, hugeObject, 'native JSON stuffs');
         serialize(crockfordJSON.stringify, hugeObject, 'crockford\'s JSON stuffs');
+    });
+
+    test('Functions can\'t be stringified, to match the native JSON API', function () {
+        deepEqual(s(function () {}), "null");
     });
 
     /*

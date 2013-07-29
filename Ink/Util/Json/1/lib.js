@@ -7,6 +7,8 @@
 Ink.createModule('Ink.Util.Json', '1', [], function() {
     'use strict';
 
+    var function_call = Function.prototype.call;
+
     function twoDigits(n) {
         var r = '' + n;
         if (r.length === 1) {
@@ -16,20 +18,19 @@ Ink.createModule('Ink.Util.Json', '1', [], function() {
         }
     }
 
-    function ISO8601Timestamp(date) {
-        // Adapted from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString
-        /*if (date.toISOString) {
-            return date.toISOString()
-        }*/
-        return date.getUTCFullYear()
-            + '-' + twoDigits( date.getUTCMonth() + 1 )
-            + '-' + twoDigits( date.getUTCDate() )
-            + 'T' + twoDigits( date.getUTCHours() )
-            + ':' + twoDigits( date.getUTCMinutes() )
-            + ':' + twoDigits( date.getUTCSeconds() )
-            + '.' + String( (date.getUTCMilliseconds()/1000).toFixed(3) ).slice( 2, 5 )
-            + 'Z';
-    }
+    var date_toISOString = Date.prototype.toISOString ?
+        Ink.bind(function_call, Date.prototype.toISOString) :
+        function(date) {
+            // Adapted from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString
+            return date.getUTCFullYear()
+                + '-' + twoDigits( date.getUTCMonth() + 1 )
+                + '-' + twoDigits( date.getUTCDate() )
+                + 'T' + twoDigits( date.getUTCHours() )
+                + ':' + twoDigits( date.getUTCMinutes() )
+                + ':' + twoDigits( date.getUTCSeconds() )
+                + '.' + String( (date.getUTCMilliseconds()/1000).toFixed(3) ).slice( 2, 5 )
+                + 'Z';
+        };
 
 
 
@@ -133,109 +134,40 @@ Ink.createModule('Ink.Util.Json', '1', [], function() {
 
         },
 
-        _serialize: function(param)
-        {
-            var formated = '';
-
-            if(typeof(param) == 'object' && param !== null) {
-                if(param.constructor == Array) {
-                    formated = '['+this._removeLastComma(this._format(param))+']';
-                } else if (param.constructor == Object) {
-                    formated = '{'+this._removeLastComma(this._format(param))+'}';
-                } else {
-                    return this._format(param);
-                }
-                return formated;
-            } else {
-                return this._format(param);
-            }
-        },
-
-        _format: function(param)
-        {
-            var formated = '';
-
-            var tmpValue = false;
-            var hasKey = false;
-
-            if(typeof(param) == 'object' && param !== null && param.constructor == Object) {
-                hasKey = true;
-            }
-
+        _format: function(param) {
             if (typeof param === 'string') {
                 return '"' + this._toUnicode(param) + '"';
             } else if (typeof param === 'number' && (isNaN(param) || !isFinite(param))) {  // Odd numbers go null
                 return 'null';
-            } else if (typeof param === 'undefined') {  // And so does undefined
+            } else if (typeof param === 'undefined' || param === null) {  // And so does undefined
                 return 'null';
-            } else if (typeof param === 'number' || typeof param === 'boolean' || param === null) {  // These have reliable string conversion
+            } else if (typeof param === 'number' || typeof param === 'boolean') {  // These ones' toString methods return valid JSON.
                 return '' + param;
+            } else if (typeof param === 'function') {
+                return 'null';  // match JSON.stringify
             } else if (param.constructor === Date) {
-                return '"' + ISO8601Timestamp(param) + '"';
-            } else if (typeof param === 'object' && param !== null) {
-
-            }
-
-            for(var key in param) {
-                if(param.hasOwnProperty(key)) {
-
-                    tmpValue = param[key];
-
-                    if(tmpValue === null || tmpValue === undefined) {
-                        if(hasKey) {
-                            formated += '"'+key+'": null,';
-                        } else {
-                            formated += 'null,';
+                return '"' + date_toISOString(param) + '"';
+            } else if (param.constructor === Array) {
+                var arrayString = '';
+                for (var i = 0, len = param.length; i < len; i++) {
+                    if (i > 0) {
+                        arrayString += ',';
+                    }
+                    arrayString += this._format(param[i]);
+                }
+                return '[' + arrayString + ']';
+            } else {  // Object
+                var objectString = '';
+                for (var k in param)  {
+                    if (param.hasOwnProperty(k)) {
+                        if (objectString !== '') {
+                            objectString += ',';
                         }
-                    } else if(typeof(tmpValue) == 'string') {
-                        if(hasKey) {
-                            formated += '"'+key+'": "'+this._toUnicode(tmpValue)+'",';
-                        } else {
-                            formated += '"'+this._toUnicode(tmpValue)+'",';
-                        }
-                    } else if(typeof(tmpValue) == 'number') {
-                        if(hasKey) {
-                            formated += '"'+key+'": '+tmpValue+',';
-                        } else {
-                            formated += ''+tmpValue+',';
-                        }
-                    } else if(tmpValue === true || tmpValue === false) {
-                        if(hasKey) {
-                            formated += '"'+key+'": '+(tmpValue ? 'true' : 'false')+',';
-                        } else {
-                            formated += ''+(tmpValue ? 'true' : 'false')+',';
-                        }
-                    } else if(typeof(tmpValue) == 'object' && tmpValue !== null && tmpValue.constructor == Array) {
-                        if(hasKey) {
-                            formated += '"'+key+'": ['+this._removeLastComma(this._format(tmpValue))+'],';
-                        } else {
-                            formated += '['+this._removeLastComma(this._format(tmpValue))+'],';
-                        }
-                    } else if(typeof(tmpValue) == 'object' && tmpValue !== null && tmpValue.constructor == Object) {
-                        if(hasKey) {
-                            formated += '"'+key+'": {'+this._removeLastComma(this._format(tmpValue))+'},';
-                        } else {
-                            formated += '{'+this._removeLastComma(this._format(tmpValue))+'},';
-                        }
-                    } else if (tmpValue.constructor === Date) {
-                        if(hasKey) {
-                            formated += '"'+key+'": '+this._removeLastComma(this._format(tmpValue))+',';
-                        } else {
-                            formated += ''+this._removeLastComma(this._format(tmpValue));
-                        }
+                        objectString += '"' + k + '": ' + this._format(param[k]);
                     }
                 }
+                return '{' + objectString + '}';
             }
-            return formated;
-        },
-
-        _removeLastComma: function(string)
-        {
-            var len = string.length;
-            if(string.substring((len - 1), len) == ',') {
-                return string.substring(0, (len - 1));
-            }
-            return string;
         },
 
         /**
@@ -244,8 +176,7 @@ Ink.createModule('Ink.Util.Json', '1', [], function() {
          * @param {Boolean} convertToUnicode - if true, converts the string contents of the object to unicode
          * @return serialized string
          */
-        get: function(jsObject, convertToUnicode)
-        {
+        stringify: function(jsObject, convertToUnicode) {
             if(typeof(convertToUnicode) != 'undefined') {
                 if(convertToUnicode === false) {
                     this._convertToUnicode = false;
@@ -256,7 +187,7 @@ Ink.createModule('Ink.Util.Json', '1', [], function() {
             if(!this._convertToUnicode && this._nativeJSON) {
                 return this._nativeJSON.stringify(jsObject);
             }
-            return this._serialize(jsObject);
+            return this._format(jsObject);
         }
     };
 
