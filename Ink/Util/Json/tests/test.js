@@ -11,6 +11,13 @@ Ink.requireModules(['Ink.Util.Json'], function (Json) {
     var s = function (input) {return Json.stringify(input, false);};
 
     function JSONEqual(a, b, msg) {
+        if (typeof b === 'undefined') {
+            b = a;
+            a = s(a);
+        }
+        if (typeof msg === 'undefined') {
+            msg = a;
+        }
         try {
             deepEqual(eval('(' + a + ')'), b, msg);
         } catch(e) {
@@ -20,6 +27,7 @@ Ink.requireModules(['Ink.Util.Json'], function (Json) {
 
     test('Stringify primitive values', function () {
         equal(s(''), '""');
+        equal(s('a'), '"a"');
         equal(s('á'), '"á"');
         deepEqual(s(1), '1');
         equal(s(true), 'true');
@@ -28,6 +36,14 @@ Ink.requireModules(['Ink.Util.Json'], function (Json) {
         equal(s(NaN), 'null');
         equal(s(Infinity), 'null');
         equal(s(-Infinity), 'null');
+    });
+
+    test('Escaping', function () {
+        equal(s('"'), '"\\""');
+        equal(s('""'), '"\\"\\""');
+
+        equal(s('\\'), '"\\\\"');
+        equal(s('\\\\'), '"\\\\\\\\"');
     });
 
     test('Serialize objects', function () {
@@ -70,18 +86,6 @@ Ink.requireModules(['Ink.Util.Json'], function (Json) {
         serialize(crockfordJSON.stringify, hugeObject, 'crockford\'s JSON stuffs');
     });
 
-    test('Functions can\'t be stringified, to match the native JSON API', function () {
-        deepEqual(s(function () {}), "null");
-    });
-
-    /*
-    test('luis2 HUGE benchmark', function () {
-        serialize(s, luis2, 'our JSON');
-        serialize(nativeJSON.stringify, luis2, 'native JSON');
-        serialize(crockfordJSON.stringify, luis2, 'crockfords JSON');
-    });
-    */
-
     function serialize(func, obj, name) {
         var start = new Date();
         var serialized = func(obj);
@@ -90,4 +94,8 @@ Ink.requireModules(['Ink.Util.Json'], function (Json) {
         var chk = eval('('+serialized+')');
         equal(nativeJSON.stringify(chk), nativeJSON.stringify(obj), name);
     }
+
+    test('Functions can\'t be stringified, to match the native JSON API', function () {
+        deepEqual(s(function () {}), "null");
+    });
 });

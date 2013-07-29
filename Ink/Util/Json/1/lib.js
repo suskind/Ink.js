@@ -32,8 +32,6 @@ Ink.createModule('Ink.Util.Json', '1', [], function() {
                 + 'Z';
         };
 
-
-
     /**
      * @class Ink.Util.Json
      * @static
@@ -45,19 +43,16 @@ Ink.createModule('Ink.Util.Json', '1', [], function() {
      *          keyArray: ['arrayValue1', 'arrayValue2', 'arrayValue3']
      *      }
      *      
-     *      Json.get(obj, <optional convertToUnicode>);
+     *      Json.stringify(obj);
      */
     var InkJson = {
         _nativeJSON: window.JSON || null,
 
-        _convertToUnicode: true,
+        _convertToUnicode: false,
 
         // A character conversion map
         _toUnicode: function (theString)
         {
-
-            //var convertToUnicode = this._convertToUnicode;
-
             if(!this._convertToUnicode) {
 
                 var _m = { '\b': '\\b', '\t': '\\t', '\n': '\\n', '\f': '\\f', '\r': '\\r', '"': '\\"',  '\\': '\\\\' };
@@ -79,7 +74,6 @@ Ink.createModule('Ink.Util.Json', '1', [], function() {
                 var inInt = false;
                 var theUnicode = false;
                 var i = 0;
-                var charCount = 0;
                 var total = theString.length;
                 while(i < total) {
                     inInt = theString.charCodeAt(i);
@@ -87,28 +81,28 @@ Ink.createModule('Ink.Util.Json', '1', [], function() {
                             //(inInt >= 48 && inInt <= 57) ||
                             //(inInt >= 65 && inInt <= 90) ||
                             //(inInt >= 97 && inInt <= 122) ||
-                            inInt == 8 ||
-                            inInt == 9 ||
-                            inInt == 10 ||
-                            inInt == 12 ||
-                            inInt == 13 ||
-                            inInt == 32 ||
-                            inInt == 34 ||
-                            inInt == 47 ||
-                            inInt == 58 ||
-                            inInt == 92) {
+                            inInt === 8 ||
+                            inInt === 9 ||
+                            inInt === 10 ||
+                            inInt === 12 ||
+                            inInt === 13 ||
+                            inInt === 32 ||
+                            inInt === 34 ||
+                            inInt === 47 ||
+                            inInt === 58 ||
+                            inInt === 92) {
 
-                        if(inInt == 34 || inInt == 92 || inInt == 47) {
+                        if(inInt === 34 || inInt === 92 || inInt === 47) {
                             theUnicode = '\\'+theString.charAt(i);
-                        } else if(inInt == 8) {
+                        } else if(inInt === 8) {
                             theUnicode = '\\b';
-                        } else if(inInt == 9) {
+                        } else if(inInt === 9) {
                             theUnicode = '\\t';
-                        } else if(inInt == 10) {
+                        } else if(inInt === 10) {
                             theUnicode = '\\n';
-                        } else if(inInt == 12) {
+                        } else if(inInt === 12) {
                             theUnicode = '\\f';
-                        } else if(inInt == 13) {
+                        } else if(inInt === 13) {
                             theUnicode = '\\r';
                         } else {
                             theUnicode = theString.charAt(i);
@@ -134,7 +128,7 @@ Ink.createModule('Ink.Util.Json', '1', [], function() {
 
         },
 
-        _format: function(param) {
+        _parseValue: function(param) {
             if (typeof param === 'string') {
                 return '"' + this._toUnicode(param) + '"';
             } else if (typeof param === 'number' && (isNaN(param) || !isFinite(param))) {  // Odd numbers go null
@@ -153,7 +147,7 @@ Ink.createModule('Ink.Util.Json', '1', [], function() {
                     if (i > 0) {
                         arrayString += ',';
                     }
-                    arrayString += this._format(param[i]);
+                    arrayString += this._parseValue(param[i]);
                 }
                 return '[' + arrayString + ']';
             } else {  // Object
@@ -163,7 +157,7 @@ Ink.createModule('Ink.Util.Json', '1', [], function() {
                         if (objectString !== '') {
                             objectString += ',';
                         }
-                        objectString += '"' + k + '": ' + this._format(param[k]);
+                        objectString += '"' + k + '": ' + this._parseValue(param[k]);
                     }
                 }
                 return '{' + objectString + '}';
@@ -177,7 +171,7 @@ Ink.createModule('Ink.Util.Json', '1', [], function() {
          * @return serialized string
          */
         stringify: function(jsObject, convertToUnicode) {
-            if(typeof(convertToUnicode) != 'undefined') {
+            if(typeof(convertToUnicode) !== 'undefined') {
                 if(convertToUnicode === false) {
                     this._convertToUnicode = false;
                 } else {
@@ -187,7 +181,7 @@ Ink.createModule('Ink.Util.Json', '1', [], function() {
             if(!this._convertToUnicode && this._nativeJSON) {
                 return this._nativeJSON.stringify(jsObject);
             }
-            return this._format(jsObject);
+            return this._parseValue(jsObject);
         }
     };
 
