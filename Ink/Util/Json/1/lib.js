@@ -7,6 +7,32 @@
 Ink.createModule('Ink.Util.Json', '1', [], function() {
     'use strict';
 
+    function twoDigits(n) {
+        var r = '' + n;
+        if (r.length === 1) {
+            return '0' + r;
+        } else {
+            return r;
+        }
+    }
+
+    function ISO8601Timestamp(date) {
+        // Adapted from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString
+        /*if (date.toISOString) {
+            return date.toISOString()
+        }*/
+        return date.getUTCFullYear()
+            + '-' + twoDigits( date.getUTCMonth() + 1 )
+            + '-' + twoDigits( date.getUTCDate() )
+            + 'T' + twoDigits( date.getUTCHours() )
+            + ':' + twoDigits( date.getUTCMinutes() )
+            + ':' + twoDigits( date.getUTCSeconds() )
+            + '.' + String( (date.getUTCMilliseconds()/1000).toFixed(3) ).slice( 2, 5 )
+            + 'Z';
+    }
+
+
+
     /**
      * @class Ink.Util.Json
      * @static
@@ -116,6 +142,8 @@ Ink.createModule('Ink.Util.Json', '1', [], function() {
                     formated = '['+this._removeLastComma(this._format(param))+']';
                 } else if (param.constructor == Object) {
                     formated = '{'+this._removeLastComma(this._format(param))+'}';
+                } else {
+                    return this._format(param);
                 }
                 return formated;
             } else {
@@ -135,13 +163,17 @@ Ink.createModule('Ink.Util.Json', '1', [], function() {
             }
 
             if (typeof param === 'string') {
-                return '"' + param + '"';
+                return '"' + this._toUnicode(param) + '"';
             } else if (typeof param === 'number' && (isNaN(param) || !isFinite(param))) {  // Odd numbers go null
                 return 'null';
             } else if (typeof param === 'undefined') {  // And so does undefined
                 return 'null';
             } else if (typeof param === 'number' || typeof param === 'boolean' || param === null) {  // These have reliable string conversion
                 return '' + param;
+            } else if (param.constructor === Date) {
+                return '"' + ISO8601Timestamp(param) + '"';
+            } else if (typeof param === 'object' && param !== null) {
+
             }
 
             for(var key in param) {
@@ -149,7 +181,7 @@ Ink.createModule('Ink.Util.Json', '1', [], function() {
 
                     tmpValue = param[key];
 
-                    if(tmpValue === null) {
+                    if(tmpValue === null || tmpValue === undefined) {
                         if(hasKey) {
                             formated += '"'+key+'": null,';
                         } else {
@@ -185,8 +217,12 @@ Ink.createModule('Ink.Util.Json', '1', [], function() {
                         } else {
                             formated += '{'+this._removeLastComma(this._format(tmpValue))+'},';
                         }
-                    } else if (typeof tmpValue === 'undefined') {
-                        
+                    } else if (tmpValue.constructor === Date) {
+                        if(hasKey) {
+                            formated += '"'+key+'": '+this._removeLastComma(this._format(tmpValue))+',';
+                        } else {
+                            formated += ''+this._removeLastComma(this._format(tmpValue));
+                        }
                     }
                 }
             }

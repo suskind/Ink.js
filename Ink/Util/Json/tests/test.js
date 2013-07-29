@@ -1,4 +1,4 @@
-/*globals equal,test*/
+/*globals equal,test,deepEqual,hugeObject,ok*/
 Ink.requireModules(['Ink.Util.Json'], function (Json) {
     'use strict';
 
@@ -7,10 +7,14 @@ Ink.requireModules(['Ink.Util.Json'], function (Json) {
     var nativeJSON = window.nativeJSON;
     var crockfordJSON = window.JSON;
 
-    var s = function (asda) {return Json.get(asda, false)}
+    var s = function (asda) {return Json.get(asda, false);};
 
     function JSONEqual(a, b, msg) {
-        deepEqual(eval('(' + a + ')'), b, msg)
+        try {
+            deepEqual(eval('(' + a + ')'), b, msg);
+        } catch(e) {
+            ok(false, 'SyntaxError: \'(' + a + ')\' caused: ' + e + '.');
+        }
     }
 
     test('Stringify primitive values', function () {
@@ -43,6 +47,13 @@ Ink.requireModules(['Ink.Util.Json'], function (Json) {
             [1,false,1,"CTHULHU"]);
         JSONEqual(s([undefined, 1, {}]),
             [null, 1, {}]);
+    });
+
+    test('dates', function () {
+        var aDate = new Date();
+        deepEqual(s(aDate), '"' + aDate.toISOString() + '"');
+        deepEqual(eval(s([aDate])), [aDate.toISOString()]);
+        JSONEqual(s([aDate]), [aDate.toISOString()]);
     });
 
     test('Nesting!', function () {
