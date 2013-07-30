@@ -65,25 +65,29 @@ Ink.createModule('Ink.Util.Json', '1', [], function() {
 
         _convertToUnicode: false,
 
+        // Escape characters so as to embed them in JSON strings
+        _escape: function (theString) {
+            var _m = { '\b': '\\b', '\t': '\\t', '\n': '\\n', '\f': '\\f', '\r': '\\r', '"': '\\"',  '\\': '\\\\' };
+
+            if (/["\\\x00-\x1f]/.test(theString)) {
+                theString = theString.replace(/([\x00-\x1f\\"])/g, function(a, b) {
+                    var c = _m[b];
+                    if (c) {
+                        return c;
+                    }
+                    c = b.charCodeAt();
+                    return '\\u00' + Math.floor(c / 16).toString(16) + (c % 16).toString(16);
+                });
+            }
+
+            return theString;
+        },
+
         // A character conversion map
         _toUnicode: function (theString)
         {
             if(!this._convertToUnicode) {
-
-                var _m = { '\b': '\\b', '\t': '\\t', '\n': '\\n', '\f': '\\f', '\r': '\\r', '"': '\\"',  '\\': '\\\\' };
-
-                if (/["\\\x00-\x1f]/.test(theString)) {
-                    theString = theString.replace(/([\x00-\x1f\\"])/g, function(a, b) {
-                        var c = _m[b];
-                        if (c) {
-                            return c;
-                        }
-                        c = b.charCodeAt();
-                        return '\\u00' + Math.floor(c / 16).toString(16) + (c % 16).toString(16);
-                    });
-                }
-                return theString;
-
+                return this._escape(theString);
             } else {
                 var unicodeString = '';
                 var inInt = false;
@@ -144,6 +148,9 @@ Ink.createModule('Ink.Util.Json', '1', [], function() {
         },
 
         _stringifyValue: function(param) {
+            if (param !== null && typeof param !== 'undefined' && typeof param.toJSON === 'function') {
+                return '"' + this._escape(param.toJSON()) + '"';
+            }
             if (typeof param === 'string') {
                 return '"' + this._toUnicode(param) + '"';
             } else if (typeof param === 'number' && (isNaN(param) || !isFinite(param))) {  // Odd numbers go null
@@ -155,7 +162,7 @@ Ink.createModule('Ink.Util.Json', '1', [], function() {
             } else if (typeof param === 'function') {
                 return 'null';  // match JSON.stringify
             } else if (param.constructor === Date) {
-                return '"' + date_toISOString(param) + '"';
+                return '"' + this._escape(date_toISOString(param)) + '"';
             } else if (param.constructor === Array) {
                 var arrayString = '';
                 for (var i = 0, len = param.length; i < len; i++) {
@@ -172,7 +179,7 @@ Ink.createModule('Ink.Util.Json', '1', [], function() {
                         if (objectString !== '') {
                             objectString += ',';
                         }
-                        objectString += '"' + k + '": ' + this._stringifyValue(param[k]);
+                        objectString += '"' + this._escape(k) + '": ' + this._stringifyValue(param[k]);
                     }
                 }
                 return '{' + objectString + '}';
@@ -192,7 +199,7 @@ Ink.createModule('Ink.Util.Json', '1', [], function() {
          */
         stringify: function(input, convertToUnicode) {
             this._convertToUnicode = !!convertToUnicode;
-            if(!convertToUnicode && this._nativeJSON) {
+            if(!this._convertToUnicode && this._nativeJSON) {
                 return this._nativeJSON.stringify(input);
             }
             return this._stringifyValue(input);  // And recurse.

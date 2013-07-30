@@ -43,9 +43,16 @@ Ink.requireModules(['Ink.Util.Json'], function (Json) {
     test('Escaping', function () {
         equal(s('"'), '"\\""');
         equal(s('""'), '"\\"\\""');
-
         equal(s('\\'), '"\\\\"');
         equal(s('\\\\'), '"\\\\\\\\"');
+        equal(s('\n'), '"\\n"');
+
+        equal(s(['"']), '["\\""]');
+        equal(s({a:'""'}), '{"a": "\\"\\""}');
+        equal(s(['\\']), '["\\\\"]');
+        equal(s({a:'\\\\'}), '{"a": "\\\\\\\\"}');
+        equal(s(['\n']), '["\\n"]');
+        equal(s({'\n':0}), '{"\\n": 0}');
     });
 
     test('Serialize objects', function () {
@@ -97,12 +104,40 @@ Ink.requireModules(['Ink.Util.Json'], function (Json) {
         equal(nativeJSON.stringify(chk), nativeJSON.stringify(obj), name);
     }
 
+    test('using toJSON', function () {
+        var i = 0;
+        var tojson = function () {return (i++).toString();};
+        var numb = new Number(123),
+            str = new String('a'),
+            obj = {};
+        numb.toJSON = str.toJSON = obj.toJSON = tojson;
+        equal(s(numb), '"0"');
+        equal(s(str), '"1"');
+        equal(s(obj), '"2"');
+    });
+
+    test('Escape values returned from toJSON', function () {
+        var obj = {
+            toJSON: function () {
+                return 'a quote: ". a backslash: \\'
+            }
+        };
+        equal(s(obj), '"a quote: \\". a backslash: \\\\"');
+    });
+
+    test('Internal _escape method for adding slashes to stuff', function () {
+        equal(Json._escape('\\'), '\\\\');
+        equal(Json._escape('\n'), '\\n');
+        equal(Json._escape('\t'), '\\t');
+        equal(Json._escape('\\"\\'), '\\\\\\"\\\\');
+    });
+
     test('Functions can\'t be stringified, to match the native JSON API', function () {
         deepEqual(s(function () {}), "null");
         deepEqual(s(new Function()), "null");
-        var f = function(){};
+        var f = function(){"..."};
         f.toJSON = Ink.bind(f.toString, f);
-        deepEqual(s(f), f.toString());  // TODO
+        deepEqual(s(f), '"' + Json._escape(f.toString()) + '"');
     });
     
     module('Json.parse');
