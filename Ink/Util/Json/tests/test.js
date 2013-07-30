@@ -1,4 +1,4 @@
-/*globals equal,test,deepEqual,hugeObject,ok*/
+/*globals equal,test,deepEqual,hugeObject,ok,module*/
 Ink.requireModules(['Ink.Util.Json'], function (Json) {
     'use strict';
 
@@ -24,6 +24,8 @@ Ink.requireModules(['Ink.Util.Json'], function (Json) {
             ok(false, 'SyntaxError: \'(' + a + ')\' caused: ' + e + '.');
         }
     }
+
+    module('Json.stringify');
 
     test('Stringify primitive values', function () {
         equal(s(''), '""');
@@ -97,5 +99,66 @@ Ink.requireModules(['Ink.Util.Json'], function (Json) {
 
     test('Functions can\'t be stringified, to match the native JSON API', function () {
         deepEqual(s(function () {}), "null");
+        deepEqual(s(new Function()), "null");
+        var f = function(){};
+        f.toJSON = f.toString;
+        deepEqual(s(f), f.toString());  // TODO
+    });
+    
+    module('Json.parse');
+
+    test('Crockford\'s JSON.parse', function () {
+        function check(json, shouldSucceed) {
+            var parsed,
+                evalled;
+            try {
+                parsed = Json.parse(json);
+            } catch (e) {
+                if (shouldSucceed !== false) {
+                    ok(false, 'failed to parse ' + json);
+                }
+            }
+            try {
+                evalled = eval('(' + json + ')');
+            } catch (e) {
+                if (shouldSucceed !== false) {
+                    ok(false, 'failed to eval ' + json);
+                }
+            }
+            if (parsed && evalled) {
+                deepEqual(parsed, evalled);
+            }
+        }
+        check('""');
+        check('true');
+        check('false');
+        check('null');
+
+        check('[function(){}]', false);
+
+        check('123123');
+        check('-123123');
+        check('1.23123');
+        check('-1.23123');
+
+        check('0x1234', false);
+
+        check('{}');
+        check('[]');
+
+        check('[1, 2, 3, 4]');
+
+        check('["ur mom\\""]');
+        check('["ur mom\\"]', false);
+
+        check('["ur mom","ur backslash\\n ","\\n", "ur qu\\"ote"]');
+
+        check('"\\n"');
+        check('"\\u0000"');
+        check('"\\a"', false);
+
+        check(" { \"asd\":\"basd\"  }  ");
+        check('{asd:"basd"}', false);
+        check('{"asd":\'basd\'}', false);
     });
 });
