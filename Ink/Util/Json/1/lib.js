@@ -128,7 +128,7 @@ Ink.createModule('Ink.Util.Json', '1', [], function() {
 
         },
 
-        _parseValue: function(param) {
+        writeValue: function(param) {
             if (typeof param === 'string') {
                 return '"' + this._toUnicode(param) + '"';
             } else if (typeof param === 'number' && (isNaN(param) || !isFinite(param))) {  // Odd numbers go null
@@ -147,7 +147,7 @@ Ink.createModule('Ink.Util.Json', '1', [], function() {
                     if (i > 0) {
                         arrayString += ',';
                     }
-                    arrayString += this._parseValue(param[i]);
+                    arrayString += this.writeValue(param[i]);
                 }
                 return '[' + arrayString + ']';
             } else {  // Object
@@ -157,12 +157,14 @@ Ink.createModule('Ink.Util.Json', '1', [], function() {
                         if (objectString !== '') {
                             objectString += ',';
                         }
-                        objectString += '"' + k + '": ' + this._parseValue(param[k]);
+                        objectString += '"' + k + '": ' + this.writeValue(param[k]);
                     }
                 }
                 return '{' + objectString + '}';
             }
         },
+
+        
 
         /**
          * @function {String} ? serializes a JSON object into a string
@@ -181,7 +183,7 @@ Ink.createModule('Ink.Util.Json', '1', [], function() {
             if(!this._convertToUnicode && this._nativeJSON) {
                 return this._nativeJSON.stringify(jsObject);
             }
-            return this._parseValue(jsObject);
+            return this.writeValue(jsObject);  // And recurse.
         }
     };
 
