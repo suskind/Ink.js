@@ -21,8 +21,14 @@ Ink.createModule( 'Ink.Dom.Css', 1, [], function() {
          *
          * @function addRemoveClassName
          * @param {DOMElement|string}   elm          DOM element or element id
-         * @param {string}              className    class name
-         * @param {boolean}             addRemState  which method to apply
+         * @param {string}              className    class name to add or remove.
+         * @param {boolean}             addRemState  Whether to add or remove. `true` to add, `false` to remove.
+         *
+         * @example
+         *      Ink.requireModules(['Ink.Dom.Css_1'], function (Css) {
+         *          Css.addRemoveClassName(myElm, 'classss', true);  // Adds the `classss` class.
+         *          Css.addRemoveClassName(myElm, 'classss', false);  // Removes the `classss` class.
+         *      });
          */
         addRemoveClassName: function(elm, className, addRemState) {
             if (addRemState) {
@@ -271,11 +277,26 @@ Ink.createModule( 'Ink.Dom.Css', 1, [], function() {
 
 
         /**
-         * Sets the value for an element's style attribute
+         * Adds CSS rules to an element's style attribute.
          *
          * @function setStyle
          * @param {DOMElement|String}  elm    DOM element or element id
          * @param {String}             style  Which css attribute to set
+         *
+         * @example
+         *     <a href="#" class="change-color">Change his color</a>
+         *     <p class="him">"He" is me</p>
+         *     <script type="text/javascript">
+         *         Ink.requireModules(['Ink.Dom.Css_1', 'Ink.Dom.Event_1', 'Ink.Dom.Selector_1'], function (Css, InkEvent, Selector) {
+         *             var btn = Selector.select('.change-color')[0];
+         *             var other = Selector.select('.him')[0];
+         *             InkEvent.observe(btn, 'click', function () {
+         *                 Css.setStyle(other, 'background-color: black');
+         *                 Css.setStyle(other, 'color: white');
+         *             });
+         *         });
+         *     </script>
+         *
          */
         setStyle: function(elm, style) {
             elm = Ink.i(elm);
@@ -343,8 +364,8 @@ Ink.createModule( 'Ink.Dom.Css', 1, [], function() {
          * shows or hides according to param show
          *
          * @function showHide
-         * @param {DOMElement|String}  elm   DOM element or element id
-         * @param {boolean}            show
+         * @param {DOMElement|String}  elm          DOM element or element id
+         * @param {boolean}            [show=false] Whether to show or hide `elm`.
          */
         showHide: function(elm, show) {
             elm = Ink.i(elm);
@@ -452,9 +473,9 @@ Ink.createModule( 'Ink.Dom.Css', 1, [], function() {
          * @function appendStylesheet
          * @param {String}  path     File path
          * @param {Object}  options  Options for the tag
-         *    @param {String}   [options.media]  media type
-         *    @param {String}   [options.type]   file type
-         *    @param {Boolean}  [options.force]  if true, tag will be appended to end of head
+         *    @param {String}   [options.media='screen']    media type
+         *    @param {String}   [options.type='text/css']   file type
+         *    @param {Boolean}  [options.force=false]       if true, tag will be appended to end of head
          */
         appendStylesheet: function(path, options){
             options = Ink.extendObj({

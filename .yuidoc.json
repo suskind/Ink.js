@@ -1,10 +1,10 @@
 {
     "name":        "Ink.js",
-    "description": "JavaScript FrameWork by SAPO",
+    "description": "JavaScript Framework by SAPO",
     "version":     "latest",
-    "url":         "http://www.todo.com",
-    "logo":        " ",
-    "paths":       ["./Ink/*.js"],
+    "url":         "http://ink.sapo.pt/",
+    "logo":        "../.yuidoclogo.png",
+    "paths":       ["./Ink"],
     "options": {
         "outdir": "./docs"
     }

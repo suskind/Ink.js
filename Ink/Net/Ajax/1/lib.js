@@ -137,7 +137,7 @@ Ink.createModule('Ink.Net.Ajax', '1', [], function() {
             if (!this.isHTTP || location.protocol === 'widget:' || typeof window.widget === 'object') {
                 this.isCrossDomain = false;
             } else {
-                this.isCrossDomain = location.protocol !== urlLocation.protocol || location.host !== urlLocation.host.split(':')[0];
+                this.isCrossDomain = location.protocol !== urlLocation.protocol || location.host !== urlLocation.host;
             }
             if(this.options.cors) {
                 this.isCrossDomain = false;
@@ -692,7 +692,7 @@ Ink.createModule('Ink.Net.Ajax', '1', [], function() {
     /**
      * Loads content from a given url through a XMLHttpRequest.
      * Shortcut function for simple AJAX use cases.
-     * 
+     *
      * @function ping
      * @param {String}   url       request url
      * @param {Function} callback  callback to be executed if the request is successful

@@ -16,12 +16,12 @@ Ink.createModule('Ink.Dom.Element', 1, [], function() {
 
     var Element = {
 
-        /** 
-         * Shortcut for document.getElementById
+        /**
+         * Shortcut for `document.getElementById`
          *
          * @function get
-         * @param {String|Array} elm  Receives either an id or an Array of ids
-         * @return Either the DOM element for the given id or an array of elements for the given ids
+         * @param {String|DOMElement} elm   Either an ID of an element, or an element.
+         * @return {DOMElement|null} The DOM element with the given id or null when it was not found
          */
         get: function(elm) {
             if(typeof elm !== 'undefined') {
@@ -55,10 +55,10 @@ Ink.createModule('Ink.Dom.Element', 1, [], function() {
         },
 
         /**
-         * Removes DOM Element from DOM
+         * Removes a DOM Element from the DOM
          *
          * @function remove
-         * @param  {DOMElement} el
+         * @param {DOMElement} elm  The element to remove
          */
         remove: function(el) {
             var parEl;
@@ -68,7 +68,7 @@ Ink.createModule('Ink.Dom.Element', 1, [], function() {
         },
 
         /**
-         * Scrolls to an element
+         * Scrolls the window to an element
          *
          * @function scrollTo
          * @param {DOMElement|String} elm  Element where to scroll
@@ -99,57 +99,32 @@ Ink.createModule('Ink.Dom.Element', 1, [], function() {
         /**
          * Gets the top cumulative offset for an element
          *
+         * Requires Ink.Dom.Browser
+         *
          * @function offsetTop
          * @param {DOMElement|String} elm  target element
          * @return {Number} Offset from the target element to the top of the document
          */
         offsetTop: function(elm) {
-            elm = this.get(elm);
-
-            var offset = elm.offsetTop;
-
-            while(elm.offsetParent){
-                if(elm.offsetParent.tagName.toLowerCase() !== "body"){
-                    elm = elm.offsetParent;
-                    offset += elm.offsetTop;
-                } else {
-                    break;
-                }
-            }
-
-            return offset;
+            return this.offset(elm)[1];
         },
 
         /**
          * Gets the left cumulative offset for an element
+         *
+         * Requires Ink.Dom.Browser
          *
          * @function offsetLeft
          * @param {DOMElement|String} elm  target element
          * @return {Number} Offset from the target element to the left of the document
          */
         offsetLeft: function(elm) {
-            /*
-                elm = this.get(elm);
-
-                var offset = elm.offsetLeft;
-
-                while(elm.offsetParent){
-                    if(elm.offsetParent.tagName.toLowerCase() !== "body"){
-                        elm = elm.offsetParent;
-                        offset += elm.offsetLeft;
-                    } else {
-                        break;
-                    }
-                }
-
-                return offset;
-            */
-           return this.offset2( elm );
+            return this.offset(elm)[0];
         },
 
         /**
         * Gets the element offset relative to its closest positioned ancestor
-        * 
+        *
         * @function positionedOffset
         * @param {DOMElement|String} elm  target element
         * @return {Array} Array with the element offsetleft and offsettop relative to the closest positioned ancestor
@@ -181,15 +156,51 @@ Ink.createModule('Ink.Dom.Element', 1, [], function() {
         /**
          * Gets the cumulative offset for an element
          *
+         * Returns the top left position of the element on the page
+         *
+         * Requires Ink.Dom.Browser
+         *
          * @function offset
-         * @param {DOMElement|String} elm  target element
-         * @return {Array} Array with offset from the target element to the top/left of the document
+         * @param {DOMElement|String}   elm     Target element
+         * @return {[Number, Number]}   Array with pixel distance from the target element to the top left corner of the document
          */
-        offset: function(elm) {
-            return [
-                this.offsetLeft(elm),
-                this.offsetTop(elm)
-            ];
+        offset: function(el) {
+            /*jshint boss:true */
+            el = Ink.i(el);
+            var bProp = ['border-left-width', 'border-top-width'];
+            var res = [0, 0];
+            var dRes, bRes, parent, cs;
+            var getPropPx = this._getPropPx;
+
+            var InkBrowser = Ink.getModule('Ink.Dom.Browser', 1);
+
+            do {
+                cs = window.getComputedStyle ? window.getComputedStyle(el, null) : el.currentStyle;
+                dRes = [el.offsetLeft | 0, el.offsetTop | 0];
+
+                bRes = [getPropPx(cs, bProp[0]), getPropPx(cs, bProp[1])];
+                if( InkBrowser.OPERA ){
+                    res[0] += dRes[0];
+                    res[1] += dRes[1];
+                } else {
+                    res[0] += dRes[0] + bRes[0];
+                    res[1] += dRes[1] + bRes[1];
+                }
+                parent = el.offsetParent;
+            } while (el = parent);
+
+            bRes = [getPropPx(cs, bProp[0]), getPropPx(cs, bProp[1])];
+
+            if (InkBrowser.GECKO) {
+                res[0] += bRes[0];
+                res[1] += bRes[1];
+            }
+            else if( !InkBrowser.OPERA ) {
+                res[0] -= bRes[0];
+                res[1] -= bRes[1];
+            }
+
+            return res;
         },
 
         /**
@@ -225,54 +236,19 @@ Ink.createModule('Ink.Dom.Element', 1, [], function() {
         },
 
         /**
-         * Returns the top left position of the element on the page
+         * Alias for offset()
          *
          * @function offset2
-         * @param {String|DOMElement} el
-         * @return {Number[2]}
+         * @deprecated Kept for historic reasons. Use offset() instead.
          */
         offset2: function(el) {
-            /*jshint boss:true */
-            el = Ink.i(el);
-            var bProp = ['border-left-width', 'border-top-width'];
-            var res = [0, 0];
-            var dRes, bRes, parent, cs;
-            var getPropPx = this._getPropPx;
-
-            var InkBrowser = Ink.getModule('Ink.Dom.Browser',1);
-
-            do {
-                cs = window.getComputedStyle ? window.getComputedStyle(el, null) : el.currentStyle;
-                dRes = [el.offsetLeft | 0, el.offsetTop | 0];
-                bRes = [getPropPx(cs, bProp[0]), getPropPx(cs, bProp[1])];
-                if( InkBrowser.OPERA ){
-                    res[0] += dRes[0];
-                    res[1] += dRes[1];
-                } else {
-                    res[0] += dRes[0] + bRes[0];
-                    res[1] += dRes[1] + bRes[1];
-                }
-                parent = el.offsetParent;
-            } while (el = parent);
-
-            bRes = [getPropPx(cs, bProp[0]), getPropPx(cs, bProp[1])];
-
-            if (InkBrowser.GECKO) {
-                res[0] += bRes[0];
-                res[1] += bRes[1];
-            }
-            else if( !InkBrowser.OPERA ) {
-                res[0] -= bRes[0];
-                res[1] -= bRes[1];
-            }
-            
-            return res;
+            return this.offset(el);
         },
 
         /**
          * Verifies the existence of an attribute
          *
-         * @function hasAttribute 
+         * @function hasAttribute
          * @param {Object} elm   target element
          * @param {String} attr  attribute name
          * @return {Boolean} Boolean based on existance of attribute
@@ -301,7 +277,7 @@ Ink.createModule('Ink.Dom.Element', 1, [], function() {
          * @param {DOMElement}         newElm     element to be inserted
          * @param {DOMElement|String}  targetElm  key element
          */
-        insertTop: function(newElm,targetElm) {
+        insertTop: function(newElm,targetElm) {  // TODO check first child exists
             /*jshint boss:true */
             if (targetElm = this.get(targetElm)) {
                 targetElm.insertBefore(newElm, targetElm.firstChild);
@@ -359,8 +335,8 @@ Ink.createModule('Ink.Dom.Element', 1, [], function() {
          * Removes all nodes children and adds the text
          *
          * @function setTextContent
-         * @param {DOMNode} node from which to retreive text from. Can be any node type.
-         * @param {String}  text to be appended to the node.
+         * @param {DOMNode} node    node to add the text to. Can be any node type.
+         * @param {String}  text    text to be appended to the node.
          */
         setTextContent: function(node, text){
             node = Ink.i(node);
@@ -399,7 +375,7 @@ Ink.createModule('Ink.Dom.Element', 1, [], function() {
          * Tells if element is a clickable link
          *
          * @function isLink
-         * @param {DOMNode} node to check if it's link
+         * @param {DOMNode} node    node to check if it's link
          * @return {Boolean}
          */
         isLink: function(element){
@@ -447,7 +423,7 @@ Ink.createModule('Ink.Dom.Element', 1, [], function() {
         /**
          * Get first child in document order of node type 1
          * @function firstElementChild
-         * @param {DOMNode} parent node
+         * @param {DOMNode} elm parent node
          * @return {DOMNode} the element child
          */
         firstElementChild: function(elm){
@@ -467,7 +443,7 @@ Ink.createModule('Ink.Dom.Element', 1, [], function() {
         /**
          * Get last child in document order of node type 1
          * @function lastElementChild
-         * @param {DOMNode} parent node
+         * @param {DOMNode} elm parent node
          * @return {DOMNode} the element child
          */
         lastElementChild: function(elm){
@@ -486,7 +462,7 @@ Ink.createModule('Ink.Dom.Element', 1, [], function() {
 
         /**
          * Get the first element sibling after the node
-         * 
+         *
          * @function nextElementSibling
          * @param {DOMNode} node  current node
          * @return {DOMNode|Null} the first element sibling after node or null if none is found
@@ -615,11 +591,7 @@ Ink.createModule('Ink.Dom.Element', 1, [], function() {
          * @return {DOMElement} the element with positionClone
          */
         clonePosition: function(cloneTo, cloneFrom){
-            /*
-            cloneTo.style.top = this.offsetTop(cloneFrom) + 'px';
-            cloneTo.style.left = this.offsetLeft(cloneFrom) + 'px';
-            */
-            var pos = this.offset2(cloneFrom);
+            var pos = this.offset(cloneFrom);
             cloneTo.style.left = pos[0]+'px';
             cloneTo.style.top = pos[1]+'px';
 
@@ -644,7 +616,9 @@ Ink.createModule('Ink.Dom.Element', 1, [], function() {
         },
 
         /**
-         * Searches up the DOM tree for an element of specified class name
+         * Searches up the DOM tree for an element of specified class name.
+         *
+         * If the target `element` already has the required `className`, it is returned.
          *
          * @function findUpwardsByClass
          * @param {DOMElement}  element
@@ -838,7 +812,7 @@ Ink.createModule('Ink.Dom.Element', 1, [], function() {
 
         /**
          * Select element on steroids - allows the creation of new values
-         * 
+         *
          * @function fillSelect2
          * @param {DomElement|String} ctn select element which will get filled
          * @param {Object} opts
@@ -1186,12 +1160,12 @@ Ink.createModule('Ink.Dom.Element', 1, [], function() {
         },
 
         /**
-        * parses and prepends an html string to a container, not destroying its contents
-        *
-        * @function prependHTML
-        * @param {String|DomElement} elm   element
-        * @param {String}            html  markup string
-        */
+         * parses and prepends an html string to a container, not destroying its contents
+         *
+         * @function prependHTML
+         * @param {String|DomElement} elm   element
+         * @param {String}            html  markup string
+         */
         prependHTML: function(elm, html){
             var temp = document.createElement('div');
             temp.innerHTML = html;
@@ -1200,6 +1174,26 @@ Ink.createModule('Ink.Dom.Element', 1, [], function() {
             for (var i = tempChildren.length - 1; i >= 0; i--){
                 elm.insertBefore(tempChildren[i], first);
                 first = elm.firstChild;
+            }
+        },
+
+        /**
+         * Removes direct children on type text.
+         * Useful to remove nasty layout gaps generated by whitespace on the markup.
+         *
+         * @function removeTextNodeChildren
+         * @param  {DOMElement} el
+         */
+        removeTextNodeChildren: function(el) {
+            var prevEl, toRemove, parent = el;
+            el = el.firstChild;
+            while (el) {
+                toRemove = (el.nodeType === 3);
+                prevEl = el;
+                el = el.nextSibling;
+                if (toRemove) {
+                    parent.removeChild(prevEl);
+                }
             }
         },
 
@@ -1248,10 +1242,10 @@ Ink.createModule('Ink.Dom.Element', 1, [], function() {
             return this.htmlToFragment.call(this, html);
         },
 
-        _camelCase: function(str) 
+        _camelCase: function(str)
         {
             return str ? str.replace(/-(\w)/g, function (_, $1){
-                    return $1.toUpperCase(); 
+                    return $1.toUpperCase();
             }) : str;
         },
 
@@ -1260,7 +1254,7 @@ Ink.createModule('Ink.Dom.Element', 1, [], function() {
          *
          * @function data
          * @param {String|DomElement} selector Element or CSS selector
-         * @return {Object} Object with the data-* properties or empty if none found.
+         * @return {Object} Object with the data-* properties. If no data-attributes are present, an empty object is returned.
         */
         data: function( selector ){
             if( typeof selector !== 'object' && typeof selector !== 'string'){
@@ -1285,8 +1279,8 @@ Ink.createModule('Ink.Dom.Element', 1, [], function() {
             }
 
             var dataset = {};
-            // var attributesElements = _element.dataset || _element.attributes || {}; 
-            var attributesElements = _element.attributes || []; 
+            // var attributesElements = _element.dataset || _element.attributes || {};
+            var attributesElements = _element.attributes || [];
             var prop ;
 
             var curAttr, curAttrName, curAttrValue;
