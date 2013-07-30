@@ -101,13 +101,13 @@ Ink.requireModules(['Ink.Util.Json'], function (Json) {
         deepEqual(s(function () {}), "null");
         deepEqual(s(new Function()), "null");
         var f = function(){};
-        f.toJSON = f.toString;
+        f.toJSON = Ink.bind(f.toString, f);
         deepEqual(s(f), f.toString());  // TODO
     });
     
     module('Json.parse');
 
-    test('Crockford\'s JSON.parse', function () {
+    test('Doug Crockford\'s JSON.parse', function () {
         function check(json, shouldSucceed) {
             var parsed,
                 evalled;

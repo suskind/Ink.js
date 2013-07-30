@@ -34,17 +34,31 @@ Ink.createModule('Ink.Util.Json', '1', [], function() {
         };
 
     /**
+     * Use this class to convert JSON strings to JavaScript objects
+     * `(Json.parse)` and also to do the opposite operation `(Json.stringify)`.
+     * Internally, the standard JSON implementation is used if available
+     * Otherwise, the functions mimic the standard implementation.
+     *
+     * Here's how to produce JSON from an existing object:
+     * 
+     *      Ink.requireModules(['Ink.Util.Json_1'], function (Json) {
+     *          var obj = {
+     *              key1: 'value1',
+     *              key2: 'value2',
+     *              keyArray: ['arrayValue1', 'arrayValue2', 'arrayValue3']
+     *          };
+     *          Json.stringify(obj);  // The above object as a JSON string
+     *      });
+     *
+     * And here is how to parse JSON:
+     *
+     *      Ink.requireModules(['Ink.Util.Json_1'], function (Json) {
+     *          var source = '{"key": "value", "array": [true, null, false]}';
+     *          Json.parse(source);  // The above JSON string as an object
+     *      });
      * @class Ink.Util.Json
      * @static
      * 
-     * @example
-     *      var obj = {
-     *          key1: 'value1',
-     *          key2: 'value2',
-     *          keyArray: ['arrayValue1', 'arrayValue2', 'arrayValue3']
-     *      }
-     *      
-     *      Json.stringify(obj);
      */
     var InkJson = {
         _nativeJSON: window.JSON || null,
@@ -129,7 +143,7 @@ Ink.createModule('Ink.Util.Json', '1', [], function() {
 
         },
 
-        writeValue: function(param) {
+        _stringifyValue: function(param) {
             if (typeof param === 'string') {
                 return '"' + this._toUnicode(param) + '"';
             } else if (typeof param === 'number' && (isNaN(param) || !isFinite(param))) {  // Odd numbers go null
@@ -148,65 +162,59 @@ Ink.createModule('Ink.Util.Json', '1', [], function() {
                     if (i > 0) {
                         arrayString += ',';
                     }
-                    arrayString += this.writeValue(param[i]);
+                    arrayString += this._stringifyValue(param[i]);
                 }
                 return '[' + arrayString + ']';
             } else {  // Object
                 var objectString = '';
                 for (var k in param)  {
-                    if (param.hasOwnProperty(k)) {
+                    if ({}.hasOwnProperty.call(param, k)) {
                         if (objectString !== '') {
                             objectString += ',';
                         }
-                        objectString += '"' + k + '": ' + this.writeValue(param[k]);
+                        objectString += '"' + k + '": ' + this._stringifyValue(param[k]);
                     }
                 }
                 return '{' + objectString + '}';
             }
         },
 
-        _validateJSON: function (source) {
-            // Grammar info from http://json.org/
-            var rTokens = [
-                // String
-                '("(?:(?:(?:\\\\(?:"|\\\\|/|b|f|n|r|t|u[0-9a-fA-F]{4}))|[^"\\\\])+)?")',
-                // Number
-                '(-?(\\d+)' +    // integer part
-                    '(\\.\\d+)?' +      // decimal part
-                    '([eE][+-]?\\d+)?)', // e
-                // Punctuation
-                '(\\:)',                    // Colon, for objects
-                '(\\,)',                    // Comma for arrays and objects
-                '(\\{)', '(\\})',           // Braces
-                '(\\[)', '(\\])',           // Square braces
-                '(true)', '(false)', '(null)',// Token/values
-                '(\\s+)',                 // Whitespace
-            ];
-            rTokens = '^(' + rTokens.join('|') + '|)+$';  // OR them together, ignore witespace.
-            rTokens = new RegExp(rTokens, 'g');
-            return !!rTokens.exec(source);
-        },
-
         /**
-         * @function {String} ? serializes a JSON object into a string
-         * @param {Object} jsObject - JSON object
-         * @param {Boolean} convertToUnicode - if true, converts the string contents of the object to unicode
-         * @return serialized string
+         * serializes a JSON object into a string.
+         *
+         * @method stringify
+         * @param {Object}      input               Data to be serialized into JSON
+         * @param {Boolean}     convertToUnicode    When `true`, converts string contents to unicode \uXXXX
+         * @return {String}     serialized string
+         *
+         * @example
+         *      Json.stringify({a:1.23}); // -> string: '{"a": 1.23}'
          */
-        stringify: function(jsObject, convertToUnicode) {
-            if(typeof(convertToUnicode) !== 'undefined') {
-                if(convertToUnicode === false) {
-                    this._convertToUnicode = false;
-                } else {
-                    this._convertToUnicode = true;
-                }
+        stringify: function(input, convertToUnicode) {
+            this._convertToUnicode = !!convertToUnicode;
+            if(!convertToUnicode && this._nativeJSON) {
+                return this._nativeJSON.stringify(input);
             }
-            if(!this._convertToUnicode && this._nativeJSON) {
-                return this._nativeJSON.stringify(jsObject);
-            }
-            return this.writeValue(jsObject);  // And recurse.
+            return this._stringifyValue(input);  // And recurse.
         },
-
+        
+        /**
+         * @method parse
+         * @param text      {String}    Input string
+         * @param reviver   {Function}  Function receiving `(key, value)`, and `this`=(containing object), used to walk objects.
+         * 
+         * @example
+         * Simple example:
+         *
+         *      Json.parse('{"a": "3","numbers":false}',
+         *          function (key, value) {
+         *              if (!this.numbers && key === 'a') {
+         *                  return "NO NUMBERS";
+         *              } else {
+         *                  return value;
+         *              }
+         *          }); // -> object: {a: 'NO NUMBERS', numbers: false}
+         */
         /* From https://github.com/douglascrockford/JSON-js/blob/master/json.js */
         parse: function (text, reviver) {
             /*jshint evil:true*/
