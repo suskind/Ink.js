@@ -62,7 +62,7 @@ Ink.createModule(
     ['Ink_Namespace_Dependency1_version', 'Ink_Namespace_Dependency2_version'], 
     function(Dependency1, Dependency2) {
         var ModuleName = {
-            // __...your code hete...__
+            // __...your code here...__
         };
 
         return ModuleName;
