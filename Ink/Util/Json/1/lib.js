@@ -148,20 +148,25 @@ Ink.createModule('Ink.Util.Json', '1', [], function() {
         },
 
         _stringifyValue: function(param) {
-            if (param !== null && typeof param !== 'undefined' && typeof param.toJSON === 'function') {
-                return '"' + this._escape(param.toJSON()) + '"';
-            }
             if (typeof param === 'string') {
                 return '"' + this._toUnicode(param) + '"';
-            } else if (typeof param === 'number' && (isNaN(param) || !isFinite(param))) {  // Odd numbers go null
+            } else if (typeof param === 'number' && (isNaN(param) || !isFinite(param))) {  // Unusable numbers go null
                 return 'null';
             } else if (typeof param === 'undefined' || param === null) {  // And so does undefined
                 return 'null';
+            } else if (typeof param.toJSON === 'function') {
+                var t = param.toJSON();
+                if (typeof t === 'string') {
+                    return '"' + this._escape(t) + '"';
+                } else {
+                    return this._escape(t.toString());
+                }
             } else if (typeof param === 'number' || typeof param === 'boolean') {  // These ones' toString methods return valid JSON.
                 return '' + param;
             } else if (typeof param === 'function') {
                 return 'null';  // match JSON.stringify
             } else if (param.constructor === Date) {
+                throw ''
                 return '"' + this._escape(date_toISOString(param)) + '"';
             } else if (param.constructor === Array) {
                 var arrayString = '';

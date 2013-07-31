@@ -16,7 +16,7 @@
         <!-- Crockford's JSON -->
         <script type="text/javascript">
             window.nativeJSON = window.JSON;
-            delete window.JSON;
+            window.JSON = undefined;
         </script>
         <script type="text/javascript" src="json.js"></script>
     </head>

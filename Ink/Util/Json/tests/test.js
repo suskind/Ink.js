@@ -70,13 +70,6 @@ Ink.requireModules(['Ink.Util.Json'], function (Json) {
             [null, 1, {}]);
     });
 
-    test('dates', function () {
-        var aDate = new Date();
-        deepEqual(s(aDate), '"' + aDate.toISOString() + '"');
-        deepEqual(eval(s([aDate])), [aDate.toISOString()]);
-        JSONEqual(s([aDate]), [aDate.toISOString()]);
-    });
-
     test('Nesting!', function () {
         var nested = [
             {
@@ -119,7 +112,7 @@ Ink.requireModules(['Ink.Util.Json'], function (Json) {
     test('Escape values returned from toJSON', function () {
         var obj = {
             toJSON: function () {
-                return 'a quote: ". a backslash: \\'
+                return 'a quote: ". a backslash: \\';
             }
         };
         equal(s(obj), '"a quote: \\". a backslash: \\\\"');
@@ -135,7 +128,7 @@ Ink.requireModules(['Ink.Util.Json'], function (Json) {
     test('Functions can\'t be stringified, to match the native JSON API', function () {
         deepEqual(s(function () {}), "null");
         deepEqual(s(new Function()), "null");
-        var f = function(){"..."};
+        var f = function(){"...";};
         f.toJSON = Ink.bind(f.toString, f);
         deepEqual(s(f), '"' + Json._escape(f.toString()) + '"');
     });
@@ -195,5 +188,18 @@ Ink.requireModules(['Ink.Util.Json'], function (Json) {
         check(" { \"asd\":\"basd\"  }  ");
         check('{asd:"basd"}', false);
         check('{"asd":\'basd\'}', false);
+    });
+
+    module('[general]');
+
+    test('dates', function () {
+        var aDate = new Date();
+        aDate.setUTCFullYear(2013);
+        aDate.setUTCMonth(7 - 1);
+        aDate.setUTCDate(1);
+        aDate.setUTCMinutes(10);
+        aDate.setUTCHours(10);
+        aDate.setUTCSeconds(5);
+        ok(/"2013-07-01T10:10:05(\.\d+)?Z"/.test(s(aDate)));
     });
 });
