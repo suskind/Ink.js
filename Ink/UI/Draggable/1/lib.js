@@ -3,7 +3,7 @@
  * @author inkdev AT sapo.pt
  * @version 1
  */
-Ink.createModule("Ink.UI.Draggable","1",["Ink.Dom.Element_1", "Ink.Dom.Event_1", "Ink.Dom.Css_1", "Ink.Dom.Browser_1", "Ink.UI.Droppable_1"],function( InkElement, InkEvent, Css, Browser, Droppable) {
+Ink.createModule("Ink.UI.Draggable","1",["Ink.Dom.Element_1", "Ink.Dom.Event_1", "Ink.Dom.Css_1", "Ink.Dom.Browser_1", "Ink.UI.Droppable_1", "Ink.Dom.Selector_1", "Ink.UI.Aux_1"],function( InkElement, InkEvent, Css, Browser, Droppable, Selector, Aux) {
 
     /**
      * @class Ink.UI.Draggable
@@ -11,7 +11,8 @@ Ink.createModule("Ink.UI.Draggable","1",["Ink.Dom.Element_1", "Ink.Dom.Event_1",
      * @constructor
      * @param {String|DOMElement} element ID of the element or DOM Element.
      * @param {Object} [options] Optional object for configuring the component
-     *     @param {String}            [options.constraint]     Movement constraint. None by default. Can be either `vertical`, `horizontal`, or `both`.
+     *     @param {String}            [options.constraint]     Movement constraint. None by default. Can be `vertical`, `horizontal`, or `both`.
+     *     @param {String|DomElement} [options.constraintElm]  Constrain dragging to be within this element. None by default.
      *     @param {Number}            [options.top]            top limit for the draggable area
      *     @param {Number}            [options.right]          right limit for the draggable area
      *     @param {Number}            [options.bottom]         bottom limit for the draggable area
@@ -50,6 +51,7 @@ Ink.createModule("Ink.UI.Draggable","1",["Ink.Dom.Element_1", "Ink.Dom.Event_1",
         init: function(element, options) {
             var o = Ink.extendObj( {
                 constraint:         false,
+                constraintElm:      false,
                 top:                0,
                 right:              InkElement.pageWidth(),
                 bottom:             InkElement.pageHeight(),
@@ -71,6 +73,7 @@ Ink.createModule("Ink.UI.Draggable","1",["Ink.Dom.Element_1", "Ink.Dom.Event_1",
 
             this.options = o;
             this.element = Ink.i(element);
+            this.constraintElm = o.constraintElm && Aux.elOrSelector(o.constraintElm);
 
             this.handle             = false;
             this.elmStartPosition   = false;
@@ -129,7 +132,7 @@ Ink.createModule("Ink.UI.Draggable","1",["Ink.Dom.Element_1", "Ink.Dom.Event_1",
          * Browser-independant implementation of page scroll
          * 
          * @method _getPageScroll
-         * @return {Array} Array where the first position is the scrollLeft and the second position is the scrollTop
+         * @return {Array} Array    Scroll amount, in pixels, from the top left of the page. Format: `[scrollLeft, scrollTop]`.
          * @private
          */
         _getPageScroll: function() {
@@ -329,13 +332,33 @@ Ink.createModule("Ink.UI.Draggable","1",["Ink.Dom.Element_1", "Ink.Dom.Event_1",
                     newX = this.elmStartPosition[0] + mPosX - this.delta.x;
                     newY = this.elmStartPosition[1] + mPosY - this.delta.y;
 
-                    if (o.constraint === 'horizontal' || o.constraint === 'both') {
-                        if (o.right !== false && newX > o.right) {        newX = o.right;        }
-                        if (o.left  !== false && newX < o.left)  {        newX = o.left;        }
-                    }
-                    if (o.constraint === 'vertical' || o.constraint === 'both') {
-                        if (o.bottom !== false && newY > o.bottom) {    newY = o.bottom;    }
-                        if (o.top    !== false && newY < o.top) {       newY = o.top;        }
+                    if (this.constraintElm) {
+                        var offset = InkElement.offset(this.constraintElm);
+                        var size = InkElement.elementDimensions(this.constraintElm);
+                        var draggableSize = InkElement.elementDimensions(this.element);
+
+                        var x = 0,
+                            y = 1;
+
+                        var constTop = offset[y],
+                            constBottom = offset[y] + size[y],
+                            constLeft = offset[x],
+                            constRight = offset[x] + size[x];
+
+                        newY = Math.min(newY, constBottom - draggableSize[y]);
+                        newY = Math.max(newY, constTop);
+
+                        newX = Math.min(newX, constRight - draggableSize[x]);
+                        newX = Math.max(newX, constLeft);
+                    } else if (o.constraint) {
+                        if (o.constraint === 'horizontal' || o.constraint === 'both') {
+                            if (o.right !== false && newX > o.right) {        newX = o.right;        }
+                            if (o.left  !== false && newX < o.left)  {        newX = o.left;        }
+                        }
+                        if (o.constraint === 'vertical' || o.constraint === 'both') {
+                            if (o.bottom !== false && newY > o.bottom) {    newY = o.bottom;    }
+                            if (o.top    !== false && newY < o.top) {       newY = o.top;        }
+                        }
                     }
 
                     if (this.firstDrag) {
