@@ -1,4 +1,4 @@
-/**
+/*
  * @module Ink.UI.Draggable_1
  * @author inkdev AT sapo.pt
  * @version 1
@@ -11,23 +11,23 @@ Ink.createModule("Ink.UI.Draggable","1",["Ink.Dom.Element_1", "Ink.Dom.Event_1",
      * @constructor
      * @param {String|DOMElement} element ID of the element or DOM Element.
      * @param {Object} [options] Optional object for configuring the component
-     *     @param {String}            [options.constraint]     - Movement constraint. None by default. Can be either vertical or horizontal.
-     *     @param {Number}            [options.top]            - top limit for the draggable area
-     *     @param {Number}            [options.right]          - right limit for the draggable area
-     *     @param {Number}            [options.bottom]         - bottom limit for the draggable area
-     *     @param {Number}            [options.left]           - left limit for the draggable area
-     *     @param {String|DOMElement} [options.handler]        - if specified, only this element will be used for dragging instead of the whole target element
-     *     @param {Boolean}           [options.revert]         - if true, reverts the draggable to the original position when dragging stops
-     *     @param {String}            [options.cursor]         - cursor type used over the draggable object
-     *     @param {Number}            [options.zindex]         - zindex applied to the draggable element while dragged
-     *     @param {Number}            [options.fps]            - if defined, on drag will run every n frames per second only
-     *     @param {DomElement}        [options.droppableProxy] - if set, a shallow copy of the droppableProxy will be put on document.body with transparent bg
-     *     @param {String}            [options.mouseAnchor]    - defaults to mouse cursor. can be 'left|center|right top|center|bottom'
-     *     @param {String}            [options.dragClass='drag'] - class to add when the draggable is being dragged.
-     *     @param {Function}          [options.onStart]        - callback called when dragging starts
-     *     @param {Function}          [options.onEnd]          - callback called when dragging stops
-     *     @param {Function}          [options.onDrag]         - callback called while dragging, prior to position updates
-     *     @param {Function}          [options.onChange]       - callback called while dragging, after position updates
+     *     @param {String}            [options.constraint]     Movement constraint. None by default. Can be either `vertical`, `horizontal`, or `both`.
+     *     @param {Number}            [options.top]            top limit for the draggable area
+     *     @param {Number}            [options.right]          right limit for the draggable area
+     *     @param {Number}            [options.bottom]         bottom limit for the draggable area
+     *     @param {Number}            [options.left]           left limit for the draggable area
+     *     @param {String|DOMElement} [options.handler]        if specified, only this element will be used for dragging instead of the whole target element
+     *     @param {Boolean}           [options.revert]         if true, reverts the draggable to the original position when dragging stops
+     *     @param {String}            [options.cursor]         cursor type used over the draggable object
+     *     @param {Number}            [options.zindex]         zindex applied to the draggable element while dragged
+     *     @param {Number}            [options.fps]            if defined, on drag will run every n frames per second only
+     *     @param {DomElement}        [options.droppableProxy] if set, a shallow copy of the droppableProxy will be put on document.body with transparent bg
+     *     @param {String}            [options.mouseAnchor]    defaults to mouse cursor. can be 'left|center|right top|center|bottom'
+     *     @param {String}            [options.dragClass='drag'] class to add when the draggable is being dragged.
+     *     @param {Function}          [options.onStart]        callback called when dragging starts
+     *     @param {Function}          [options.onEnd]          callback called when dragging stops
+     *     @param {Function}          [options.onDrag]         callback called while dragging, prior to position updates
+     *     @param {Function}          [options.onChange]       callback called while dragging, after position updates
      * @example
      *     Ink.requireModules( ['Ink.UI.Draggable_1'], function( Draggable ){
      *         new Draggable( 'myElementId' );
