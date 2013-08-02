@@ -345,8 +345,8 @@ Ink.createModule("Ink.UI.Draggable","1",["Ink.Dom.Element_1", "Ink.Dom.Event_1",
                         var size = InkElement.elementDimensions(this.constraintElm);
                         var constTop = offset[y] + (o.top || 0),
                             constBottom = offset[y] + size[y] - (o.bottom || 0),
-                            constLeft = offset[x],
-                            constRight = offset[x] + size[x];
+                            constLeft = offset[x] + (o.left || 0),
+                            constRight = offset[x] + size[x] - (o.right || 0);
 
                         newY = between(newY, constTop, constBottom - draggableSize[y]);
                         newX = between(newX, constLeft, constRight - draggableSize[x]);
