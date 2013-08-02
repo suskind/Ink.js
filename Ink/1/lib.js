@@ -436,18 +436,23 @@
         },
 
         /**
-         * Enriches the destination object with values from source object whenever the key is missing in destination
+         * Enriches the destination object with values from source object whenever the key is missing in destination.
+         *
+         * More than one object can be passed as source, in which case the rightmost objects have precedence.
          *
          * @function extendObj
          * @param {Object} destination
-         * @param {Object} source
-         * @return destination object, enriched with defaults from source
+         * @param {Object...} sources
+         * @return destination object, enriched with defaults from the sources
          */
         extendObj: function(destination, source)
         {
+            if (arguments.length > 2) {
+                source = Ink.extendObj.apply(this, [].slice.call(arguments, 1));
+            }
             if (source) {
                 for (var property in source) {
-                    if(source.hasOwnProperty(property)){
+                    if(Object.prototype.hasOwnProperty.call(source, property) {
                         destination[property] = source[property];
                     }
                 }
