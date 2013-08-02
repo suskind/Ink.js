@@ -452,7 +452,7 @@
             }
             if (source) {
                 for (var property in source) {
-                    if(Object.prototype.hasOwnProperty.call(source, property) {
+                    if(Object.prototype.hasOwnProperty.call(source, property)) {
                         destination[property] = source[property];
                     }
                 }
