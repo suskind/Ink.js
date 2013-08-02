@@ -52,10 +52,10 @@ Ink.createModule("Ink.UI.Draggable","1",["Ink.Dom.Element_1", "Ink.Dom.Event_1",
             var o = Ink.extendObj( {
                 constraint:         false,
                 constraintElm:      false,
-                top:                0,
-                right:              InkElement.pageWidth(),
-                bottom:             InkElement.pageHeight(),
-                left:               0,
+                top:                false,
+                right:              false,
+                bottom:             false,
+                left:               false,
                 handler:            false,
                 revert:             false,
                 cursor:             'move',
@@ -101,9 +101,6 @@ Ink.createModule("Ink.UI.Draggable","1",["Ink.Dom.Element_1", "Ink.Dom.Event_1",
             // set handler
             this.handle = (this.options.handler) ? Ink.i(this.options.handler) : this.element;
             this.handle.style.cursor = o.cursor;
-
-            if (o.right  !== false) {   this.options.right    = o.right  - InkElement.elementWidth( element);    }
-            if (o.bottom !== false) {   this.options.bottom   = o.bottom - InkElement.elementHeight(element);    }
 
             InkEvent.observe(this.handle, 'touchstart', this.handlers.start);
             InkEvent.observe(this.handle, 'mousedown', this.handlers.start);
@@ -324,6 +321,12 @@ Ink.createModule("Ink.UI.Draggable","1",["Ink.Dom.Element_1", "Ink.Dom.Event_1",
                     newY        = false;
 
                 if (!this.prevCoords) {        this.prevCoords = {x: 0, y: 0};        }
+                
+                function between (val, min, max) {
+                    val = Math.min(val, max);
+                    val = Math.max(val, min);
+                    return val;
+                }
 
                 if (mPosX !== this.prevCoords.x || mPosY !== this.prevCoords.y) {
                     if (o.onDrag) {        o.onDrag(this.element, e);        }
@@ -332,32 +335,31 @@ Ink.createModule("Ink.UI.Draggable","1",["Ink.Dom.Element_1", "Ink.Dom.Event_1",
                     newX = this.elmStartPosition[0] + mPosX - this.delta.x;
                     newY = this.elmStartPosition[1] + mPosY - this.delta.y;
 
+                    var x = 0,
+                        y = 1;  // For accessing coords
+
+                    var draggableSize = InkElement.elementDimensions(this.element);
+
                     if (this.constraintElm) {
                         var offset = InkElement.offset(this.constraintElm);
                         var size = InkElement.elementDimensions(this.constraintElm);
-                        var draggableSize = InkElement.elementDimensions(this.element);
-
-                        var x = 0,
-                            y = 1;
-
-                        var constTop = offset[y],
-                            constBottom = offset[y] + size[y],
+                        var constTop = offset[y] + (o.top || 0),
+                            constBottom = offset[y] + size[y] - (o.bottom || 0),
                             constLeft = offset[x],
                             constRight = offset[x] + size[x];
 
-                        newY = Math.min(newY, constBottom - draggableSize[y]);
-                        newY = Math.max(newY, constTop);
-
-                        newX = Math.min(newX, constRight - draggableSize[x]);
-                        newX = Math.max(newX, constLeft);
+                        newY = between(newY, constTop, constBottom - draggableSize[y]);
+                        newX = between(newX, constLeft, constRight - draggableSize[x]);
                     } else if (o.constraint) {
+                        var right = o.right === false ? InkElement.pageWidth() - draggableSize[x] : o.right,
+                            left = o.left === false ? 0 : o.left,
+                            top = o.top === false ? 0 : o.top,
+                            bottom = o.bottom === false ? InkElement.pageHeight() - draggableSize[y] : o.bottom;
                         if (o.constraint === 'horizontal' || o.constraint === 'both') {
-                            if (o.right !== false && newX > o.right) {        newX = o.right;        }
-                            if (o.left  !== false && newX < o.left)  {        newX = o.left;        }
+                            newX = between(newX, left, right);
                         }
                         if (o.constraint === 'vertical' || o.constraint === 'both') {
-                            if (o.bottom !== false && newY > o.bottom) {    newY = o.bottom;    }
-                            if (o.top    !== false && newY < o.top) {       newY = o.top;        }
+                            newY = between(newY, top, bottom);
                         }
                     }
 
