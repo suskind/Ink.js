@@ -182,7 +182,7 @@ Ink.createModule("Ink.UI.Draggable","1",["Ink.Dom.Element_1", "Ink.Dom.Event_1",
             if (!this.active && InkEvent.isLeftClick(e) || typeof e.button === 'undefined') {
 
                 var tgtEl = InkEvent.element(e);
-                if (this.options.skipChildren && tgtEl !== this.element) {    return;    }
+                if (this.options.skipChildren && tgtEl !== this.handle) {    return;    }
 
                 InkEvent.stop(e);
 
