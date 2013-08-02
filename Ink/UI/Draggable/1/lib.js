@@ -28,7 +28,7 @@ Ink.createModule("Ink.UI.Draggable","1",["Ink.Dom.Element_1", "Ink.Dom.Event_1",
      *     @param {String|DOMElement} [options.handle]        if specified, only this element will be used for dragging instead of the whole target element
      *     @param {Boolean}           [options.revert]         if true, reverts the draggable to the original position when dragging stops
      *     @param {String}            [options.cursor]         cursor type used over the draggable object
-     *     @param {Number}            [options.zindex]         zindex applied to the draggable element while dragged
+     *     @param {Number}            [options.zIndex]         zindex applied to the draggable element while dragged
      *     @param {Number}            [options.fps]            if defined, on drag will run every n frames per second only
      *     @param {DomElement}        [options.droppableProxy] if set, a shallow copy of the droppableProxy will be put on document.body with transparent bg
      *     @param {String}            [options.mouseAnchor]    defaults to mouse cursor. can be 'left|center|right top|center|bottom'
@@ -64,10 +64,10 @@ Ink.createModule("Ink.UI.Draggable","1",["Ink.Dom.Element_1", "Ink.Dom.Event_1",
                 right:              false,
                 bottom:             false,
                 left:               false,
-                handle:             options.handler /* old option name */|| false,
+                handle:             options.handler /* old option name */ || false,
                 revert:             false,
                 cursor:             'move',
-                zindex:             9999,
+                zindex:             options.zindex /* old option name */ || 9999,
                 dragClass:          'drag',
                 onStart:            false,
                 onEnd:              false,
@@ -77,7 +77,7 @@ Ink.createModule("Ink.UI.Draggable","1",["Ink.Dom.Element_1", "Ink.Dom.Event_1",
                 mouseAnchor:        undefined,
                 skipChildren:       true,
                 debug:              false
-            }, options || {});
+            }, options || {}, InkElement.data(element));
 
             this.options = o;
             this.element = Aux.elOrSelector(element);
