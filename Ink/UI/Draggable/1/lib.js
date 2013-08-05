@@ -1,10 +1,9 @@
-/*globals self*/
 /*
  * @module Ink.UI.Draggable_1
  * @author inkdev AT sapo.pt
  * @version 1
  */
-Ink.createModule("Ink.UI.Draggable","1",["Ink.Dom.Element_1", "Ink.Dom.Event_1", "Ink.Dom.Css_1", "Ink.Dom.Browser_1", "Ink.UI.Droppable_1", "Ink.Dom.Selector_1", "Ink.UI.Aux_1"],function( InkElement, InkEvent, Css, Browser, Droppable, Selector, Aux) {
+Ink.createModule("Ink.UI.Draggable","1",["Ink.Dom.Element_1", "Ink.Dom.Event_1", "Ink.Dom.Css_1", "Ink.Dom.Browser_1", "Ink.Dom.Selector_1", "Ink.UI.Aux_1"],function( InkElement, InkEvent, Css, Browser, Selector, Aux) {
 
     var x = 0,
         y = 1;  // For accessing coords in [x, y] arrays
@@ -76,6 +75,7 @@ Ink.createModule("Ink.UI.Draggable","1",["Ink.Dom.Element_1", "Ink.Dom.Event_1",
                 droppableProxy:     false,
                 mouseAnchor:        undefined,
                 skipChildren:       true,
+                fps:                100,
                 debug:              false
             }, options || {}, InkElement.data(element));
 
@@ -107,7 +107,8 @@ Ink.createModule("Ink.UI.Draggable","1",["Ink.Dom.Element_1", "Ink.Dom.Event_1",
             this.handlers.selectStart   = function(event) {    InkEvent.stop(event);    return false;    };
 
             // set handle
-            this.handle = (this.options.handle) ? Aux.elOrSelector(this.options.handle) : this.element;
+            this.handle = (this.options.handle) ?
+                Aux.elOrSelector(this.options.handle) : this.element;
             this.handle.style.cursor = o.cursor;
 
             InkEvent.observe(this.handle, 'touchstart', this.handlers.start);
@@ -230,6 +231,8 @@ Ink.createModule("Ink.UI.Draggable","1",["Ink.Dom.Element_1", "Ink.Dom.Event_1",
                     this.applyDelta = [this.delta2[x] - ad[x], this.delta2[y] - ad[y]];
                 }
 
+                var dragHandlerName = this.options.fps ? 'dragFacade' : 'drag';
+
                 this.placeholder = div;
 
                 if (this.options.onStart) {        this.options.onStart(this.element, e);        }
@@ -254,11 +257,12 @@ Ink.createModule("Ink.UI.Draggable","1",["Ink.Dom.Element_1", "Ink.Dom.Event_1",
                     while (firstEl && firstEl.nodeType !== 1) {    firstEl = firstEl.nextSibling;    }
                     document.body.insertBefore(this.proxy, firstEl);
 
-                    InkEvent.observe(this.proxy, 'mousemove', this.handlers[this.options.fps ? 'dragFacade' : 'drag']);
-                    InkEvent.observe(this.proxy, 'touchmove', this.handlers[this.options.fps ? 'dragFacade' : 'drag']);
+                    
+                    InkEvent.observe(this.proxy, 'mousemove', this.handlers[dragHandlerName]);
+                    InkEvent.observe(this.proxy, 'touchmove', this.handlers[dragHandlerName]);
                 }
                 else {
-                    InkEvent.observe(document, 'mousemove', this.handlers[this.options.fps ? 'dragFacade' : 'drag']);
+                    InkEvent.observe(document, 'mousemove', this.handlers[dragHandlerName]);
                 }
 
                 this.element.style.position = 'absolute';
@@ -307,11 +311,7 @@ Ink.createModule("Ink.UI.Draggable","1",["Ink.Dom.Element_1", "Ink.Dom.Event_1",
                     newX        = false,
                     newY        = false;
 
-                if (!this.prevCoords) {        this.prevCoords = {x: 0, y: 0};        }
-                
-
-
-                if (mPosX !== this.prevCoords.x || mPosY !== this.prevCoords.y) {
+                if (this.prevCoords && mPosX !== this.prevCoords.x || mPosY !== this.prevCoords.y) {
                     if (o.onDrag) {        o.onDrag(this.element, e);        }
                     this.prevCoords = mouseCoords;
 
@@ -343,6 +343,7 @@ Ink.createModule("Ink.UI.Draggable","1",["Ink.Dom.Element_1", "Ink.Dom.Event_1",
                         }
                     }
 
+                    var Droppable = Ink.getModule('Ink.UI.Droppable_1');
                     if (this.firstDrag) {
                         if (Droppable) {    Droppable.updateAll();    }
                         /*this.element.style.position = 'absolute';
@@ -356,19 +357,9 @@ Ink.createModule("Ink.UI.Draggable","1",["Ink.Dom.Element_1", "Ink.Dom.Event_1",
 
                     if (Droppable) {
                         // apply applyDelta defined on drag init
-                        var mouseCoords2 = this.options.mouseAnchor ? {x: mPosX - this.applyDelta[x], y: mPosY - this.applyDelta[y]} : mouseCoords;
-
-                        // for debugging purposes
-                        // if (this.options.debug) {
-                        //     if (!this.pt) {
-                        //         this.pt = Debug.addPoint(document.body, [mouseCoords2.x, mouseCoords2.y], '#0FF', 9);
-                        //         this.pt.style.zIndex = this.options.zindex + 1;
-                        //     }
-                        //     else {
-                        //         Debug.movePoint(this.pt, [mouseCoords2.x, mouseCoords2.y]);
-                        //     }
-                        // }
-
+                        var mouseCoords2 = this.options.mouseAnchor ?
+                            {x: mPosX - this.applyDelta[x], y: mPosY - this.applyDelta[y]} :
+                            mouseCoords;
                         Droppable.action(mouseCoords2, 'drag', e, this.element);
                     }
                     if (o.onChange) {    o.onChange(this);    }
@@ -428,7 +419,8 @@ Ink.createModule("Ink.UI.Draggable","1",["Ink.Dom.Element_1", "Ink.Dom.Event_1",
                 if (this.options.onEnd) {
                     this.options.onEnd(this.element, e);
                 }
-
+                
+                var Droppable = Ink.getModule('Ink.UI.Droppable_1');
                 if (Droppable) {
                     Droppable.action(this._getCoords(e), 'drop', e, this.element);
                 }
