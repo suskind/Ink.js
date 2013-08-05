@@ -68,15 +68,14 @@ Ink.createModule("Ink.UI.Droppable","1",["Ink.Dom.Element_1", "Ink.Dom.Event_1",
          *            <li>Draggable 3</li>
          *        </ul>
          *        <ul class="right">
-         *           &nbsp;
          *        </ul>
          *        <script type="text/javascript">
          *            Ink.requireModules(['Ink.UI.Draggable_1', 'Ink.UI.Droppable_1'], function (Draggable, Droppable) {
          *                new Draggable('.left li:eq(0)', {});
          *                new Draggable('.left li:eq(1)', {});
          *                new Draggable('.left li:eq(2)', {});
-         *                Droppable.add('.left', {});
-         *                Droppable.add('.right', {});
+         *                Droppable.add('.left', {onDrop: 'move', onDropOut: 'revert'});
+         *                Droppable.add('.right', {onDrop: 'move', onDropOut: 'revert'});
          *            })
          *        </script>
          *
