@@ -46,8 +46,8 @@ Ink.createModule("Ink.UI.Droppable","1",["Ink.Dom.Element_1", "Ink.Dom.Event_1",
          *     @param {String}      [options.hoverClass] Classname(s) applied when an acceptable draggable element is hovering the element
          *     @param {String}      [options.accept]    Selector for choosing draggables which can be dropped in this droppable.
          *     @param {Function}    [options.onHover]   callback called when an acceptable draggable element is hovering the droppable. Gets the draggable and the droppable element as parameters.
-         *     @param {Function}    [options.onDrop]    callback called when an acceptable draggable element is dropped. Gets the draggable, the droppable and the event as parameters.
-         *     @param {Function}    [options.onDropOut] callback called when a droppable is dropped outside this droppable. Gets the draggable, the droppable and the event as parameters.
+         *     @param {Function|String} [options.onDrop] callback called when an acceptable draggable element is dropped. Gets the draggable, the droppable and the event as parameters. If the 'move' or 'copy' strings are passed, the draggable gets moved into this droppable. If 'revert' is passed, an acceptable droppable is moved back to the element it came from.
+         *     @param {Function|String} [options.onDropOut] callback called when a droppable is dropped outside this droppable. Gets the draggable, the droppable and the event as parameters. (see above for string options).
          * @public
          *
          * @example
@@ -59,6 +59,7 @@ Ink.createModule("Ink.UI.Droppable","1",["Ink.Dom.Element_1", "Ink.Dom.Event_1",
          *           .left, .right {
          *               float: left; width: 50%;
          *               outline: 1px solid gray;
+         *               min-height: 2em;
          *           }
          *       </style>
          *        <ul class="left">
@@ -93,6 +94,39 @@ Ink.createModule("Ink.UI.Droppable","1",["Ink.Dom.Element_1", "Ink.Dom.Event_1",
             
             if (typeof opt.hoverClass === 'string') {
                 opt.hoverClass = opt.hoverClass.split(/\s+/);
+            }
+            
+            function cleanStyle(draggable) {
+                draggable.style.position = 'inherit';
+            }
+            var namedEventHandlers = {
+                move: function (draggable, droppable, event) {
+                    cleanStyle(draggable);
+                    droppable.appendChild(draggable);
+                },
+                copy: function (draggable, droppable, event) {
+                    cleanStyle(draggable);
+                    droppable.appendChild(draggable.cloneNode);
+                },
+                revert: function (draggable, droppable, event) {
+                    cleanStyle(draggable);
+                }
+            }
+            var name;
+
+            if (typeof opt.onDrop === 'string') {
+                name = opt.onDrop;
+                opt.onDrop = namedEventHandlers[name];
+                if (opt.onDrop === undefined) {
+                    throw 'Unknown drop event handler: ' + name;
+                }
+            }
+            if (typeof opt.onDropOut === 'string') {
+                name = opt.onDropOut;
+                opt.onDropOut = namedEventHandlers[name];
+                if (opt.onDropOut === undefined) {
+                    throw 'Unknown dropOut event handler: ' + name;
+                }
             }
 
             var elementData = {
