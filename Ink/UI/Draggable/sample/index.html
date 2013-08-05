@@ -63,7 +63,7 @@
                     };
                 }
             
-                new Draggable('drag1', {
+                new Draggable('#drag1', {
                         revert: true,
                         onStart: makeDebug('start'),
                         onDrag: makeDebug('drag'),
@@ -71,7 +71,7 @@
                     });
 
 
-                new Draggable('drag2', {
+                new Draggable('#drag2', {
                         revert: false,
                         onStart: makeDebug('start'),
                         onDrag: makeDebug('drag'),

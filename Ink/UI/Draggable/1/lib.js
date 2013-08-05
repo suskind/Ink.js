@@ -21,16 +21,16 @@ Ink.createModule("Ink.UI.Draggable","1",["Ink.Dom.Element_1", "Ink.Dom.Event_1",
      * @constructor
      * @param {String|DOMElement} target    Target element.
      * @param {Object} [options] Optional object for configuring the component
-     *     @param {String}            [options.constraint]     Movement constraint. None by default. Can be `vertical`, `horizontal`, or `both`.
-     *     @param {String|DomElement} [options.constraintElm]  Constrain dragging to be within this element. None by default.
-     *     @param {Number}            [options.top,left,right,bottom]   Limits for constraining draggable movement
-     *     @param {String|DOMElement} [options.handle]        if specified, only this element will be used for dragging instead of the whole target element
-     *     @param {Boolean}           [options.revert]         if true, reverts the draggable to the original position when dragging stops
-     *     @param {String}            [options.cursor]         cursor type used over the draggable object
-     *     @param {Number}            [options.zIndex]         zindex applied to the draggable element while dragged
-     *     @param {Number}            [options.fps]            if defined, on drag will run every n frames per second only
-     *     @param {DomElement}        [options.droppableProxy] if set, a shallow copy of the droppableProxy will be put on document.body with transparent bg
-     *     @param {String}            [options.mouseAnchor]    defaults to mouse cursor. can be 'left|center|right top|center|bottom'
+     *     @param {String}            [options.constraint]      Movement constraint. None by default. Can be `vertical`, `horizontal`, or `both`.
+     *     @param {String|DomElement} [options.constraintElm]   Constrain dragging to be within this element. None by default.
+     *     @param {Number}            [options.top,left,right,bottom]   Limits for constraining draggable movement.
+     *     @param {String|DOMElement} [options.handle]          if specified, this element will be used as a handle for dragging.
+     *     @param {Boolean}           [options.revert]          if true, reverts the draggable to the original position when dragging stops
+     *     @param {String}            [options.cursor]          cursor type (CSS `cursor` value) used when the mouse is over the draggable object
+     *     @param {Number}            [options.zIndex]          zindex applied to the draggable element while dragged
+     *     @param {Number}            [options.fps]             if defined, on drag will run every n frames per second only
+     *     @param {DomElement}        [options.droppableProxy]  if set, a shallow copy of the droppableProxy will be put on document.body with transparent bg
+     *     @param {String}            [options.mouseAnchor]     defaults to mouse cursor. can be 'left|center|right top|center|bottom'
      *     @param {String}            [options.dragClass='drag'] class to add when the draggable is being dragged.
      *     @param {Function}          [options.onStart]        callback called when dragging starts
      *     @param {Function}          [options.onEnd]          callback called when dragging stops
@@ -38,7 +38,7 @@ Ink.createModule("Ink.UI.Draggable","1",["Ink.Dom.Element_1", "Ink.Dom.Event_1",
      *     @param {Function}          [options.onChange]       callback called while dragging, after position updates
      * @example
      *     Ink.requireModules( ['Ink.UI.Draggable_1'], function( Draggable ){
-     *         new Draggable( 'myElementId' );
+     *         new Draggable( '#myElementId' );
      *     });
      */
     var Draggable = function(element, options) {
@@ -96,7 +96,7 @@ Ink.createModule("Ink.UI.Draggable","1",["Ink.Dom.Element_1", "Ink.Dom.Event_1",
 
             if (o.fps) {
                 this.deltaMs = 1000 / o.fps;
-                this.lastRanAt = 0;
+                this.lastRunAt = 0;
             }
 
             this.handlers = {};
@@ -286,9 +286,9 @@ Ink.createModule("Ink.UI.Draggable","1",["Ink.Dom.Element_1", "Ink.Dom.Event_1",
          * @private
          */
         _onDragFacade: function(e) {
-            var now = new Date().getTime();
-            if (!this.lastRanAt || now > this.lastRanAt + this.deltaMs) {
-                this.lastRanAt = now;
+            var now = +new Date();
+            if (!this.lastRunAt || now > this.lastRunAt + this.deltaMs) {
+                this.lastRunAt = now;
                 this._onDrag(e);
             }
         },

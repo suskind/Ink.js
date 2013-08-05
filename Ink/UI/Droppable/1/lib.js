@@ -3,7 +3,15 @@
  * @author inkdev AT sapo.pt
  * @version 1
  */
-Ink.createModule("Ink.UI.Droppable","1",["Ink.Dom.Element_1", "Ink.Dom.Event_1", "Ink.Dom.Css_1", "Ink.UI.Aux_1", "Ink.Util.Array_1"], function( InkElement, InkEvent, Css, Aux, InkArray) {
+Ink.createModule("Ink.UI.Droppable","1",["Ink.Dom.Element_1", "Ink.Dom.Event_1", "Ink.Dom.Css_1", "Ink.UI.Aux_1", "Ink.Util.Array_1", "Ink.Dom.Selector_1"], function( InkElement, InkEvent, Css, Aux, InkArray, Selector) {
+    // Higher order functions
+    var hAddClassName = function (element) {
+        return function (className) {return Css.addClassName(element, className);};
+    };
+    var hRemoveClassName = function (element) {
+        return function (className) {return Css.removeClassName(element, className);};
+    };
+
     /**
      * @class Ink.UI.Droppable
      * @version 1
@@ -35,12 +43,42 @@ Ink.createModule("Ink.UI.Droppable","1",["Ink.Dom.Element_1", "Ink.Dom.Event_1",
          * @method add
          * @param {String|DOMElement}       element     Target element
          * @param {Object}                  [options]   options object
-         *     @param {String}       [options.hoverClass] Classname applied when an acceptable draggable element is hovering the element
-         *     @param {Array|String} [options.accept]   Array or space separated string of classnames for elements that can be accepted by this droppable
-         *     @param {Function}     [options.onHover]  callback called when an acceptable draggable element is hovering the droppable. Gets the draggable and the droppable element as parameters.
-         *     @param {Function}     [options.onDrop]   callback called when an acceptable draggable element is dropped. Gets the draggable, the droppable and the event as parameters.
-         *     @param {Function}     [options.onDropOut] callback called when a droppable is dropped outside this droppable. Gets the draggable, the droppable and the event as parameters.
+         *     @param {String}      [options.hoverClass] Classname(s) applied when an acceptable draggable element is hovering the element
+         *     @param {String}      [options.accept]    Selector for choosing draggables which can be dropped in this droppable.
+         *     @param {Function}    [options.onHover]   callback called when an acceptable draggable element is hovering the droppable. Gets the draggable and the droppable element as parameters.
+         *     @param {Function}    [options.onDrop]    callback called when an acceptable draggable element is dropped. Gets the draggable, the droppable and the event as parameters.
+         *     @param {Function}    [options.onDropOut] callback called when a droppable is dropped outside this droppable. Gets the draggable, the droppable and the event as parameters.
          * @public
+         *
+         * @example
+         *
+         *       <style type="text/css">
+         *           .hover {
+         *               border: 1px solid red;
+         *           }
+         *           .left, .right {
+         *               float: left; width: 50%;
+         *               outline: 1px solid gray;
+         *           }
+         *       </style>
+         *        <ul class="left">
+         *            <li>Draggable 1</li>
+         *            <li>Draggable 2</li>
+         *            <li>Draggable 3</li>
+         *        </ul>
+         *        <ul class="right">
+         *           &nbsp;
+         *        </ul>
+         *        <script type="text/javascript">
+         *            Ink.requireModules(['Ink.UI.Draggable_1', 'Ink.UI.Droppable_1'], function (Draggable, Droppable) {
+         *                new Draggable('.left li:eq(0)', {});
+         *                new Draggable('.left li:eq(1)', {});
+         *                new Draggable('.left li:eq(2)', {});
+         *                Droppable.add('.left', {});
+         *                Droppable.add('.right', {});
+         *            })
+         *        </script>
+         *
          */
         add: function(element, options) {
             element = Aux.elOrSelector(element, 'Droppable.add target element');
@@ -50,11 +88,11 @@ Ink.createModule("Ink.UI.Droppable","1",["Ink.Dom.Element_1", "Ink.Dom.Event_1",
                 accept:         false,
                 onHover:        false,
                 onDrop:         false,
-                onDropOut:      false                
+                onDropOut:      false
             }, options || {}, InkElement.data(element));
-
-            if (opt.accept && opt.accept.constructor === Array) {
-                opt.accept = opt.accept.join();
+            
+            if (typeof opt.hoverClass === 'string') {
+                opt.hoverClass = opt.hoverClass.split(/\s+/);
             }
 
             var elementData = {
@@ -82,7 +120,7 @@ Ink.createModule("Ink.UI.Droppable","1",["Ink.Dom.Element_1", "Ink.Dom.Event_1",
          * Invoke every time a drag starts
          * 
          * @method updateAll
-         * @public
+         * @private
          */
         updateAll: function() {
             InkArray.each(this._elements, Droppable._update);
@@ -93,7 +131,7 @@ Ink.createModule("Ink.UI.Droppable","1",["Ink.Dom.Element_1", "Ink.Dom.Event_1",
          * 
          * @method update
          * @param {String|DOMElement} element - target element
-         * @public
+         * @private
          */
         update: function(element) {
             this._update(this._findData(element));
@@ -119,7 +157,7 @@ Ink.createModule("Ink.UI.Droppable","1",["Ink.Dom.Element_1", "Ink.Dom.Event_1",
         remove: function(el) {
             el = Aux.elOrSelector(el);
             var len = this._elements.length;
-            for (var i = 0, len = this._elements.length; i < len; i++) {
+            for (var i = 0; i < len; i++) {
                 if (this._elements[i].element === el) {
                     this._elements.splice(i, 1);
                     break;
@@ -136,33 +174,24 @@ Ink.createModule("Ink.UI.Droppable","1",["Ink.Dom.Element_1", "Ink.Dom.Event_1",
          * @param {String} type      type of action. drag or drop.
          * @param {Object} ev        Event object
          * @param {Object} draggable draggable element
-         * @public
+         * @private
          */
         action: function(coords, type, ev, draggable) {
-            var opt,
-                acceptable,
-                accept,
-                el,
-                element,
-                classes;
-
             // check all droppable elements
-            for (var i = 0, len = this._elements.length; i < len; i++) {
-                el = this._elements[i].data;
-                opt = this._elements[i].options;
-                accept = false;
-                element = this._elements[i].element;
+            InkArray.each(this._elements, function(elementData) {
+                var data = elementData.data;
+                var opt = elementData.options;
+                var element = elementData.element;
+                var accept = false;
 
                 // check if our draggable is over our droppable
-                if (coords.x >= el.left && coords.x <= el.right &&
-                        coords.y >= el.top && coords.y <= el.bottom) {
+                if (coords.x >= data.left && coords.x <= data.right &&
+                        coords.y >= data.top && coords.y <= data.bottom) {
                     // INSIDE
-
                     // check if the droppable accepts the draggable
+                    
                     if (opt.accept) {
-                        acceptable = opt.accept.split(/ +/);
-                        accept = !!InkArray.some(acceptable,
-                            Ink.bind(Css.hasClassName, Css, draggable));
+                        accept = !!Selector.matches(opt.accept, [draggable]).length;
                     } else {
                         accept = true;
                     }
@@ -170,40 +199,34 @@ Ink.createModule("Ink.UI.Droppable","1",["Ink.Dom.Element_1", "Ink.Dom.Event_1",
                     if (accept) {
                         if (type === 'drag') {
                             if (opt.hoverClass) {
-                                classes = opt.hoverClass.split(/ +/);
-                                InkArray.each(classes,
-                                    Ink.bind(Css.addClassName, Css, element));
+                                InkArray.each(opt.hoverClass,
+                                    hAddClassName(element));
                             }
                             if (opt.onHover) {
                                 opt.onHover(draggable, element);
                             }
-                        } else {
-                            if (type === 'drop' && opt.onDrop) {
-                                if (opt.hoverClass) {
-                                    classes = opt.hoverClass.split(/ +/);
-                                    InkArray.each(classes,
-                                        Ink.bind(Css.removeClassName, Css, element));
-                                }
-                                if (opt.onDrop) {
-                                    opt.onDrop(draggable, element, ev);
-                                }
+                        } else if (type === 'drop') {
+                            if (opt.hoverClass) {
+                                InkArray.each(opt.hoverClass,
+                                    hRemoveClassName(element));
+                            }
+                            if (opt.onDrop) {
+                                opt.onDrop(draggable, element, ev);
                             }
                         }
                     }
-                }
-                else {
+                } else {
                     // OUTSIDE
+
                     if (type === 'drag' && opt.hoverClass) {
-                        InkArray.each(opt.hoverClass.split(/ +/),
-                            Ink.bind(Css.removeClassName, Css, element));
-                    }
-                    if(type === 'drop'){
+                        InkArray.each(opt.hoverClass, hRemoveClassName(element));
+                    } else if (type === 'drop') {
                         if(opt.onDropOut){
                             opt.onDropOut(draggable, element, ev);
                         }
                     }
                 }
-            }
+            });
         }
     };
 
