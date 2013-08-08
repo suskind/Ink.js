@@ -15,8 +15,6 @@ Ink.requireModules( [ 'Ink.Util.I18n' ] , function ( I18n ) {
         '{} days' : '{} dias'
     }};
 
-    var _ = make().alias();
-
     test('basic usage', function () {
         var i18n = make();
         equal(i18n.text('me'), 'eu');
@@ -56,6 +54,7 @@ Ink.requireModules( [ 'Ink.Util.I18n' ] , function ( I18n ) {
     });
 
     test('replacements', function () {
+        var _ = make().alias();
         equal(_('i have a {} for you', 'presente'), 'tenho um presente para ti');
         equal(_('1:, {1}, 2: {2}', 1, 2), '2: 2, 1: 1');
     });
@@ -80,8 +79,8 @@ Ink.requireModules( [ 'Ink.Util.I18n' ] , function ( I18n ) {
 
     test('ordinal', function () {
         var dict = {
-        	pt_PT : {
-        		_ordinals: '&ordm;'
+            pt_PT : {
+                _ordinals: '&ordm;'
             },
             fr_FR: {
                 _ordinals: {
@@ -130,15 +129,15 @@ Ink.requireModules( [ 'Ink.Util.I18n' ] , function ( I18n ) {
         var dict = {
             'en_US': {
                 _ordinals: {
-                    byLastDigit: function (digit, num) {return digit === 0 ? 'th' : undefined;},
-                    exceptions: function (num,digit) {return num === 3 ? 'rd' : undefined;}
+                    byLastDigit: function (digit/*, num*/) {return digit === 0 ? 'th' : undefined;},
+                    exceptions: function (num/*, digit*/) {return num === 3 ? 'rd' : undefined;}
                 }
             },
             'en_UK': {
                 _ordinals: function( num , digit ) {
-                	return num === 3   ? 'rd' : 
-                	       digit === 0 ? 'th' :
-                	                     undefined;
+                        return num === 3   ? 'rd' : 
+                               digit === 0 ? 'th' :
+                                             undefined;
                 }
             }
         };
