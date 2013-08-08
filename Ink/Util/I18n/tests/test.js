@@ -1,8 +1,6 @@
 /*globals equal,test*/
-Ink.requireModules(['Ink.Util.I18n'], function () {
+Ink.requireModules( [ 'Ink.Util.I18n' ] , function ( I18n ) {
     'use strict';
-
-    var I18n = Ink.Util.I18n;
 
     function make() {
         return new I18n(dict, 'pt_PT');
@@ -23,17 +21,17 @@ Ink.requireModules(['Ink.Util.I18n'], function () {
         equal(i18n.text('me'), 'eu');
     });
 
-    test('when the dictionary has translation keys in root', function () {
-        var i18n = new I18n({
-            'translation': 'traducao'
-        }, 'pt_PT', 'translation strings in root');
-        equal(i18n.text('translation'), 'traducao');
-    });
-
     test('alias', function () {
         var i18n = make();
         var aliased = i18n.alias();
         equal(aliased('me'), 'eu');
+    });
+
+    test('lang()', function () {
+        var i18n = make();
+        equal(i18n.lang(), 'pt_PT');
+        equal(i18n.lang('en_US'), i18n);
+        equal(i18n.lang(), 'en_US');
     });
 
     test('append', function () {
@@ -74,88 +72,83 @@ Ink.requireModules(['Ink.Util.I18n'], function () {
         equal(i18n.ntext('{%s} day', '{%s} days', 2), '2 dias');
     });
 
-    test('ordinal (from dict)', function () {
+    test('ordinal', function () {
         var dict = {
-            fr: {
+        	pt_PT : {
+        		_ordinals: '&ordm;'
+            },
+            fr_FR: {
                 _ordinals: {
-                    "default": "<sup>e</sup>",
+                    'default': '<sup>e</sup>',
                     exceptions: {
-                        1: "<sup>er</sup>"
+                        1: '<sup>er</sup>'
                     }
                 }
             },
             en_US: {
                 _ordinals: {
-                    "default": "th",
+                    'default': 'th',
                     byLastDigit: {
-                        1: "st",
-                        2: "nd",
-                        3: "rd"
+                        1: 'st',
+                        2: 'nd',
+                        3: 'rd'
                     },
                     exceptions: {
-                        0: "",
-                        11: "th",
-                        12: "th",
-                        13: "th"
+                        0: '',
+                        11: 'th',
+                        12: 'th',
+                        13: 'th'
                     }
                 }
             }
         };
 
-        var i18n = new I18n(dict, 'fr');
+        var i18n = new I18n(dict, 'fr_FR');
         equal(i18n.ordinal(1), '<sup>er</sup>');
         equal(i18n.ordinal(2), '<sup>e</sup>');
         equal(i18n.ordinal(11), '<sup>e</sup>');
-        
-        i18n = new I18n(dict, 'en_US');
-        equal(i18n.ordinal(1), 'st');
+
+        equal(i18n.lang( 'en_US' ).ordinal(1), 'st');
         equal(i18n.ordinal(2), 'nd');
         equal(i18n.ordinal(12), 'th');
         equal(i18n.ordinal(22), 'nd');
         equal(i18n.ordinal(3), 'rd');
         equal(i18n.ordinal(4), 'th');
         equal(i18n.ordinal(5), 'th');
-    });
 
-    test('ordinal (from passed options)', function () {
-        // Examples of passing in the options directly
-        var ptOrdinals = {
-            default: '&ordm;'
-        };
-        var i18n = new I18n();
-        equal(i18n.ordinal(1, ptOrdinals), '&ordm;'); // Returns 'º'
-        equal(i18n.ordinal(4, ptOrdinals), '&ordm;'); // Returns 'º'
+        equal(i18n.lang( 'pt_PT' ).ordinal(1), '&ordm;'); // Returns 'º'
+        equal(i18n.ordinal(4), '&ordm;'); // Returns 'º'
     });
 
     test('ordinal (with functions)', function () {
         var dict = {
-            'en': {
+            'en_US': {
                 _ordinals: {
-                    byLastDigit: function (digit) {return digit === 0 ? 'th' : undefined;},
-                    exceptions: function (num) {return num === 3 ? 'rd' : undefined;}
+                    byLastDigit: function (digit, num) {return digit === 0 ? 'th' : undefined;},
+                    exceptions: function (num,digit) {return num === 3 ? 'rd' : undefined;}
+                }
+            },
+            'en_UK': {
+                _ordinals: function( num , digit ) {
+                	return num === 3   ? 'rd' : 
+                	       digit === 0 ? 'th' :
+                	                     undefined;
                 }
             }
         };
-        var i18n = new I18n(dict, 'en');
+        var i18n = new I18n(dict, 'en_US');
         equal(i18n.ordinal(0), 'th');
         equal(i18n.ordinal(10), 'th');
         equal(i18n.ordinal(200), 'th');
         equal(i18n.ordinal(3), 'rd');
         equal(i18n.ordinal(123), '');
         equal(i18n.ordinal(12312312), '');
-    });
-
-    test('ordinal (passed a function)', function () {
-        var i18n = make();
-        equal(
-            i18n.ordinal(123, function () {return 'THTH';}),
-            'THTH'
-        );
-        equal(
-            i18n.ordinal(123, function () {return null;}),
-            ''
-        );
-
+        equal(i18n.lang( 'en_UK' ).ordinal(0), 'th');
+        equal(i18n.ordinal(10), 'th');
+        equal(i18n.ordinal(200), 'th');
+        equal(i18n.ordinal(3), 'rd');
+        equal(i18n.ordinal(123), '');
+        equal(i18n.ordinal(12312312), '');
     });
 
     test('multilang', function () {
@@ -169,7 +162,7 @@ Ink.requireModules(['Ink.Util.I18n'], function () {
             }
         });
         equal(i18n.text('yeah_text'), 'pois');
-        i18n.setLang('en_US');
+        i18n.lang( 'en_US' );
         equal(i18n.text('yeah_text'), 'yeah');
     });
 
