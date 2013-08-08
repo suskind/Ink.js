@@ -8,10 +8,11 @@ Ink.requireModules( [ 'Ink.Util.I18n' ] , function ( I18n ) {
 
     var dict = {'pt_PT': {
         'me': 'eu',
-        'i have a {%s} for you': 'tenho um {%s} para ti',
-        '1:, {%s:1}, 2: {%s:2}': '2: {%s:2}, 1: {%s:1}',
-        '{%s} day': '{%s} dia',
-        '{%s} days': '{%s} dias'
+        'i have a {} for you': 'tenho um {} para ti',
+        '1:, {1}, 2: {2}': '2: {2}, 1: {1}',
+        'day': ['um dia', '{} dias'],
+        'one day' : 'um dia' ,
+        '{} days' : '{} dias'
     }};
 
     var _ = make().alias();
@@ -55,8 +56,8 @@ Ink.requireModules( [ 'Ink.Util.I18n' ] , function ( I18n ) {
     });
 
     test('replacements', function () {
-        equal(_('i have a {%s} for you', 'presente'), 'tenho um presente para ti');
-        equal(_('1:, {%s:1}, 2: {%s:2}', 1, 2), '2: 2, 1: 1');
+        equal(_('i have a {} for you', 'presente'), 'tenho um presente para ti');
+        equal(_('1:, {1}, 2: {2}', 1, 2), '2: 2, 1: 1');
     });
 
     test('ntext()', function() {
@@ -68,8 +69,13 @@ Ink.requireModules( [ 'Ink.Util.I18n' ] , function ( I18n ) {
         equal(i18n.ntext('animal', 'animals', 2),
             'animals');
 
-        equal(i18n.ntext('{%s} day', '{%s} days', 1), '1 dia');
-        equal(i18n.ntext('{%s} day', '{%s} days', 2), '2 dias');
+        equal(i18n.ntext('day', 1), 'um dia');
+        equal(i18n.ntext('day', 2), '2 dias');
+        
+        // Classic API
+        equal(i18n.ntext('one day', '{} days', 1), 'um dia');
+        equal(i18n.ntext('one day', '{} days', 2), '2 dias');
+
     });
 
     test('ordinal', function () {
@@ -170,8 +176,8 @@ Ink.requireModules( [ 'Ink.Util.I18n' ] , function ( I18n ) {
         var i18n = new I18n({
            'pt_PT': {
                'hi': 'olá',
-               '{%s} day': '{%s} dia',
-               '{%s} days': '{%s} dias',
+               '{} day': '{} dia',
+               '{} days': '{} dias',
                '_ordinals': {
                    'default': 'º'
                }
@@ -179,9 +185,9 @@ Ink.requireModules( [ 'Ink.Util.I18n' ] , function ( I18n ) {
         }, 'pt_PT');
         var _ = i18n.alias();
         equal(_('hi'), 'olá');
-        equal(_('{%s} days', 3), '3 dias');
-        equal(_.ntext('{%s} day', '{%s} days', 2), '2 dias');
-        equal(_.ntext('{%s} day', '{%s} days', 1), '1 dia');
+        equal(_('{} days', 3), '3 dias');
+        equal(_.ntext('{} day', '{} days', 2), '2 dias');
+        equal(_.ntext('{} day', '{} days', 1), '1 dia');
         equal(_.ordinal(3), 'º');
     });
 });
