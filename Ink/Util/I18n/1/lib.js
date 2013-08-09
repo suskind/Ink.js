@@ -31,23 +31,18 @@ Ink.createModule('Ink.Util.I18n', '1', [], function () {
      *          'pt_PT': {
      *              'hello': 'olá',
      *              'me': 'eu',
-     *              'i have a {%s} for you': 'tenho um {%s} para ti'
+     *              'i have a {} for you': 'tenho um {} para ti' // Old syntax using `{%s}` tokens still available
      *          },
      *          'pt_BR': {
      *              'hello': 'oi',
      *              'me': 'eu',
-     *              'i have a {%s} for you': 'tenho um {%s} para você'
-     *          },
-     *          'en_US': {
-     *              langCodes: {
-     *                  'Portuguese'
-     *              }
-     *          }  
+     *              'i have a {} for you': 'tenho um {} para você'
+     *          }
      *      };
      *      Ink.requireModules(['Ink.Util.I18n_1'], function (I18n) {
      *          var i18n = new I18n(dictionaries, 'pt_PT');
      *          i18n.text('hello');  // returns 'olá'
-     *          i18n.text('i have a {%s} for you', 'IRON SWORD'); // returns 'tenho um IRON SWORD' para ti
+     *          i18n.text('i have a {} for you', 'IRON SWORD'); // returns 'tenho um IRON SWORD' para ti
      *          
      *          i18n.lang('pt_BR');  // Changes language. pt_BR dictionary is loaded
      *          i18n.text('hello');  // returns 'oi'
@@ -79,8 +74,6 @@ Ink.createModule('Ink.Util.I18n', '1', [], function () {
          *
          * @method append
          * @param {Object} dict object containing language objects identified by their language code
-         * @param {Boolean} [lang] .
-         *
          * @example
          *     var i18n = new I18n({}, 'pt_PT');
          *     i18n.append({'pt_PT': {
@@ -170,9 +163,9 @@ Ink.createModule('Ink.Util.I18n', '1', [], function () {
          *
          * @method {String} text
          * @param {String} str key to look for in i18n dictionary (which is returned verbatim if unknown)
-         * @param {optional String} arg1 replacement #1 (replaces first {%s} and all {%s:1})
-         * @param {optional String} arg2 replacement #2 (replaces second {%s} and all {%s:2})
-         * @param {optional String} argn... replacement #n (replaces nth {%s} and all {%s:n})
+         * @param {optional String} arg1 replacement #1 (replaces first {} and all {1})
+         * @param {optional String} arg2 replacement #2 (replaces second {} and all {2})
+         * @param {optional String} ... replacement #n (replaces nth {} and all {n})
          *
          * @example
          *     _('Gosto muito de {} e o céu é {}.', 'carros', 'azul');
@@ -226,7 +219,7 @@ Ink.createModule('Ink.Util.I18n', '1', [], function () {
          *     i18n.ntext('platypus', 'platypuses', 2); // returns 'ornitorrincos'
          * 
          * @example
-         *     // Extra arguments are passed to text()
+         *     // The "count" argument is passed to text()
          *     i18n.ntext('{} platypus', '{} platypuses', 1); // returns '1 ornitorrinco'
          *     i18n.ntext('{} platypus', '{} platypuses', 2); // returns '2 ornitorrincos'
          */
@@ -258,7 +251,7 @@ Ink.createModule('Ink.Util.I18n', '1', [], function () {
          *
          * @param {Number}          num             Input number
          * 
-         * @param {Object}          [options={}]
+         * @param {Object|Function} [options={}]
          *
          *    Maps for translating. Each of these options' fallback is found in the current
          *    language's dictionary. The lookup order is the following:
@@ -268,8 +261,10 @@ Ink.createModule('Ink.Util.I18n', '1', [], function () {
          *        3. `default`
          *   
          *    Each of these may be either an `Object` or a `Function`. If it's a function, it
-         *    is called, and if the function returns a string, that is used. If it's an object,
-         *    the property is looked up using `[...]`. If what is found is a string, it is used.
+         *    is called (with `number` and `digit` for any function except for byLastDigit,
+         *    which is called with the `lastDigit` of the number in question), and if the
+         *    function returns a string, that is used. If it's an object, the property is
+         *    looked up using `[...]`. If what is found is a string, it is used.
          *
          * @param {Object|Function} [options.byLastDigit={}]
          *    If the language requires the last digit to be considered, mappings of last digits
@@ -283,7 +278,7 @@ Ink.createModule('Ink.Util.I18n', '1', [], function () {
          * @example
          *     var i18n = new I18n({
          *         pt_PT: {  // 1º, 2º, 3º, 4º, ...
-         *             _ordinal: {  // The _ordinals key is special.
+         *             _ordinal: {  // The _ordinals key each translation dictionary is special.
          *                 'default': "º" // Usually the suffix is "º" in portuguese...
          *             }
          *         },
@@ -313,14 +308,14 @@ Ink.createModule('Ink.Util.I18n', '1', [], function () {
          *         }
          *     }, 'pt_PT');
          *
-         *     i18n.ordinal(1);    // return 'º'
-         *     i18n.ordinal(2);    // return 'º'
-         *     i18n.ordinal(11);   // return 'º'
+         *     i18n.ordinal(1);    // returns 'º'
+         *     i18n.ordinal(2);    // returns 'º'
+         *     i18n.ordinal(11);   // returns 'º'
          * 
          *     i18n.lang('fr');
-         *     i18n.ordinal(1);    // return 'er'
-         *     i18n.ordinal(2);    // return 'e'
-         *     i18n.ordinal(11);   // return 'e'
+         *     i18n.ordinal(1);    // returns 'er'
+         *     i18n.ordinal(2);    // returns 'e'
+         *     i18n.ordinal(11);   // returns 'e'
          *
          *     i18n.lang('en_US');
          *     i18n.ordinal(1);    // returns 'st'
