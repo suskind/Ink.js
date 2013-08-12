@@ -389,11 +389,11 @@ Ink.createModule('Ink.Util.I18n', '1', [], function () {
          *         }
          *     }, 'pt_PT');
          *     var _ = i18n.alias();
-         *     equal(_('hi'), 'olá');
-         *     equal(_('{} days', 3), '3 dias');
-         *     equal(_.ntext('{} day', '{} days', 2), '2 dias');
-         *     equal(_.ntext('{} day', '{} days', 1), '1 dia');
-         *     equal(_.ordinal(3), 'º');
+         *     _('hi');  // -> 'olá'
+         *     _('{} days', 3);  // -> '3 dias'
+         *     _.ntext('{} day', '{} days', 2);  // -> '2 dias'
+         *     _.ntext('{} day', '{} days', 1);  // -> '1 dia'
+         *     _.ordinal(3);  // -> 'º'
          */
         alias: function( ) {
             var ret      = Ink.bind( I18n.prototype.text     , this );
@@ -406,6 +406,12 @@ Ink.createModule('Ink.Util.I18n', '1', [], function () {
         }
     };
 
+    /**
+     * @static
+     * @method I18n.reset
+     *
+     * Reset I18n global state (global dictionaries, and default language for instances)
+     **/
     I18n.reset = function( ) {
         I18n.prototype._gDicts = [ ];
         I18n.prototype._gDict  = { };
@@ -413,6 +419,15 @@ Ink.createModule('Ink.Util.I18n', '1', [], function () {
     };
     I18n.reset( );
 
+    /**
+     * @static
+     * @method I18n.append
+     *
+     * @param dict {Object}     Dictionary to be added
+     * @param lang {String}     Language to be added to
+     *
+     * Add a dictionary to be used in all I18n instances for the corresponding language
+     */
     I18n.append = function( dict , lang ) {
         if ( lang ) {
             if ( !( lang in dict ) ) {
@@ -431,6 +446,22 @@ Ink.createModule('Ink.Util.I18n', '1', [], function () {
         Ink.extendObj( I18n.prototype._gDict , dict[ I18n.prototype._gLang ] );
     };
 
+    /**
+     * @static
+     * @method I18n.lang
+     * 
+     * @param lang {String} String in the format `"pt_PT"`, `"fr"`, etc.
+     *
+     * Set global default language of I18n instances to `lang`
+     */
+    /**
+     * @static
+     * @method I18n.lang
+     *
+     * Get the current default language of I18n instances.
+     *
+     * @return {String} language code
+     */
     I18n.lang = function( lang ) {
         if ( !arguments.length ) { return I18n.prototype._gLang; }
 

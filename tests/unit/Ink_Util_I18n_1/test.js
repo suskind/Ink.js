@@ -189,4 +189,31 @@ Ink.requireModules( [ 'Ink.Util.I18n' ] , function ( I18n ) {
         equal(_.ntext('{} day', '{} days', 1), '1 dia');
         equal(_.ordinal(3), 'º');
     });
+
+    test('Global stuff', function () {
+        I18n.lang('en_US')
+        equal(new I18n({}).lang(), 'en_US');
+
+        var inst = new I18n({}, 'pt_PT');
+        
+        I18n.append({
+            pt_PT: {
+                hello: 'olá'
+            },
+            pt_BR: {
+                hello: 'oi'
+            }
+        });
+
+        equal(inst.text('hello'), 'olá');
+        inst.lang('pt_BR');
+        equal(inst.text('hello'), 'oi');
+
+        inst.append({pt_PT: {hello: 'olá2'}, pt_BR: {hello: 'oi2'}});
+
+        inst.lang('pt_PT');
+        equal(inst.text('hello'), 'olá2');
+        inst.lang('pt_BR');
+        equal(inst.text('hello'), 'oi2');
+    });
 });
