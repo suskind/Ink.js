@@ -30,11 +30,20 @@ Ink.createModule("Ink.UI.Droppable","1",["Ink.Dom.Element_1", "Ink.Dom.Event_1",
         /**
          * Array with the data of each element (`{element: ..., data: ..., options: ...}`)
          * 
-         * @property _elements
-         * @type {Arrag}
+         * @property _droppables
+         * @type {Array}
          * @private
          */
-        _elements: [], // indexed by id
+        _droppables: [],
+
+        /**
+         * Array of data for each draggable. (`{element: ..., data: ...}`)
+         *
+         * @property _draggables
+         * @type {Array}
+         * @private
+         */
+        _draggables: [],
 
         /**
          * Makes an element droppable and adds it to the stack of droppable elements.
@@ -98,6 +107,7 @@ Ink.createModule("Ink.UI.Droppable","1",["Ink.Dom.Element_1", "Ink.Dom.Event_1",
             function cleanStyle(draggable) {
                 draggable.style.position = 'inherit';
             }
+            var that = this;
             var namedEventHandlers = {
                 move: function (draggable, droppable, event) {
                     cleanStyle(draggable);
@@ -108,23 +118,24 @@ Ink.createModule("Ink.UI.Droppable","1",["Ink.Dom.Element_1", "Ink.Dom.Event_1",
                     droppable.appendChild(draggable.cloneNode);
                 },
                 revert: function (draggable, droppable, event) {
+                    debugger;   // TODO draggableData.movedFrom
                     cleanStyle(draggable);
                 }
-            }
+            };
             var name;
 
             if (typeof opt.onDrop === 'string') {
                 name = opt.onDrop;
                 opt.onDrop = namedEventHandlers[name];
                 if (opt.onDrop === undefined) {
-                    throw 'Unknown drop event handler: ' + name;
+                    throw new Error('Unknown drop event handler: ' + name);
                 }
             }
             if (typeof opt.onDropOut === 'string') {
                 name = opt.onDropOut;
                 opt.onDropOut = namedEventHandlers[name];
                 if (opt.onDropOut === undefined) {
-                    throw 'Unknown dropOut event handler: ' + name;
+                    throw new Error('Unknown dropOut event handler: ' + name);
                 }
             }
 
@@ -133,17 +144,38 @@ Ink.createModule("Ink.UI.Droppable","1",["Ink.Dom.Element_1", "Ink.Dom.Event_1",
                 data: {},
                 options: opt
             };
-            this._elements.push(elementData);
+            this._droppables.push(elementData);
             this._update(elementData);
         },
         
         /**
-         * Find droppable data about `element`. This data is added in `.add`
+         * find droppable data about `element`. this data is added in `.add`
+         *
+         * @method _findData
+         * @param {DOMElement} element  Needle
+         * @return {object}             Droppable data of the element
+         * @private
          */
         _findData: function (element) {
-            var elms = this._elements;
+            var elms = this._droppables;
             for (var i = 0, len = elms.length; i < len; i++) {
-                if (elms[i] === element) {
+                if (elms[i].element === element) {
+                    return elms[i];
+                }
+            }
+        },
+        /**
+         * Find draggable data about `element`
+         *
+         * @method _findDraggable
+         * @param {DOMElement} element  Needle
+         * @return {Object}             Draggable data queried
+         * @private
+         */
+        _findDraggable: function (element) {
+            var elms = this._draggables;
+            for (var i = 0, len = elms.length; i < len; i++) {
+                if (elms[i].element === element) {
                     return elms[i];
                 }
             }
@@ -156,14 +188,13 @@ Ink.createModule("Ink.UI.Droppable","1",["Ink.Dom.Element_1", "Ink.Dom.Event_1",
          * @private
          */
         updateAll: function() {
-            InkArray.each(this._elements, Droppable._update);
+            InkArray.each(this._droppables, Droppable._update);
         },
 
         /**
          * Updates location and size of droppable element
          * 
-         * @method update
-         * @param {String|DOMElement} element - target element
+         * @method update * @param {String|DOMElement} element - target element
          * @private
          */
         update: function(element) {
@@ -189,14 +220,14 @@ Ink.createModule("Ink.UI.Droppable","1",["Ink.Dom.Element_1", "Ink.Dom.Event_1",
          */
         remove: function(el) {
             el = Aux.elOrSelector(el);
-            var len = this._elements.length;
+            var len = this._droppables.length;
             for (var i = 0; i < len; i++) {
-                if (this._elements[i].element === el) {
-                    this._elements.splice(i, 1);
+                if (this._droppables[i].element === el) {
+                    this._droppables.splice(i, 1);
                     break;
                 }
             }
-            return len !== this._elements.length;
+            return len !== this._droppables.length;
         },
 
         /**
@@ -211,41 +242,37 @@ Ink.createModule("Ink.UI.Droppable","1",["Ink.Dom.Element_1", "Ink.Dom.Event_1",
          */
         action: function(coords, type, ev, draggable) {
             // check all droppable elements
-            InkArray.each(this._elements, function(elementData) {
+            InkArray.each(this._droppables, function(elementData) {
                 var data = elementData.data;
                 var opt = elementData.options;
                 var element = elementData.element;
                 var accept = false;
 
+                if (opt.accept) {
+                    if (!Selector.matches(opt.accept, [draggable]).length) {
+                        return;
+                    }
+                }
+
                 // check if our draggable is over our droppable
                 if (coords.x >= data.left && coords.x <= data.right &&
                         coords.y >= data.top && coords.y <= data.bottom) {
                     // INSIDE
-                    // check if the droppable accepts the draggable
-                    
-                    if (opt.accept) {
-                        accept = !!Selector.matches(opt.accept, [draggable]).length;
-                    } else {
-                        accept = true;
-                    }
-
-                    if (accept) {
-                        if (type === 'drag') {
-                            if (opt.hoverClass) {
-                                InkArray.each(opt.hoverClass,
-                                    hAddClassName(element));
-                            }
-                            if (opt.onHover) {
-                                opt.onHover(draggable, element);
-                            }
-                        } else if (type === 'drop') {
-                            if (opt.hoverClass) {
-                                InkArray.each(opt.hoverClass,
-                                    hRemoveClassName(element));
-                            }
-                            if (opt.onDrop) {
-                                opt.onDrop(draggable, element, ev);
-                            }
+                    if (type === 'drag') {
+                        if (opt.hoverClass) {
+                            InkArray.each(opt.hoverClass,
+                                hAddClassName(element));
+                        }
+                        if (opt.onHover) {
+                            opt.onHover(draggable, element);
+                        }
+                    } else if (type === 'drop') {
+                        if (opt.hoverClass) {
+                            InkArray.each(opt.hoverClass,
+                                hRemoveClassName(element));
+                        }
+                        if (opt.onDrop) {
+                            opt.onDrop(draggable, element, ev);
                         }
                     }
                 } else {
