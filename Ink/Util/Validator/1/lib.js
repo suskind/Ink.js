@@ -923,7 +923,7 @@ Ink.createModule('Ink.Util.Validator', '1', [], function() {
          * @param  {String} ipType Type of IP to be validated. The values are: ipv4, ipv6. By default is ipv4.
          * @return {Boolean}         True if the value is a valid IP address. False if not.
          */
-        isIP: function( value, ipType ){
+        ip: function( value, ipType ){
             if( typeof value !== 'string' ){
                 return false;
             }
@@ -932,7 +932,7 @@ Ink.createModule('Ink.Util.Validator', '1', [], function() {
 
             switch( ipType ){
                 case 'ipv4':
-                    return (/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/).test(value);
+                    return (/^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$/).test(value);
                 case 'ipv6':
                     return (/^\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))(%.+)?\s*$/).test(value);
                 default:
@@ -956,43 +956,43 @@ Ink.createModule('Ink.Util.Validator', '1', [], function() {
 
             'american express': {
                 'length': '15',
-                'prefix': /^3[47]/,
+                'prefix': '3[47]',
                 'luhn'  : true
             },
 
             'diners club': {
                 'length': '14,16',
-                'prefix': /^36|55|30[0-5]/,
+                'prefix': '36|55|30[0-5]',
                 'luhn'  : true
             },
 
             'discover': {
                 'length': '16',
-                'prefix': /^6(?:5|011)/,
+                'prefix': '6(?:5|011)',
                 'luhn'  : true
             },
 
             'jcb': {
                 'length': '15,16',
-                'prefix': /^3|1800|2131/,
+                'prefix': '3|1800|2131',
                 'luhn'  : true
             },
 
             'maestro': {
                 'length': '16,18',
-                'prefix': /^50(?:20|38)|6(?:304|759)/,
+                'prefix': '50(?:20|38)|6(?:304|759)',
                 'luhn'  : true
             },
 
             'mastercard': {
                 'length': '16',
-                'prefix': /^5[1-5]/,
+                'prefix': '5[1-5]',
                 'luhn'  : true
             },
 
             'visa': {
                 'length': '13,16',
-                'prefix': /^4/,
+                'prefix': '4',
                 'luhn'  : true
             }
         },
@@ -1002,14 +1002,14 @@ Ink.createModule('Ink.Util.Validator', '1', [], function() {
          */
         _luhn: function (num){
 
-            num = parseInt(num,10);
+            num = num + '';
 
-            if ( (typeof num !== 'number') && (num % 1 !== 0) ){
+            if ( ! (typeof num === 'number' && num % 1 === 0) )
+            {
                 // Luhn can only be used on nums!
                 return false;
             }
 
-            num = num+'';
             // Check num length
             var length = num.length;
 
@@ -1021,13 +1021,13 @@ Ink.createModule('Ink.Util.Validator', '1', [], function() {
             for (i = length - 1; i >= 0; i -= 2)
             {
                 // Add up every 2nd digit, starting from the right
-                checksum += parseInt(num.substr(i, 1),10);
+                checksum += num.substr(i, 1);
             }
 
             for (i = length - 2; i >= 0; i -= 2)
             {
                 // Add up every 2nd digit doubled, starting from the right
-                var dbl = parseInt(num.substr(i, 1) * 2,10);
+                var dbl = num.substr(i, 1) * 2;
 
                 // Subtract 9 from the dbl where value is greater than 10
                 checksum += (dbl >= 10) ? (dbl - 9) : dbl;
@@ -1046,7 +1046,7 @@ Ink.createModule('Ink.Util.Validator', '1', [], function() {
          */
         isCreditCard: function(num, creditCardType){
 
-            if ( /\d+/.test(num) === false ){
+            if ( /\D+/.test(num) === false ){
                 return false;
             }
 
@@ -1068,12 +1068,12 @@ Ink.createModule('Ink.Util.Validator', '1', [], function() {
             // Check card type
             creditCardType = creditCardType.toLowerCase();
 
-            if ( typeof this._creditCardSpecs[creditCardType] === 'undefined' ){
+            if ( typeof this.__creditCardSpecs[creditCardType] === 'undefined' ){
                 return false;
             }
 
             // Check card number length
-            var length = num.length+'';
+            var length = num.length;
 
             // Validate the card length by the card type
             if ( this._creditCardSpecs[creditCardType]['length'].split(",").indexOf(length) === -1 ){
@@ -1081,7 +1081,7 @@ Ink.createModule('Ink.Util.Validator', '1', [], function() {
             }
 
             // Check card number prefix
-            if ( !this._creditCardSpecs[creditCardType]['prefix'].test(num) ){
+            if ( !('/^'+this._creditCardSpecs[creditCardType]['prefix']+'/').match(num) ){
                 return false;
             }
 
