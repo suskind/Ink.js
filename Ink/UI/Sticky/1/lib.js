@@ -148,6 +148,7 @@ Ink.createModule('Ink.UI.Sticky', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Do
                         this._rootElement.style.left = this._options.originalLeft + 'px';
                         this._rootElement.style.position = 'fixed';
                         this._rootElement.style.bottom = 'auto';
+                        this._rootElement.style.left = this._options.originalLeft + 'px';
                         this._rootElement.style.top = this._options.originalOffsetTop + 'px';
                         this._rootElement.style.width = this._options.originalWidth + 'px';
                     }
@@ -158,7 +159,8 @@ Ink.createModule('Ink.UI.Sticky', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Do
                     this._rootElement.style.left = this._options.originalLeft + 'px';
                     this._rootElement.style.position = 'fixed';
                     this._rootElement.style.bottom = 'auto';
-                    this._rootElement.style.top = this._options.offsetTop + 'px';
+                    this._rootElement.style.left = this._options.originalLeft + 'px';
+                    this._rootElement.style.top = this._options.originalOffsetTop + 'px';
                     this._rootElement.style.width = this._options.originalWidth + 'px';
                 }
 
