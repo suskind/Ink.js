@@ -18,7 +18,7 @@ Ink.createModule('Ink.Util.Validator', '1', [], function() {
 
         /**
          * List of country codes avaible for isPhone function
-         * 
+         *
          * @property _countryCodes
          * @type {Array}
          * @private
@@ -34,7 +34,7 @@ Ink.createModule('Ink.Util.Validator', '1', [], function() {
 
         /**
          * International number for portugal
-         * 
+         *
          * @property _internacionalPT
          * @type {Number}
          * @private
@@ -46,7 +46,7 @@ Ink.createModule('Ink.Util.Validator', '1', [], function() {
 
         /**
          * List of all portuguese number prefixes
-         * 
+         *
          * @property _indicativosPT
          * @type {Object}
          * @private
@@ -124,7 +124,7 @@ Ink.createModule('Ink.Util.Validator', '1', [], function() {
                           },
         /**
          * International number for Cabo Verde
-         * 
+         *
          * @property _internacionalCV
          * @type {Number}
          * @private
@@ -135,7 +135,7 @@ Ink.createModule('Ink.Util.Validator', '1', [], function() {
 
         /**
          * List of all Cabo Verde number prefixes
-         * 
+         *
          * @property _indicativosCV
          * @type {Object}
          * @private
@@ -253,7 +253,7 @@ Ink.createModule('Ink.Util.Validator', '1', [], function() {
 
         /**
          * Object with the date formats available for validation
-         * 
+         *
          * @property _dateParsers
          * @type {Object}
          * @private
@@ -913,6 +913,184 @@ Ink.createModule('Ink.Util.Validator', '1', [], function() {
             }
 
             return valid;
+        },
+
+        /**
+         * Checks if the value is a valid IP. Supports ipv4 and ipv6
+         *
+         * @method validationFunctions.ip
+         * @param  {String} value   Value to be checked
+         * @param  {String} ipType Type of IP to be validated. The values are: ipv4, ipv6. By default is ipv4.
+         * @return {Boolean}         True if the value is a valid IP address. False if not.
+         */
+        ip: function( value, ipType ){
+            if( typeof value !== 'string' ){
+                return false;
+            }
+
+            ipType = ipType || 'ipv4';
+
+            switch( ipType ){
+                case 'ipv4':
+                    return (/^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$/).test(value);
+                case 'ipv6':
+                    return (/^\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))(%.+)?\s*$/).test(value);
+                default:
+                    return false;
+            }
+        },
+
+        /**
+         * Credit Card specifications, to be used in the credit card verification.
+         *
+         * @property _creditCardSpecs
+         * @type {Object}
+         * @private
+         */
+        _creditCardSpecs: {
+            'default': {
+                'length': '13,14,15,16,17,18,19',
+                'prefix': '',
+                'luhn': true
+            },
+
+            'american express': {
+                'length': '15',
+                'prefix': '3[47]',
+                'luhn'  : true
+            },
+
+            'diners club': {
+                'length': '14,16',
+                'prefix': '36|55|30[0-5]',
+                'luhn'  : true
+            },
+
+            'discover': {
+                'length': '16',
+                'prefix': '6(?:5|011)',
+                'luhn'  : true
+            },
+
+            'jcb': {
+                'length': '15,16',
+                'prefix': '3|1800|2131',
+                'luhn'  : true
+            },
+
+            'maestro': {
+                'length': '16,18',
+                'prefix': '50(?:20|38)|6(?:304|759)',
+                'luhn'  : true
+            },
+
+            'mastercard': {
+                'length': '16',
+                'prefix': '5[1-5]',
+                'luhn'  : true
+            },
+
+            'visa': {
+                'length': '13,16',
+                'prefix': '4',
+                'luhn'  : true
+            }
+        },
+
+        /**
+         * Luhn function, to be used when validating credit cards
+         */
+        _luhn: function (num){
+
+            num = num + '';
+
+            if ( ! (typeof num === 'number' && num % 1 === 0) )
+            {
+                // Luhn can only be used on nums!
+                return false;
+            }
+
+            // Check num length
+            var length = num.length;
+
+            // Checksum of the card num
+            var
+                i, checksum = 0
+            ;
+
+            for (i = length - 1; i >= 0; i -= 2)
+            {
+                // Add up every 2nd digit, starting from the right
+                checksum += num.substr(i, 1);
+            }
+
+            for (i = length - 2; i >= 0; i -= 2)
+            {
+                // Add up every 2nd digit doubled, starting from the right
+                var dbl = num.substr(i, 1) * 2;
+
+                // Subtract 9 from the dbl where value is greater than 10
+                checksum += (dbl >= 10) ? (dbl - 9) : dbl;
+            }
+
+            // If the checksum is a multiple of 10, the number is valid
+            return (checksum % 10 === 0);
+        },
+
+        /**
+         * Validates if a number is of a specific credit card
+         *
+         * @param  {String}  num            Number to be validates
+         * @param  {String|Array}  creditCardType Credit card type. See _creditCardSpecs for the list of supported values.
+         * @return {Boolean}
+         */
+        isCreditCard: function(num, creditCardType){
+
+            if ( /\D+/.test(num) === false ){
+                return false;
+            }
+
+            if ( typeof creditCardType === 'undefined' ){
+                creditCardType = 'default';
+            }
+            else if ( typeof creditCardType === 'array' ){
+                var i, ccLength = creditCardType.length;
+                for ( i=0; i < ccLength; i++ ){
+                    // Test each type for validity
+                    if (this.isCreditCard(num, creditCardType[i]) ){
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+
+            // Check card type
+            creditCardType = creditCardType.toLowerCase();
+
+            if ( typeof this.__creditCardSpecs[creditCardType] === 'undefined' ){
+                return false;
+            }
+
+            // Check card number length
+            var length = num.length;
+
+            // Validate the card length by the card type
+            if ( this._creditCardSpecs[creditCardType]['length'].split(",").indexOf(length) === -1 ){
+                return false;
+            }
+
+            // Check card number prefix
+            if ( !('/^'+this._creditCardSpecs[creditCardType]['prefix']+'/').match(num) ){
+                return false;
+            }
+
+            // No Luhn check required
+            if (this._creditCardSpecs[creditCardType]['luhn'] === false){
+                return true;
+            }
+
+            return this._luhn(num);
         }
     };
 
