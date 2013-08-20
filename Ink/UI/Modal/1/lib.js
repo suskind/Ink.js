@@ -102,6 +102,7 @@ Ink.createModule('Ink.UI.Modal', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Dom
              */
             trigger:      undefined,
             triggerEvent: 'click',
+            autoDisplay:  true,
 
             /**
              * Remaining options
@@ -210,25 +211,23 @@ Ink.createModule('Ink.UI.Modal', '1', ['Ink.UI.Aux_1','Ink.Dom.Event_1','Ink.Dom
                 triggerElement = Selector.select( this._options.trigger );
                 if( triggerElement.length > 0 ){
                     for( i=0; i<triggerElement.length; i++ ){
-                        Event.observe( triggerElement[i], this._options.triggerEvent, Ink.bindEvent(this._init, this) );
+                        Event.observe( triggerElement[i], this._options.triggerEvent, Ink.bindEvent(this.open, this) );
                     }
                 }
             }
-        } else {
-            this._init();
+        } else if ( this._options.autoDisplay ) {
+            this.open();
         }
     };
 
     Modal.prototype = {
 
         /**
-         * Init function called by the constructor
-         * 
-         * @method _init
+         * Display this Modal. Useful only if you have initialized the modal
+         * @method open 
          * @param {Event} [event] In case its fired by the trigger.
-         * @private
          */
-        _init: function(event) {
+        open: function(event) {
 
             if( event ){ Event.stop(event); }
 
