@@ -24,7 +24,7 @@ Ink.createModule('Ink.UI.FormValidator', '2', [ 'Ink.UI.Aux_1','Ink.Dom.Element_
          * @return {Boolean}       True case is defined, false if it's empty or not defined.
          */
         'required': function( value ){
-            return ( (typeof value !== 'undefined') && ( value.replace(/\ /g,'') !== '' ) );
+            return ( (typeof value !== 'undefined') && ( !(/^\s*$/).test(value) ) );
         },
 
         /**
@@ -373,12 +373,21 @@ Ink.createModule('Ink.UI.FormValidator', '2', [ 'Ink.UI.Aux_1','Ink.Dom.Element_
      */
     FormElement.prototype = {
 
+        /**
+         * Function to get the label that identifies the field.
+         * If it can't find one, it will use the name or the id
+         * (depending on what is defined)
+         *
+         * @method _getLabel
+         * @return {String} Label to be used in the error messages
+         * @private
+         */
         _getLabel: function(){
 
             var controlGroup = Element.findUpwardsByClass(this._element,'control-group');
             var label = Ink.s('label',controlGroup);
             if( label ){
-                label = label.innerHTML.replace(':','');
+                label = label.innerHTML;
             } else {
                 label = this._element.name || this._element.id || '';
             }
@@ -455,10 +464,11 @@ Ink.createModule('Ink.UI.FormValidator', '2', [ 'Ink.UI.Aux_1','Ink.Dom.Element_
         },
 
         /**
-         * Internal function to retrieve the element's value
+         * Function to retrieve the element's value
          *
+         * @method getValue
          * @return {mixed} The DOM Element's value
-         * @private
+         * @public
          */
         getValue: function(){
 
@@ -481,7 +491,7 @@ Ink.createModule('Ink.UI.FormValidator', '2', [ 'Ink.UI.Aux_1','Ink.Dom.Element_
                     }
                     return;
                 default:
-                    return this._element.value;
+                    return this._element.innerHTML;
             }
         },
 
@@ -508,6 +518,9 @@ Ink.createModule('Ink.UI.FormValidator', '2', [ 'Ink.UI.Aux_1','Ink.Dom.Element_
         },
 
         /**
+         * Function used to validate the element based on the rules defined.
+         * It parses the rules defined in the _options.rules property.
+         *
          * @method validate
          * @return {Boolean} True if every rule was valid. False if one fails.
          * @public
@@ -595,9 +608,40 @@ Ink.createModule('Ink.UI.FormValidator', '2', [ 'Ink.UI.Aux_1','Ink.Dom.Element_
 
         this._options = Ink.extendObj( this._options, options || {} );
 
-        Event.observe( this._rootElement,this._options.eventTrigger, Ink.bindEvent(this.validate,this) );
+        // Sets an event listener for a specific event in the form, if defined.
+        // By default is the 'submit' event.
+        if( typeof this._options.eventTrigger === 'string' ){
+            Event.observe( this._rootElement,this._options.eventTrigger, Ink.bindEvent(this.validate,this) );
+        }
 
         this._init();
+    };
+
+    /**
+     * Method used to set validation functions (either custom or ovewrite the existent ones)
+     *
+     * @method setRule
+     * @param {String}   name         Name of the function. E.g. 'required'
+     * @param {String}   errorMessage Error message to be displayed in case of returning false. E.g. 'Oops, you passed :param1 as parameter1, lorem ipsum dolor...'
+     * @param {Function} cb           Function to be executed when calling this rule
+     * @public
+     * @static
+     */
+    FormValidator.setRule = function( name, errorMessage, cb ){
+        validationFunctions[ name ] = cb;
+        validationMessages[ name ] = errorMessage;
+    };
+
+    /**
+     * Method used to get the existing defined validation functions
+     *
+     * @method getRules
+     * @return {Object} Object with the rules defined
+     * @public
+     * @static
+     */
+    FormValidator.getRules = function(){
+        return validationFunctions;
     };
 
     FormValidator.prototype = {
@@ -605,6 +649,14 @@ Ink.createModule('Ink.UI.FormValidator', '2', [ 'Ink.UI.Aux_1','Ink.Dom.Element_
 
         },
 
+        /**
+         * Function that searches for the elements of the form, based in the
+         * this._options.searchFor configuration.
+         *
+         * @method getElements
+         * @return {Object} An object with the elements in the form, indexed by name/id
+         * @public
+         */
         getElements: function(){
             this._formElements = {};
             var formElements = Selector.select( this._options.searchFor, this._rootElement );
@@ -644,6 +696,17 @@ Ink.createModule('Ink.UI.FormValidator', '2', [ 'Ink.UI.Aux_1','Ink.Dom.Element_
             return this._formElements;
         },
 
+        /**
+         * Runs the validate function of each FormElement in the this._formElements
+         * object.
+         * Also, based on the this._options.beforeValidation, this._options.onError
+         * and this._options.onSuccess, this callbacks are executed when defined.
+         *
+         * @method validate
+         * @param  {Event} event window.event object
+         * @return {Boolean}
+         * @public
+         */
         validate: function( event ){
             Event.stop(event);
 
@@ -669,16 +732,13 @@ Ink.createModule('Ink.UI.FormValidator', '2', [ 'Ink.UI.Aux_1','Ink.Dom.Element_
                 if( typeof this._options.onSuccess === 'function' ){
                     this._options.onSuccess();
                 }
+                return true;
             } else {
                 if( typeof this._options.onError === 'function' ){
                     this._options.onError( errorElements );
                 }
+                return false;
             }
-        },
-
-        setFunction: function( name, errorMessage, cb ){
-            validationFunctions[ name ] = cb;
-            validationMessages[ name ] = errorMessage;
         }
     };
 
