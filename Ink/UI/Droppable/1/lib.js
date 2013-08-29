@@ -49,13 +49,16 @@ Ink.createModule("Ink.UI.Droppable","1",["Ink.Dom.Element_1", "Ink.Dom.Event_1",
          * Makes an element droppable and adds it to the stack of droppable elements.
          * Can consider it a constructor of droppable elements, but where no Droppable object is returned.
          * 
+         * In the following arguments, any events/callbacks you may pass, can be either functions or strings. If the 'move' or 'copy' strings are passed, the draggable gets moved into this droppable. If 'revert' is passed, an acceptable droppable is moved back to the element it came from.
+
+         *
          * @method add
          * @param {String|DOMElement}       element     Target element
          * @param {Object}                  [options]   options object
          *     @param {String}      [options.hoverClass] Classname(s) applied when an acceptable draggable element is hovering the element
          *     @param {String}      [options.accept]    Selector for choosing draggables which can be dropped in this droppable.
          *     @param {Function}    [options.onHover]   callback called when an acceptable draggable element is hovering the droppable. Gets the draggable and the droppable element as parameters.
-         *     @param {Function|String} [options.onDrop] callback called when an acceptable draggable element is dropped. Gets the draggable, the droppable and the event as parameters. If the 'move' or 'copy' strings are passed, the draggable gets moved into this droppable. If 'revert' is passed, an acceptable droppable is moved back to the element it came from.
+         *     @param {Function|String} [options.onDrop] callback called when an acceptable draggable element is dropped. Gets the draggable, the droppable and the event as parameters.
          *     @param {Function|String} [options.onDropOut] callback called when a droppable is dropped outside this droppable. Gets the draggable, the droppable and the event as parameters. (see above for string options).
          * @public
          *
@@ -118,12 +121,19 @@ Ink.createModule("Ink.UI.Droppable","1",["Ink.Dom.Element_1", "Ink.Dom.Event_1",
                     droppable.appendChild(draggable.cloneNode);
                 },
                 revert: function (draggable, droppable, event) {
-                    debugger;   // TODO draggableData.movedFrom
+                    that._findDraggable(draggable).originalParent.appendChild(draggable);
                     cleanStyle(draggable);
                 }
             };
             var name;
 
+            if (typeof opt.onHover === 'string') {
+                name = opt.onHover;
+                opt.onHover = namedEventHandlers[name];
+                if (opt.onHover === undefined) {
+                    throw new Error('Unknown hover event handler: ' + name);
+                }
+            }
             if (typeof opt.onDrop === 'string') {
                 name = opt.onDrop;
                 opt.onDrop = namedEventHandlers[name];
@@ -242,16 +252,20 @@ Ink.createModule("Ink.UI.Droppable","1",["Ink.Dom.Element_1", "Ink.Dom.Event_1",
          */
         action: function(coords, type, ev, draggable) {
             // check all droppable elements
-            InkArray.each(this._droppables, function(elementData) {
+            InkArray.each(this._droppables, Ink.bind(function(elementData) {
                 var data = elementData.data;
                 var opt = elementData.options;
                 var element = elementData.element;
-                var accept = false;
 
-                if (opt.accept) {
-                    if (!Selector.matches(opt.accept, [draggable]).length) {
-                        return;
-                    }
+                if (opt.accept && !Selector.matches(opt.accept, [draggable]).length) {
+                    return;
+                }
+
+                if (type === 'drag' && !this._findDraggable(draggable)) {
+                    this._draggables.push({
+                        element: draggable,
+                        originalParent: draggable.parentNode
+                    });
                 }
 
                 // check if our draggable is over our droppable
@@ -286,7 +300,7 @@ Ink.createModule("Ink.UI.Droppable","1",["Ink.Dom.Element_1", "Ink.Dom.Event_1",
                         }
                     }
                 }
-            });
+            }, this));
         }
     };
 
