@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
 
-        <title>InkJS - Table samples</title>
+        <title>InkJS - Carousel samples</title>
 
         <!--<link rel="stylesheet" href="/samples/assets/css/ink.css" />
         <link rel="stylesheet" href="/samples/assets/css/docs.css" />-->
@@ -26,54 +26,74 @@
 
     <body>
         <div class="ink-container ink-grid">
-            <h1>Grid Samples - InkJS</h1>
+            <h1>Carousel Samples - InkJS</h1>
 
             <style type="text/css">
-                #grid1 li {
+                #car1 li {
                     width:  256px;
                     height: 256px;
                     background-color: #FDD;
                 }
 
-                #grid1 li:nth-child(even) {
+                #car1 li:nth-child(even) {
                     background-color: #DDF;
                 }
 
-                #grid2 li {
+                /**************/
+
+                #car2 {
+                    height: 400px;
+                }
+
+                #car2 li {
                     width:  196px;
                     height: 196px;
                     background-color: #FFD;
                 }
 
-                #grid2 li:nth-child(even) {
+                #car2 li:nth-child(even) {
                     background-color: #DFF;
                 }
 
-                /**/
+                /**************/
 
-                .ink-uigrid {
+                .ink-navigation .dotted {
+                }
+
+                .ink-navigation .dotted a {
+                    text-decoration: none !important;
+                    opacity: 0.33;
+                }
+
+                .ink-navigation .dotted .active a {
+                    opacity: 1;
+                }
+
+                /**************/
+
+                .ink-carousel {
                     border: 1px solid #AAA;
                     position: relative;
                     overflow: hidden;
                 }
 
-                .ink-uigrid ul {
+                .ink-carousel ul {
                     position: relative;
 
-                    -webkit-transition: left 0.5s;
-                       -moz-transition: left 0.5s;
-                         -o-transition: left 0.5s;
-                            transition: left 0.5s;
+                    -webkit-transition: left 0.5s, top 0.5s;
+                       -moz-transition: left 0.5s, top 0.5s;
+                         -o-transition: left 0.5s, top 0.5s;
+                            transition: left 0.5s, top 0.5s;
                 }
 
-                .ink-uigrid li {
+                .ink-carousel li {
                     display: inline-block;
                     margin: 0;
                     vertical-align: top;
                 }
             </style>
 
-            <div id="grid1" class="ink-uigrid">
+            <div id="car1" class="ink-carousel">
                 <ul class="unstyled">
                     <li>
                         <a href="/cronica/alpha" class="box column-group gutters external">
@@ -87,7 +107,7 @@
                             </div>
                         </a>
                     </li>
-                
+
                     <li>
                         <a href="/cronica/cronica-2" class="box column-group gutters external">
                             <div class="image-wrapper large-40 medium-40 small-100">
@@ -100,7 +120,7 @@
                             </div>
                         </a>
                     </li>
-                
+
                     <li>
                         <a href="/cronica/esta-fui-eu-que-fiz" class="box column-group gutters external">
                             <div class="image-wrapper large-40 medium-40 small-100">
@@ -113,7 +133,7 @@
                             </div>
                         </a>
                     </li>
-                
+
                     <li>
                         <a href="/cronica/cronica-3" class="box column-group gutters external">
                             <div class="image-wrapper large-40 medium-40 small-100">
@@ -126,7 +146,7 @@
                             </div>
                         </a>
                     </li>
-                
+
                     <li>
                         <a href="/cronica/fui-eu-que-inventei-a-internet" class="box column-group gutters external">
                             <div class="image-wrapper large-40 medium-40 small-100">
@@ -139,7 +159,7 @@
                             </div>
                         </a>
                     </li>
-                
+
                     <li>
                         <a href="/cronica/cronica-1" class="box column-group gutters external">
                             <div class="image-wrapper large-40 medium-40 small-100">
@@ -161,7 +181,7 @@
 
             <!-- -->
 
-            <div id="grid2" class="ink-uigrid">
+            <div id="car2" class="ink-carousel">
                 <ul class="unstyled">
                     <li>
                         <a href="/cronica/alpha" class="box column-group gutters external">
@@ -175,7 +195,7 @@
                             </div>
                         </a>
                     </li>
-                
+
                     <li>
                         <a href="/cronica/cronica-2" class="box column-group gutters external">
                             <div class="image-wrapper large-40 medium-40 small-100">
@@ -188,7 +208,7 @@
                             </div>
                         </a>
                     </li>
-                
+
                     <li>
                         <a href="/cronica/esta-fui-eu-que-fiz" class="box column-group gutters external">
                             <div class="image-wrapper large-40 medium-40 small-100">
@@ -201,7 +221,7 @@
                             </div>
                         </a>
                     </li>
-                
+
                     <li>
                         <a href="/cronica/cronica-3" class="box column-group gutters external">
                             <div class="image-wrapper large-40 medium-40 small-100">
@@ -214,7 +234,7 @@
                             </div>
                         </a>
                     </li>
-                
+
                     <li>
                         <a href="/cronica/fui-eu-que-inventei-a-internet" class="box column-group gutters external">
                             <div class="image-wrapper large-40 medium-40 small-100">
@@ -227,7 +247,7 @@
                             </div>
                         </a>
                     </li>
-                
+
                     <li>
                         <a href="/cronica/cronica-1" class="box column-group gutters external">
                             <div class="image-wrapper large-40 medium-40 small-100">
@@ -243,19 +263,19 @@
                 </ul>
             </div>
 
-            <nav id="p2" class="ink-navigation">
-                <ul class="pagination rounded shadowed blue"></ul>
+            <nav id="p2" class="ink-navigation" data-previous-label="" data-next-label="">
+                <ul class="pagination dotted"></ul>
             </nav>
         </div>
 
         <script>
-            Ink.requireModules(['Ink.UI.Grid_1'], function(Grid) {
-                window.g1 = new Grid('#grid1', {
+            Ink.requireModules(['Ink.UI.Carousel_1'], function(Carousel) {
+                window.c1 = new Carousel('#car1', {
                     pagination: Ink.s('#p1'),
                     center:     true
                 });
 
-                window.g2 = new Grid('#grid2', {
+                window.g2 = new Carousel('#car2', {
                     pagination: Ink.s('#p2'),
                     axis:       'y' // TODO
                 });
