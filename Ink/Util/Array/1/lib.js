@@ -162,31 +162,13 @@ Ink.createModule('Ink.Util.Array', '1', [], function() {
          *         });
          *     });
          */
-        forEach: function(arr, cb) {
-            var arrCopy    = arr.slice(0),
-                total      = arrCopy.length,
-                iterations = Math.floor(total / 8),
-                leftover   = total % 8,
-                i          = 0;
-
-            if (leftover > 0) { // Duff's device pattern
-                do {
-                    cb(arrCopy[i++], i-1, arr);
-                } while (--leftover > 0);
+        forEach: function(array, callback, context) {
+            if (arrayProto.forEach) {
+                return arrayProto.forEach.call(array, callback, context);
             }
-            if (iterations === 0) { return arr; }
-            do {
-                cb(arrCopy[i++], i-1, arr);
-                cb(arrCopy[i++], i-1, arr);
-                cb(arrCopy[i++], i-1, arr);
-                cb(arrCopy[i++], i-1, arr);
-                cb(arrCopy[i++], i-1, arr);
-                cb(arrCopy[i++], i-1, arr);
-                cb(arrCopy[i++], i-1, arr);
-                cb(arrCopy[i++], i-1, arr);
-            } while(--iterations > 0);
-
-            return arr;
+            for (var i = 0, len = array.length >>> 0; i < len; i++) {
+                callback.call(context, array[i], i, array);
+            }
         },
 
         /**
