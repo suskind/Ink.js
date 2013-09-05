@@ -116,33 +116,26 @@ Ink.createModule('Ink.UI.FormValidator', '2', [ 'Ink.UI.Aux_1','Ink.Dom.Element_
                 return false;
             }
 
-            if( phoneType ){
-                phoneType = phoneType.toUpperCase();
-                if( ("is" + phoneType + "Phone") in InkValidator ){
-                    return InkValidator["is" + phoneType + "Phone"]( value );
-                }
-            } else {
-                return InkValidator.isPhone( value );
-            }
+            var countryCode = phoneType ? phoneType.toUpperCase() : '';
 
-            return false;
+            return InkValidator['is' + countryCode + 'Phone'](value);
         },
 
         /**
          * Checks if it's a valid credit card.
-         *
-         * @method validationFunctions.credit_card
+         * TODO: uncomment when InkValidator.isCreditCard exists
+         * @@method validationFunctions.credit_card
          * @param  {String} value   Value to be checked
          * @param  {String} cardType Type of credit card to be validated. The card types available are in the Ink.Util.Validator class.
          * @return {Boolean}         True if the value is a valid credit card number. False if not.
-         */
+         *//*
         'credit_card': function( value, cardType ){
             if( typeof value !== 'string' ){
                 return false;
             }
 
             return InkValidator.isCreditCard( value, cardType );
-        },
+        },*/
 
         /**
          * Checks if the value is a valid date.
@@ -168,6 +161,8 @@ Ink.createModule('Ink.UI.FormValidator', '2', [ 'Ink.UI.Aux_1','Ink.Dom.Element_
             if( supportSpaces ){
                 value = value.replace(/\ /g,'');
             }
+
+            // TODO check if this works with the BMP, and whether it is intended to
             return ((typeof value === 'string') && /^[a-zA-Z]+$/.test(value));
         },
 
@@ -231,8 +226,12 @@ Ink.createModule('Ink.UI.FormValidator', '2', [ 'Ink.UI.Aux_1','Ink.Dom.Element_
          * @return {Boolean}         True if the value is a valid decimal number. False if not.
          */
         'decimal': function( value, decimalSeparator, decimalPlaces, leftDigits ){
-
+            value = value + '';
             decimalSeparator = decimalSeparator || '.';
+
+            if (isNaN(value)) {
+                return false;
+            }
 
             var parcels = value.split(decimalSeparator);
 
@@ -279,13 +278,23 @@ Ink.createModule('Ink.UI.FormValidator', '2', [ 'Ink.UI.Aux_1','Ink.Dom.Element_
          * @return {Boolean}         True if the value is within the range. False if not.
          */
         'range': function( value, minValue, maxValue, multipleOf ){
-            if( (parseInt(value,10) < parseInt(minValue,10)) || (parseInt(value,10) > parseInt(maxValue,10)) ){
+            value = +value;
+            minValue = +minValue;
+            maxValue = +maxValue;
+
+            if (isNaN(value) || isNaN(minValue) || isNaN(maxValue)) {
                 return false;
             }
 
-            multipleOf = multipleOf || 1;
+            if( value < minValue || value > maxValue ){
+                return false;
+            }
 
-            return ( ( ( parseInt(value,10)-parseInt(minValue,10) ) % parseInt(multipleOf,10) ) === 0 );
+            if (multipleOf) {
+                return (value - minValue) % multipleOf === 0;
+            } else {
+                return true;
+            }
         },
 
         /**
