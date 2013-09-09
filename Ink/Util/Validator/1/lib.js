@@ -246,8 +246,8 @@ Ink.createModule('Ink.Util.Validator', '1', [], function() {
             unicodeAlpha: ['a-zA-Z', '\u00C0-\u00FF', '\u0100-\u1FFF', '\u2C00-\uD7FF'],
             /* whitespace characters */
             space: [' '],
-            underscore: ['_'],
             dash: ['-'],
+            underscore: ['_'],
             nicknamePunctuation: ['_.-'],
 
             singleLineWhitespace: ['\t '],
@@ -272,6 +272,7 @@ Ink.createModule('Ink.Util.Validator', '1', [], function() {
          * - **latin1Alpha**: asciiAlpha, plus printable characters in latin-1
          * - **unicodeAlpha**: unicode alphanumeric characters.
          * - **space**: ' ', the space character.
+         * - **dash**: dash character.
          * - **underscore**: underscore character.
          * - **nicknamePunctuation**: dash, dot, underscore
          * - **singleLineWhitespace**: space and tab (whitespace which only spans one line).
@@ -350,6 +351,73 @@ Ink.createModule('Ink.Util.Validator', '1', [], function() {
         ascii: function (s, options) {
             return Validator.checkCharacterGroups(s, Ink.extendObj({
                 asciiAlpha: true}, options));
+        },
+
+        /**
+         * Checks that the number is a valid number
+         *
+         * @method number
+         * @param {String} numb         The number
+         * @param {Object} [options]    Further options
+         *  @param  [options.decimalSep='.']    Allow decimal separator.
+         *  @param  [options.thousandSep=","]   Strip this character from the number.
+         *  @param  [options.negative=false]    Allow negative numbers.
+         *  @param  [options.decimalPlaces=0]   Maximum number of decimal places. `0` means integer number.
+         *  @param  [options.max=null]          Maximum number
+         *  @param  [options.min=null]          Minimum number
+         *  @param  [options.returnNumber=false] When this option is true, return the number itself when the value is valid.
+         */
+        number: function (numb, inOptions) {
+            numb = numb + '';
+            var options = Ink.extendObj({
+                decimalSep: '.',
+                thousandSep: '',
+                negative: true,
+                decimalPlaces: 0,
+                max: null,
+                min: null,
+                returnNumber: false
+            }, inOptions || {});
+            // smart recursion thing sets up aliases for options.
+            if (options.thousandSep) {
+                numb = numb.replace(new RegExp('\\' + options.thousandSep, 'g'), '');
+                options.thousandSep = '';
+                return Validator.number(numb, options);
+            }
+            if (options.negative === false) {
+                options.min = 0;
+                options.negative = true;
+                return Validator.number(numb, options);
+            }
+            if (options.decimalSep !== '.') {
+                numb = numb.replace(new RegExp('\\' + options.decimalSep, 'g'), '.');
+            }
+
+            if (!/^(-)?(\d+)?(\.\d+)?$/.test(numb) || numb === '') {
+                return false;  // forbidden character found
+            }
+            
+            if (numb.indexOf(options.decimalSep) !== -1) {
+                var split = numb.split(options.decimalSep);
+                if (split[1].length > options.decimalPlaces) {
+                    return false;
+                }
+            }
+
+            // Now look at the actual float
+            var ret = parseFloat(numb);
+
+            if (options.max !== null && ret > options.max) {
+                return false;
+            } else if (options.min !== null && ret < options.min) {
+                return false;
+            }
+            
+            if (options.returnNumber) {
+                return ret;
+            } else {
+                return true;
+            }
         },
 
         /**

@@ -7,10 +7,10 @@ var ellipsis = '\u2026'; // ellipsis character (…)
 var ccedil = '\u00E7'; // C with a cedilla (ç)
 
 function invalid (a, msg) {
-    equal(a, false, msg || 'should be invalid!');
+    deepEqual(a, false, msg || 'should be invalid!');
 }
 function valid (a, msg) {
-    equal(a, true, msg || 'should be valid!');
+    deepEqual(a, true, msg || 'should be valid!');
 }
 
 module('checkCharacterGroups');
@@ -48,7 +48,7 @@ test('undefined values', function () {
     invalid (grps(undefined));
 });
 
-module('checker functions');
+module('alphanumeric check functions');
 test('unicode', function () {
     valid   (val.unicode('FábioSan' + tsu /* <- Awesome guy*/));
     valid   (val.unicode('Fábio San' + tsu, {whitespace: true}));
@@ -66,3 +66,57 @@ test('ascii', function () {
     valid   (val.ascii('Fabio'));
     invalid (val.ascii(ccedil));
 });
+
+module('number');
+var numb = function (numb, options) {
+    return val.number(numb, Ink.extendObj({returnNumber: true}, options));
+};
+
+test('integer numbers', function () {
+    deepEqual(numb('.'), false);
+    deepEqual(numb('123.123'), false);
+    deepEqual(numb('123'), 123);
+    deepEqual(numb(0), 0);
+});
+
+test('decimal numbers', function () {
+    deepEqual(numb('0.123', {decimalPlaces: 3}), 0.123);
+    deepEqual(numb('.123', {decimalPlaces: 3}), 0.123);
+    
+    deepEqual(numb('.123', {decimalPlaces: 2}), false);
+});
+
+test('negative numbers', function () {
+    deepEqual(numb('-1.23', {decimalPlaces: 3}), -1.23)
+    deepEqual(numb('-1.23', {decimalPlaces: 3, negative: false}), false)
+});
+
+test('max/min', function () {
+    var minMax = {min: -100, max: 100};
+    deepEqual(numb('123', minMax), false);
+    deepEqual(numb('50', minMax), 50);
+    deepEqual(numb('-50', minMax), -50);
+    deepEqual(numb('-150', minMax), false);
+});
+
+test('thousand separator', function () {
+    deepEqual(numb('1`344`123'), false);
+    deepEqual(numb('1`344`123', {thousandSep: '`'}), 1344123);
+    deepEqual(numb('1.344.123'), false);
+    deepEqual(numb('1.344.123', {thousandSep: '.'}), 1344123);
+    deepEqual(numb('1Thousand344Thousand123', {thousandSep: '`'}), false);
+    deepEqual(numb('1Thousand344Thousand123', {thousandSep: 'Thousand'}), 1344123);
+    deepEqual(numb('Thousand'), false);
+    deepEqual(numb('Thousand', {thousandSep: 'Thousand'}), false);
+});
+
+test('NaN, Inf', function () {
+    deepEqual(numb(Infinity), false);
+    deepEqual(numb(-Infinity), false);
+    deepEqual(numb(NaN), false);
+
+    deepEqual(numb('Infinity'), false);
+    deepEqual(numb('-Infinity'), false);
+    deepEqual(numb('NaN'), false);
+});
+
