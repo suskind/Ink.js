@@ -3,7 +3,7 @@
  * @author inkdev AT sapo.pt
  * @version 2
  */
-Ink.createModule('Ink.UI.FormValidator', '2', [ 'Ink.UI.Aux_1','Ink.Dom.Element_1','Ink.Dom.Event_1','Ink.Dom.Selector_1','Ink.Dom.Css_1','Ink.Util.Validator_1'], function( Aux, Element, Event, Selector, Css, InkValidator ) {
+Ink.createModule('Ink.UI.FormValidator', '2', [ 'Ink.UI.Aux_1','Ink.Dom.Element_1','Ink.Dom.Event_1','Ink.Dom.Selector_1','Ink.Dom.Css_1','Ink.Util.Array_1','Ink.Util.Validator_1'], function( Aux, Element, Event, Selector, Css, InkArray, InkValidator ) {
     'use strict';
 
     /**
@@ -153,17 +153,42 @@ Ink.createModule('Ink.UI.FormValidator', '2', [ 'Ink.UI.Aux_1','Ink.Dom.Element_
          * Checks if the value only contains alphabetical values.
          *
          * @method validationFunctions.alpha
-         * @param  {String} value   Value to be checked
-         * @return {Boolean}         True if the value is alphabetical-only. False if not.
+         * @param  {String} value           Value to be checked
+         * @param  {Boolean} supportSpaces  Allow whitespace
+         * @return {Boolean}                True if the value is alphabetical-only. False if not.
          */
         'alpha': function( value, supportSpaces ){
-            supportSpaces = supportSpaces || false;
-            if( supportSpaces ){
-                value = value.replace(/\ /g,'');
-            }
+            return InkValidator.ascii(value, {singleLineWhitespace: supportSpaces});
+        },
 
-            // TODO check if this works with the BMP, and whether it is intended to
-            return ((typeof value === 'string') && /^[a-zA-Z]+$/.test(value));
+        /*
+         * Check that the value contains only printable unicode text characters
+         * from the Basic Multilingual plane (BMP)
+         * Optionally allow punctuation and whitespace
+         *
+         * @method validationFunctions.text
+         * @param {String} value    Value to be checked
+         * @return {Boolean}        Whether the value only contains printable text characters
+         **/
+        'text': function (value, whitespace, punctuation) {
+            return InkValidator.unicode(value, {
+                singleLineWhitespace: whitespace,
+                unicodePunctuation: punctuation});
+        },
+
+        /*
+         * Check that the value contains only printable text characters 
+         * available in the latin-1 encoding.
+         *
+         * Optionally allow punctuation and whitespace
+         *
+         * @method validationFunctions.text
+         * @param {String} value    Value to be checked
+         * @return {Boolean}        Whether the value only contains printable text characters
+         **/
+        'latin': function (value, punctuation, whitespace) {
+            if ( typeof value !== 'string') { return false; }
+            return InkValidator.latin1(value, {latin1Punctuation: punctuation, singleLineWhitespace: whitespace});
         },
 
         /**
@@ -174,7 +199,7 @@ Ink.createModule('Ink.UI.FormValidator', '2', [ 'Ink.UI.Aux_1','Ink.Dom.Element_
          * @return {Boolean}         True if the value is a valid alphanumerical. False if not.
          */
         'alpha_numeric': function( value ){
-            return ((typeof value === 'string') && /^[a-zA-Z0-9]+$/.test(value));
+            return InkValidator.ascii(value, {numbers: true});
         },
 
         /**
@@ -185,7 +210,7 @@ Ink.createModule('Ink.UI.FormValidator', '2', [ 'Ink.UI.Aux_1','Ink.Dom.Element_
          * @return {Boolean}         True if the value is a valid. False if not.
          */
         'alpha_dash': function( value ){
-            return ((typeof value === 'string') && /^[a-zA-Z\-\_]+$/.test(value));
+            return InkValidator.ascii(value, {dash: true, underscore: true});
         },
 
         /**
@@ -221,33 +246,22 @@ Ink.createModule('Ink.UI.FormValidator', '2', [ 'Ink.UI.Aux_1','Ink.Dom.Element_
          * @method validationFunctions.decimal
          * @param  {String} value   Value to be checked
          * @param  {String} decimalSeparator Character that splits the integer part from the decimal one. By default is '.'.
-         * @param  {String} [decimalPlaces] Number of digits that the decimal part must have.
-         * @param  {String} [leftDigits] Number of digits that the integer part must have, when provided.
+         * @param  {String} [decimalPlaces] Maximum number of digits that the decimal part must have.
+         * @param  {String} [leftDigits] Maximum number of digits that the integer part must have, when provided.
          * @return {Boolean}         True if the value is a valid decimal number. False if not.
          */
         'decimal': function( value, decimalSeparator, decimalPlaces, leftDigits ){
-            value = value + '';
             decimalSeparator = decimalSeparator || '.';
-
-            if (isNaN(value)) {
+            var numb = InkValidator.number(value, {
+                decimalSep: decimalSeparator || '.',
+                decimalPlaces: +decimalPlaces || 0,
+                returnNumb: true
+            });
+            if (leftDigits && ('' + Math.round(numb)).length > leftDigits) {
                 return false;
             }
 
-            var parcels = value.split(decimalSeparator);
-
-            if( parcels.length !== 2 ){
-                return false;
-            }
-
-            if( !validationFunctions.integer(parcels[0]) || !validationFunctions.integer(parcels[1],true) ){
-                return false;
-            }
-
-            return (
-                ( ( typeof leftDigits === 'undefined' ) || ( parcels[0].length === parseInt(leftDigits,10) ) )
-                && ( ( typeof decimalPlaces === 'undefined' ) || ( parcels[1].length === parseInt(decimalPlaces,10) ) )
-            );
-
+            return true;
         },
 
         /**
@@ -341,6 +355,8 @@ Ink.createModule('Ink.UI.FormValidator', '2', [ 'Ink.UI.Aux_1','Ink.Dom.Element_
         'credit_card': 'The :field does not contain a valid :param1 credit card',
         'date': 'The :field should contain a date in the :param1 format',
         'alpha': 'The :field should only contain letters',
+        'text': 'The :field should only contain alphabetic characters',
+        'latin': 'The :field should only contain alphabetic characters',
         'alpha_numeric': 'The :field should only contain letters or numbers',
         'alpha_dashes': 'The :field should only contain letters or dashes',
         'digit': 'The :field should only contain a digit',
@@ -413,7 +429,6 @@ Ink.createModule('Ink.UI.FormValidator', '2', [ 'Ink.UI.Aux_1','Ink.Dom.Element_
          * @private
          */
         _parseRules: function( rules ){
-
             this._rules = {};
             rules = rules.split("|");
             var i, rulesLength = rules.length, rule, params, paramStartPos ;
@@ -429,6 +444,12 @@ Ink.createModule('Ink.UI.FormValidator', '2', [ 'Ink.UI.Aux_1','Ink.Dom.Element_
                         params = params.split(']');
                         params = params[0];
                         params = params.split(',');
+                        for (var p = 0, len = params.length; p < len; p++) {
+                            params[p] =
+                                params[p] === 'true' ? true :
+                                params[p] === 'false' ? false :
+                                params[p];
+                        }
                         params.splice(0,0,this.getValue());
                         params.push(this._options.form._formElements);
 
@@ -538,7 +559,7 @@ Ink.createModule('Ink.UI.FormValidator', '2', [ 'Ink.UI.Aux_1','Ink.Dom.Element_
 
             this._errors = {};
 
-            if( "rules" in this._options ){
+            if( "rules" in this._options || 1){
                 this._parseRules( this._options.rules );
             }
 

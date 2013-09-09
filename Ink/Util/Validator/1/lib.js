@@ -288,7 +288,7 @@ Ink.createModule('Ink.Util.Validator', '1', [], function() {
             for (var key in groups) if (groups.hasOwnProperty(key)) {
                 if (!(key in Validator._characterGroups)) {
                     throw new Error('group ' + key + ' is not a valid character group');
-                } else {
+                } else if (groups[key]) {
                     re += Validator._characterGroups[key].join('');
                 }
             }
