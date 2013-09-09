@@ -68,6 +68,10 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
         }
     }());
 
+    // Body or documentElement
+    var bodies = document.getElementsByTagName('body');
+    var body = bodies && bodies.length ? bodies[0] : document.documentElement;
+
     Tooltip.prototype = {
         _init: function(element, options) {
             var elements;
@@ -164,7 +168,6 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
             var template = this._getOpt('template'),  // User template instead of our HTML
                 templatefield = this._getOpt('templatefield'),
                 
-                where = this._getOpt('where'),
                 tooltip,  // The element we float
                 field;  // Element where we write our message. Child or same as the above
 
@@ -192,13 +195,6 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
                 Css.addClassName(field, 'content');
 
                 tooltip.appendChild(field);
-                
-                if (where.match(/(up|down|left|right)/)) {
-                    var arrow = document.createElement('SPAN');
-                    Css.addClassName(arrow, 'arrow');
-                    Css.addClassName(arrow, this._oppositeDirections[where]);
-                    tooltip.appendChild(arrow);
-                }
             }
             
             InkElement.setTextContent(field, this._getOpt('text'));
@@ -222,21 +218,13 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
         },
         _placeTooltipElement: function (tooltip, mousePosition) {
             var where = this._getOpt('where');
-            
-            var insert = function () {
-                var bodies = document.getElementsByTagName('body');
-                var insertInto = bodies && bodies.length ? bodies[0] : document.documentElement;
 
-                // InkElement.insertTop(tooltip, insertInto);
-                insertInto.appendChild(tooltip);  // TODO use above line instead when Ink CSS does not meddle too much with element positioning.
-            };
-            
             if (where === 'mousemove' || where === 'mousefix') {
                 var mPos = mousePosition;
                 this._setPos(mPos[0], mPos[1]);
-                insert();
+                body.appendChild(tooltip)
             } else if (where.match(/(up|down|left|right)/)) {
-                insert();
+                body.appendChild(tooltip)
                 var targetElementPos = InkElement.offset(this.element);
                 var tleft = targetElementPos[0],
                     ttop = targetElementPos[1];
@@ -249,29 +237,67 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
                 var centerh = (InkElement.elementWidth(this.element) / 2) - (InkElement.elementWidth(tooltip) / 2),
                     centerv = (InkElement.elementHeight(this.element) / 2) - (InkElement.elementHeight(tooltip) / 2);
                 var spacing = this._getIntOpt('spacing');
+
+                var tooltipDims = InkElement.elementDimensions(tooltip);
+                var elementDims = InkElement.elementDimensions(this.element);
+
+                var maxWidth = InkElement.scrollWidth() + InkElement.viewportWidth();
+                var maxHeight = InkElement.scrollHeight() + InkElement.viewportHeight();
+                
+                if (where === 'left' &&  tleft - tooltipDims[0] < 0) {
+                    where = 'right';
+                } else if (where === 'right' && tleft + tooltipDims[0] > maxWidth) {
+                    where = 'left';
+                } else if (where === 'up' && ttop - tooltipDims[1] < 0) {
+                    where = 'down';
+                } else if (where === 'down' && ttop + tooltipDims[1] > maxHeight) {
+                    where = 'up';
+                }
                 
                 if (where === 'up') {
-                    ttop -= InkElement.elementHeight(tooltip);
+                    ttop -= tooltipDims[1];
                     ttop -= spacing;
                     tleft += centerh;
                 } else if (where === 'down') {
-                    ttop += InkElement.elementHeight(this.element);
+                    ttop += elementDims[1];
                     ttop += spacing;
                     tleft += centerh;
                 } else if (where === 'left') {
-                    tleft -= InkElement.elementWidth(tooltip);
+                    tleft -= tooltipDims[0];
                     tleft -= spacing;
                     ttop += centerv;
                 } else if (where === 'right') {
-                    tleft += InkElement.elementWidth(this.element);
+                    tleft += elementDims[0];
                     tleft += spacing;
                     ttop += centerv;
                 }
 
+                if (where.match(/(up|down|left|right)/)) {
+                    var arrow = document.createElement('SPAN');
+                    Css.addClassName(arrow, 'arrow');
+                    Css.addClassName(arrow, this._oppositeDirections[where]);
+                    tooltip.appendChild(arrow);
+                }
+
                 var scrl = this._getLocalScroll();
 
-                tooltip.style.left = (tleft - scrl[0]) + 'px';
-                tooltip.style.top = (ttop - scrl[1]) + 'px';
+                var tooltipLeft = tleft - scrl[0];
+                var tooltipTop = ttop - scrl[1];
+
+                tooltip.style.left = tooltipLeft + 'px';
+                tooltip.style.top = tooltipTop + 'px';
+
+                if (tooltipLeft < 0) {
+                    if (arrow) {
+                        arrow.style.left = (tooltipDims[0] / 2) + tooltipLeft + 'px';
+                    }
+                    tooltip.style.left = 0;
+                } else if (tooltipTop < 0) {
+                    if (arrow) {
+                        arrow.style.top = (tooltipDims[1] / 2) + tooltipTop + 'px';
+                    }
+                    tooltip.style.top = 0;
+                }
             }
         },
         _removeTooltip: function() {
