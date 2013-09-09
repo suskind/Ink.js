@@ -222,9 +222,9 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
             if (where === 'mousemove' || where === 'mousefix') {
                 var mPos = mousePosition;
                 this._setPos(mPos[0], mPos[1]);
-                body.appendChild(tooltip)
+                body.appendChild(tooltip);
             } else if (where.match(/(up|down|left|right)/)) {
-                body.appendChild(tooltip)
+                body.appendChild(tooltip);
                 var targetElementPos = InkElement.offset(this.element);
                 var tleft = targetElementPos[0],
                     ttop = targetElementPos[1];
@@ -241,16 +241,16 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
                 var tooltipDims = InkElement.elementDimensions(tooltip);
                 var elementDims = InkElement.elementDimensions(this.element);
 
-                var maxWidth = InkElement.scrollWidth() + InkElement.viewportWidth();
-                var maxHeight = InkElement.scrollHeight() + InkElement.viewportHeight();
+                var maxX = InkElement.scrollWidth() + InkElement.viewportWidth();
+                var maxY = InkElement.scrollHeight() + InkElement.viewportHeight();
                 
                 if (where === 'left' &&  tleft - tooltipDims[0] < 0) {
                     where = 'right';
-                } else if (where === 'right' && tleft + tooltipDims[0] > maxWidth) {
+                } else if (where === 'right' && tleft + tooltipDims[0] > maxX) {
                     where = 'left';
                 } else if (where === 'up' && ttop - tooltipDims[1] < 0) {
                     where = 'down';
-                } else if (where === 'down' && ttop + tooltipDims[1] > maxHeight) {
+                } else if (where === 'down' && ttop + tooltipDims[1] > maxY) {
                     where = 'up';
                 }
                 
@@ -271,9 +271,10 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
                     tleft += spacing;
                     ttop += centerv;
                 }
-
+                
+                var arrow = null;
                 if (where.match(/(up|down|left|right)/)) {
-                    var arrow = document.createElement('SPAN');
+                    arrow = document.createElement('SPAN');
                     Css.addClassName(arrow, 'arrow');
                     Css.addClassName(arrow, this._oppositeDirections[where]);
                     tooltip.appendChild(arrow);
@@ -284,20 +285,27 @@ Ink.createModule('Ink.UI.Tooltip', '1', ['Ink.UI.Aux_1', 'Ink.Dom.Event_1', 'Ink
                 var tooltipLeft = tleft - scrl[0];
                 var tooltipTop = ttop - scrl[1];
 
+                var toBottom = (tooltipTop + tooltipDims[1]) - maxY;
+                var toRight = (tooltipLeft + tooltipDims[0]) - maxX;
+                var toLeft = 0 - tooltipLeft;
+                var toTop = 0 - tooltipTop;
+
+                if (toBottom > 0) {
+                    if (arrow) { arrow.style.top = (tooltipDims[1] / 2) + toBottom + 'px'; }
+                    tooltipTop -= toBottom;
+                } else if (toTop > 0) {
+                    if (arrow) { arrow.style.top = (tooltipDims[1] / 2) - toTop + 'px'; }
+                    tooltipTop += toTop;
+                } else if (toRight > 0) {
+                    if (arrow) { arrow.style.left = (tooltipDims[0] / 2) + toRight + 'px'; }
+                    tooltipLeft -= toRight;
+                } else if (toLeft > 0) {
+                    if (arrow) { arrow.style.left = (tooltipDims[0] / 2) - toLeft + 'px'; }
+                    tooltipLeft += toLeft;
+                }
+
                 tooltip.style.left = tooltipLeft + 'px';
                 tooltip.style.top = tooltipTop + 'px';
-
-                if (tooltipLeft < 0) {
-                    if (arrow) {
-                        arrow.style.left = (tooltipDims[0] / 2) + tooltipLeft + 'px';
-                    }
-                    tooltip.style.left = 0;
-                } else if (tooltipTop < 0) {
-                    if (arrow) {
-                        arrow.style.top = (tooltipDims[1] / 2) + tooltipTop + 'px';
-                    }
-                    tooltip.style.top = 0;
-                }
             }
         },
         _removeTooltip: function() {
