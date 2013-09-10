@@ -491,6 +491,8 @@ Ink.createModule('Ink.UI.FormValidator', '2', [ 'Ink.UI.Aux_1','Ink.Dom.Element_
             for( var i = 1; i < paramsLength; i++ ){
                 this._errors[rule] = this._errors[rule].replace(':param'+(i), params[i]);
             }
+            // fix "does not contain a valid :param1 IP address"-like messages:
+            this._errors[rule] = this._errors[rule].replace(/:param\d+/g, '');
         },
 
         /**
@@ -591,10 +593,8 @@ Ink.createModule('Ink.UI.FormValidator', '2', [ 'Ink.UI.Aux_1','Ink.Dom.Element_
 
 
     /**
-     * @class Ink.UI.FormValidator
+     * @class Ink.UI.FormValidator_2
      * @version 2
-     * @uses Ink.Dom.Css
-     * @uses Ink.Util.Validator
      * @constructor
      * @param {String|DOMElement} selector Either a CSS Selector string, or the form's DOMElement
      * @param {} [varname] [description]
