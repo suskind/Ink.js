@@ -1131,7 +1131,7 @@ Ink.createModule('Ink.Util.Validator', '1', [], function() {
                 return false;
             }
 
-            ipType = ipType || 'ipv4';
+            ipType = (ipType || 'ipv4').toLowerCase();
 
             switch( ipType ){
                 case 'ipv4':
@@ -1153,7 +1153,7 @@ Ink.createModule('Ink.Util.Validator', '1', [], function() {
         _creditCardSpecs: {
             'default': {
                 'length': '13,14,15,16,17,18,19',
-                'prefix': '',
+                'prefix': /^.+/,
                 'luhn': true
             },
 

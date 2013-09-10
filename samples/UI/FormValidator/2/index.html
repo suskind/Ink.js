@@ -78,7 +78,14 @@
                         <div class="control-group required">
                             <label for="number">A number between -1.23 and 2.25 with at most 2 decimal points!</label>
                             <div class="control">
-                                <input type="text" name="number" id="number" data-rules="numeric[1]" />
+                                <input type="text" name="number" id="number" data-rules="required|numeric[1]" />
+                            </div>
+                        </div>
+
+                        <div class="control-group required">
+                            <label for="creditcard">Credit card</label>
+                            <div class="control">
+                                <input type="text" name="creditcard" id="creditcard" data-rules="credit_card" />
                             </div>
                         </div>
 

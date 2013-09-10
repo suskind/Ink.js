@@ -123,19 +123,19 @@ Ink.createModule('Ink.UI.FormValidator', '2', [ 'Ink.UI.Aux_1','Ink.Dom.Element_
 
         /**
          * Checks if it's a valid credit card.
-         * TODO: uncomment when InkValidator.isCreditCard exists
-         * @@method validationFunctions.credit_card
+         *
+         * @method validationFunctions.credit_card
          * @param  {String} value   Value to be checked
          * @param  {String} cardType Type of credit card to be validated. The card types available are in the Ink.Util.Validator class.
          * @return {Boolean}         True if the value is a valid credit card number. False if not.
-         *//*
+         */
         'credit_card': function( value, cardType ){
             if( typeof value !== 'string' ){
                 return false;
             }
 
-            return InkValidator.isCreditCard( value, cardType );
-        },*/
+            return InkValidator.isCreditCard( value, cardType || 'default' );
+        },
 
         /**
          * Checks if the value is a valid date.
