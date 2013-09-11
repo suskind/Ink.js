@@ -6,14 +6,16 @@
 Ink.createModule('Ink.Util.I18n', '1', [], function () {
     'use strict';
 
-    var pattrText = /\{(\{.*?})}|(?:\{(?:(\d+)|(\w+)|(?:%s(?::(\d+))?))?})/g;
+    var pattrText = /\{(?:(\{.*?})|(?:%s:)?(\d+)|(?:%s)?|([\w-]+))}/g;
 
-    var funcOrVal = function( ret /*, args */ ) {
-        var args = Array.prototype.slice.call( arguments , 1 );
-
-        return typeof ret === 'function' ? ret.apply( this , args ) :
-                      ret !== undefined  ? ret :
-                                           '';
+    var funcOrVal = function( ret , args ) {
+        if ( typeof ret === 'function' ) {
+            return ret.apply(this, args);
+        } else if (typeof ret !== undefined) {
+            return ret;
+        } else {
+            return '';
+        }
     };
 
     /**
@@ -50,6 +52,10 @@ Ink.createModule('Ink.Util.I18n', '1', [], function () {
      *          i18n.lang('en_US');  // Missing language.
      *          i18n.text('hello');  // returns 'hello'. If testMode is on, returns '[hello]'
      *      });
+     *      
+     *  @example
+     *      // The old {%s} syntax from libsapo's i18n is still supported
+     *      i18n.text('hello, {%s}!', 'someone'); // -> 'olá, someone!'
      */
     var I18n = function( dict , lang , testMode ) {
         if ( !( this instanceof I18n ) ) { return new I18n( dict , lang , testMode ); }
@@ -137,6 +143,18 @@ Ink.createModule('Ink.Util.I18n', '1', [], function () {
             return this;
         },
 
+        /**
+         * Return an arbitrary key from the current language dictionary
+         *
+         * @method getKey
+         * @param {String} key
+         * @return {Any} The object which happened to be in the current language dictionary on the given key.
+         *
+         * @example
+         *      _.getKey('astring'); // -> 'a translated string'
+         *      _.getKey('anobject'); // -> {'a': 'translated object'}
+         *      _.getKey('afunction'); // -> function () { return 'this is a localized function' }
+         */
         getKey: function( key ) {
             var ret;
             var gLang = this._gLang;
@@ -144,9 +162,7 @@ Ink.createModule('Ink.Util.I18n', '1', [], function () {
     
             if ( key in this._dict ) {
                 ret = this._dict[ key ];
-            } else if ( lang === gLang && key in this._gDict ) {
-                ret = this._gDict[ key ];
-            } else if ( lang !== gLang ) {
+            } else {
                 I18n.lang( lang );
     
                 ret = this._gDict[ key ];
@@ -163,42 +179,63 @@ Ink.createModule('Ink.Util.I18n', '1', [], function () {
          *
          * @method {String} text
          * @param {String} str key to look for in i18n dictionary (which is returned verbatim if unknown)
-         * @param {optional String} arg1 replacement #1 (replaces first {} and all {1})
-         * @param {optional String} arg2 replacement #2 (replaces second {} and all {2})
-         * @param {optional String} ... replacement #n (replaces nth {} and all {n})
+         * @param {Object} [namedParms] named replacements. Replaces {named} with values in this object.
+         * @param {String} [arg1] replacement #1 (replaces first {} and all {1})
+         * @param {String} [arg2] replacement #2 (replaces second {} and all {2})
+         * @param {String} [argn...] replacement #n (replaces nth {} and all {n})
          *
          * @example
-         *     _('Gosto muito de {} e o céu é {}.', 'carros', 'azul');
-         *     // returns 'Gosto muito de carros e o céu é azul.'
+         *      _('Gosto muito de {} e o céu é {}.', 'carros', 'azul');
+         *      // returns 'Gosto muito de carros e o céu é azul.'
          *
          * @example
-         *     _('O {1} é {2} como {2} é a cor do {3}.', 'carro', 'azul', 'FCP');
-         *     // returns 'O carro é azul como azul é o FCP.'
+         *      _('O {1} é {2} como {2} é a cor do {3}.', 'carro', 'azul', 'FCP');
+         *      // returns 'O carro é azul como azul é o FCP.'
+         *
+         *  @example
+         *      _('O {person1} dava-se com a {person2}', {person1: 'coisinho', person2: 'coisinha'});
+         *      // -> 'O coisinho dava-se com a coisinha'
+         *
+         *  @example
+         *      // This is a bit more complex
+         *      var i18n = make().lang('pt_PT').append({
+         *          pt_PT: {
+         *              array: [1, 2],
+         *              object: {'a': '-a-', 'b': '-b-'},
+         *              func: function (a, b) {return '[[' + a + ',' + b + ']]';}
+         *          }
+         *      });
+         *      i18n.text('array', 0); // -> '1'
+         *      i18n.text('object', 'a'); // -> '-a-'
+         *      i18n.text('func', 'a', 'b'); // -> '[[a,b]]'
          */
         text: function( str /*, replacements...*/ ) {
             if ( typeof str !== 'string' ) { return; } // Backwards-compat
 
-            var args = Array.prototype.slice.call( arguments , 1 );
+            var pars = Array.prototype.slice.call( arguments , 1 );
             var idx = 0;
-            var isObj = typeof args[ 0 ] === 'object';
+            var isObj = typeof pars[ 0 ] === 'object';
 
             var original = this.getKey( str );
             if ( original === undefined ) { original = this._testMode ? '[' + str + ']' : str; }
             if ( typeof original === 'number' ) { original += ''; }
+
+            if (typeof original === 'string') {
+                original = original.replace( pattrText , function( m , $1 , $2 , $3 , i ) {
+                    var ret =
+                        $1 ? $1 :
+                        $2 ? pars[ $2 - ( isObj ? 0 : 1 ) ] :
+                        $3 ? pars[ 0 ][ $3 ] :
+                             pars[ (idx++) + ( isObj ? 1 : 0 ) ]
+                    return funcOrVal( ret , [idx].concat(pars) );
+                });
+                return original;
+            }
              
             return (
-                typeof original === 'string' ?
-                    original.replace( pattrText , function( m , $1 , $2 , $3 , $4 , i ) {
-                        return funcOrVal(
-                            $1          ? $1 :
-                            $2 || $4    ? args[ ( $2 || $4 ) - ( isObj ? 0 : 1 ) ] :
-                            $3          ? args[ 0 ][ $3 ] :
-                                          args[ idx++ + ( isObj ? 1 : 0 ) ] ,
-                            m , $1 , $2 , $3 , $4 , i , args , idx );
-                    }) :
-                typeof original === 'function' ? original.apply( this , args ) :
-                original instanceof Array      ? funcOrVal( original[ args[ 0 ] ] , args ) :
-                typeof original === 'object'   ? funcOrVal( original[ args[ 0 ] ] , args ) :
+                typeof original === 'function' ? original.apply( this , pars ) :
+                original instanceof Array      ? funcOrVal( original[ pars[ 0 ] ] , pars ) :
+                typeof original === 'object'   ? funcOrVal( original[ pars[ 0 ] ] , pars ) :
                                                  '');
         },
 
@@ -224,21 +261,21 @@ Ink.createModule('Ink.Util.I18n', '1', [], function () {
          *     i18n.ntext('{} platypus', '{} platypuses', 2); // returns '2 ornitorrincos'
          */
         ntext: function( strSin , strPlur , count ) {
-            var args = Array.prototype.slice.apply( arguments );
+            var pars = Array.prototype.slice.apply( arguments );
             var original;
 
-            if ( args.length === 2 && typeof strPlur === 'number' ) {
+            if ( pars.length === 2 && typeof strPlur === 'number' ) {
                 original = this.getKey( strSin );
                 if ( !( original instanceof Array ) ) { return ''; }
 
-                args.splice( 0 , 1 );
+                pars.splice( 0 , 1 );
                 original = original[ strPlur === 1 ? 0 : 1 ];
             } else {
-                args.splice( 0 , 2 );
+                pars.splice( 0 , 2 );
                 original = count === 1 ? strSin : strPlur;
             }
 
-            return this.text.apply( this , [ original ].concat( args ) );
+            return this.text.apply( this , [ original ].concat( pars ) );
         },
 
         /**
@@ -347,7 +384,7 @@ Ink.createModule('Ink.Util.I18n', '1', [], function () {
 
             if ( 'exceptions' in ordDict ) {
                 ret = typeof ordDict.exceptions === 'function' ? ordDict.exceptions( num , lastDig ) :
-                      num in ordDict.exceptions                ? funcOrVal( ordDict.exceptions[ num ] , num , lastDig ) :
+                      num in ordDict.exceptions                ? funcOrVal( ordDict.exceptions[ num ] , [num , lastDig] ) :
                                                                  undefined;
 
                 if ( typeof ret === 'string' ) { return ret; }
@@ -355,14 +392,14 @@ Ink.createModule('Ink.Util.I18n', '1', [], function () {
 
             if ( 'byLastDigit' in ordDict ) {
                 ret = typeof ordDict.byLastDigit === 'function' ? ordDict.byLastDigit( lastDig , num ) :
-                      lastDig in ordDict.byLastDigit            ? funcOrVal( ordDict.byLastDigit[ lastDig ] , lastDig , num ) :
+                      lastDig in ordDict.byLastDigit            ? funcOrVal( ordDict.byLastDigit[ lastDig ] , [lastDig , num] ) :
                                                                   undefined;
 
                 if ( typeof ret === 'string' ) { return ret; }
             }
 
             if ( 'default' in ordDict ) {
-                ret = funcOrVal( ordDict['default'] , num , lastDig );
+                ret = funcOrVal( ordDict['default'] , [ num , lastDig ] );
 
                 if ( typeof ret === 'string' ) { return ret; }
             }

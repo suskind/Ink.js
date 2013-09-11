@@ -2,6 +2,12 @@
 Ink.requireModules( [ 'Ink.Util.I18n' ] , function ( I18n ) {
     'use strict';
 
+    var _test = window.test,
+        test = function () {
+            I18n.reset();
+            return _test.apply(this, [].slice.call(arguments));
+        };
+
     function make() {
         return new I18n(dict, 'pt_PT');
     }
@@ -41,14 +47,16 @@ Ink.requireModules( [ 'Ink.Util.I18n' ] , function ( I18n ) {
         equal(i18n.text('sfraggles'), 'braggles');
     });
 
-    test('_testMode', function() {
+    test('testMode', function() {
         var i18n = make();
         var _ = i18n.alias();
         i18n.testMode(true);
+        equal(i18n.testMode(), true);
         equal(_('unknown'), '[unknown]');
         equal(_('me'), 'eu');
 
         i18n.testMode(false);
+        equal(i18n.testMode(), false);
         equal(_('unknown'), 'unknown');
         equal(_('me'), 'eu');
     });
@@ -188,6 +196,89 @@ Ink.requireModules( [ 'Ink.Util.I18n' ] , function ( I18n ) {
         equal(_.ntext('{} day', '{} days', 2), '2 dias');
         equal(_.ntext('{} day', '{} days', 1), '1 dia');
         equal(_.ordinal(3), 'º');
+    });
+
+    test('escaping braces', function () {
+        var i18n = make();
+        i18n.lang('pt_PT').append({pt_PT: {
+            escNew: '{{}}{{1}}',
+            escOld: '{{%s}}{{%s:1}}'
+        }});
+        equal(i18n.text('escNew'), '{}{1}')
+        equal(i18n.text('escOld'), '{%s}{%s:1}')
+    });
+
+    (function () {
+        var i18n = make();
+        i18n.lang('pt_PT').append({
+            pt_PT: {
+                '{person1} said hi to {person2}': '{person1} disse olá à {person2}',
+                '{person-1} said hi to {person-2}': '{person-1} disse olá à {person-2}',
+                '{} said hi to {1}': '{} disse olá à {1}',
+                '{1} said hi to {person-2}': '{} disse olá à {person-2}',
+                '{person-1} said hi to {1}': '{person-1} disse olá à {1}'
+            }
+        });
+        test('named parameters, array parameters', function () {
+            equal(i18n.text('{person1} said hi to {person2}', {
+                person1: 'root',
+                person2: 'sapo'}),
+                'root disse olá à sapo');
+
+            equal(i18n.text('{person-1} said hi to {person-2}', {
+                'person-1': 'root',
+                'person-2': 'sapo'}),
+                'root disse olá à sapo');
+        });
+
+        test('mixing types', function () {
+            equal(i18n.text('{} said hi to {1}', 'root', 'sapo'),
+                'root disse olá à root');
+
+            equal(
+                i18n.text('{1} said hi to {person-2}', {"person-2": 'sapo'}, 'root'),
+                'root disse olá à sapo');
+
+            equal(
+                i18n.text('{person-1} said hi to {1}', {'person-1': 'rute'}, 'sapo'),
+                'rute disse olá à sapo');
+        });
+    }());
+
+    test('functions', function () {
+        var i18n = make().lang('pt_PT').append({
+            pt_PT: {
+                'say-hi': function (par1, par2) {
+                    return par1 + ' ' + par2
+                }
+            }
+        });
+        equal(i18n.text('say-hi', 'par1', 'par2'), 'par1 par2');
+    });
+
+    test('arrays, objects', function () {
+        var i18n = make().lang('pt_PT').append({
+            pt_PT: {
+                array: [1, 2],
+                object: {'a': '-a-', 'b': '-b-'}
+            }
+        });
+        equal(i18n.text('array', 0), '1');
+        equal(i18n.text('object', 'a'), '-a-');
+    });
+
+    test('old replacement API compatibility', function () {
+        var i18n = make().lang('pt_PT').append({pt_PT: {
+            "hello, {%s}": 'olá, {%s}',
+            "hello, {%s:1}": 'olá, {%s:1}'
+        }});
+
+        equal(
+            i18n.text('hello, {%s}', 'coisinho'),
+            'olá, coisinho');
+        equal(
+            i18n.text('hello, {%s:1}', 'coisinho'),
+            'olá, coisinho');
     });
 
     test('Global stuff', function () {
