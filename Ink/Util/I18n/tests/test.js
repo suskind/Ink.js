@@ -108,12 +108,11 @@ Ink.requireModules(['Ink.Util.I18n'], function () {
         equal(i18n.ordinal(11), '<sup>e</sup>');
         
         i18n = new I18n(dict, 'en_US');
-        equal(i18n.ordinal(1), 'st');  // x
-        equal(i18n.ordinal(2), 'nd');  // x
-        equal(i18n.ordinal(0), '');
+        equal(i18n.ordinal(1), 'st');
+        equal(i18n.ordinal(2), 'nd');
         equal(i18n.ordinal(12), 'th');
-        equal(i18n.ordinal(22), 'nd');  // x
-        equal(i18n.ordinal(3), 'rd');  // x
+        equal(i18n.ordinal(22), 'nd');
+        equal(i18n.ordinal(3), 'rd');
         equal(i18n.ordinal(4), 'th');
         equal(i18n.ordinal(5), 'th');
     });
@@ -121,7 +120,7 @@ Ink.requireModules(['Ink.Util.I18n'], function () {
     test('ordinal (from passed options)', function () {
         // Examples of passing in the options directly
         var ptOrdinals = {
-            "default": '&ordm;'
+            default: '&ordm;'
         };
         var i18n = new I18n();
         equal(i18n.ordinal(1, ptOrdinals), '&ordm;'); // Returns 'º'

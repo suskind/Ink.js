@@ -266,7 +266,7 @@ Ink.createModule('Ink.Util.I18n', '1', [], function () {
          * @example
          *     var i18n = new I18n({
          *         fr: {  // 1er, 2e, 3e, 4e, ...
-         *             _ordinals: {  // The _ordinals key is special.
+         *             _ordinal: {  // The _ordinals key is special.
          *                 'default': "e", // Usually the suffix is "e" in french...
          *                 exceptions: {
          *                     1: "er"   // ... Except for the number one.
@@ -274,7 +274,7 @@ Ink.createModule('Ink.Util.I18n', '1', [], function () {
          *             }
          *         },
          *         en_US: {  // 1st, 2nd, 3rd, 4th, ..., 11th, 12th, ... 21st, 22nd...
-         *             _ordinals: {
+         *             _ordinal: {
          *                 'default': "th",// Usually the digit is "th" in english...
          *                 byLastDigit: {
          *                     1: "st",  // When the last digit is 1, use "th"...
@@ -321,66 +321,36 @@ Ink.createModule('Ink.Util.I18n', '1', [], function () {
             var numStr = num.toString();
             options = options || {};
             var fromDict = this._strings._ordinals || {};
-            
-            var tryRet;
-            if (typeof options === 'function') {
-                tryRet = options(num)
-            } else if (typeof fromDict === 'function') {
-                tryRet = fromDict(num);
-            }
-            if (typeof tryRet === 'string') {
-                return tryRet;
+
+            var inCaseOptionsIsAFunction = v(options, num) || v(fromDict, num);
+            if (inCaseOptionsIsAFunction) {
+                return inCaseOptionsIsAFunction;
             }
 
-            function v(inside, number) {
+            function v(val, number) {
                 number = typeof number === 'undefined' ? num : number;
-                if (typeof inside === 'undefined') {
+                if (typeof val === 'undefined') {
                     return;
-                } else if (typeof inside === 'function') {
+                } else if (typeof val === 'function') {
                     try {
-                        var ret = inside(number);
+                        var ret = val(number);
                         return typeof ret === 'string' ? ret : null;
                     } catch(e) {}
-                } else if (typeof inside === 'object') {
-                    return inside[number];
-                } else if (typeof inside === 'string') {
+                } else if (typeof val === 'object') {
+                    return val[number];
+                } else if (typeof val === 'string') {
                     // Useful for the default option, or to define a global _ordinals rule for languages which don't need it.
-                    return inside;
+                    return val;
                 }
             }
-
             function lookup (obj) {
-                var tmp;
-
-                tmp = v(obj.exceptions);
-                if (typeof tmp === 'string') {
-                    return tmp;
-                }
-
-                tmp = v(obj.byLastDigit, +(numStr[numStr.length - 1]));
-                if (typeof tmp === 'string') {
-                    return tmp;
-                }
-
-                tmp = v(obj['default'])
-                if (typeof tmp === 'string') {
-                    return tmp;
-                }
+                return (
+                    v(obj.exceptions, num) ||
+                    v(obj.byLastDigit, +(numStr[numStr.length - 1])) ||
+                    v(obj.default, num) ||
+                    null);
             }
-
-            var ret;
-            
-            ret = lookup(options)
-            if (typeof ret === 'string') {
-                return ret;
-            }
-            
-            ret = lookup(fromDict)
-            if (typeof ret === 'string') {
-                return ret;
-            }
-
-            return '';
+            return lookup(options) || lookup(fromDict) || '';
         }
     };
     
