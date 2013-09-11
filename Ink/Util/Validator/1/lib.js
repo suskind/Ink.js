@@ -373,7 +373,8 @@ Ink.createModule('Ink.Util.Validator', '1', [], function() {
                 decimalSep: '.',
                 thousandSep: '',
                 negative: true,
-                decimalPlaces: 0,
+                decimalPlaces: null,
+                maxDigits: null,
                 max: null,
                 min: null,
                 returnNumber: false
@@ -397,19 +398,32 @@ Ink.createModule('Ink.Util.Validator', '1', [], function() {
                 return false;  // forbidden character found
             }
             
-            if (numb.indexOf(options.decimalSep) !== -1) {
-                var split = numb.split(options.decimalSep);
-                if (split[1].length > options.decimalPlaces) {
+            var split;
+            if (options.decimalSep && numb.indexOf(options.decimalSep) !== -1) {
+                split = numb.split(options.decimalSep);
+                if (options.decimalPlaces !== null &&
+                        split[1].length > options.decimalPlaces) {
                     return false;
                 }
+            } else {
+                split = ['' + numb, ''];
             }
-
+            
+            if (options.maxDigits!== null) {
+                if (split[0].replace(/-/g, '').length > options.maxDigits) {
+                    return split
+                }
+            }
+            
             // Now look at the actual float
             var ret = parseFloat(numb);
-
-            if (options.max !== null && ret > options.max) {
+            
+            if (options.maxExcl !== null && ret >= options.maxExcl ||
+                    options.minExcl !== null && ret <= options.minExcl) {
                 return false;
-            } else if (options.min !== null && ret < options.min) {
+            }
+            if (options.max !== null && ret > options.max ||
+                    options.min !== null && ret < options.min) {
                 return false;
             }
             

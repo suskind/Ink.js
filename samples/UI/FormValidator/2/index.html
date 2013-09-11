@@ -78,7 +78,7 @@
                         <div class="control-group required">
                             <label for="number">A number between -1.23 and 2.25 with at most 2 decimal points!</label>
                             <div class="control">
-                                <input type="text" name="number" id="number" data-rules="required|numeric[1]" />
+                                <input type="text" name="number" id="number" data-rules="required|numeric[.,2]|range[-1.23,2.25]" />
                             </div>
                         </div>
 

@@ -233,11 +233,10 @@ Ink.createModule('Ink.UI.FormValidator', '2', [ 'Ink.UI.Aux_1','Ink.Dom.Element_
          * @return {Boolean}         True if the value is a valid integer. False if not.
          */
         'integer': function( value, positive ){
-            if( positive ){
-                return ((typeof value === 'string') && /^[0-9]+$/.test(value));
-            } else {
-                return ((typeof value === 'string') && /^\-?[0-9]+$/.test(value));
-            }
+            return InkValidator.number(value, {
+                negative: !positive,
+                decimalPlaces: 0
+            });
         },
 
         /**
@@ -251,17 +250,11 @@ Ink.createModule('Ink.UI.FormValidator', '2', [ 'Ink.UI.Aux_1','Ink.Dom.Element_
          * @return {Boolean}         True if the value is a valid decimal number. False if not.
          */
         'decimal': function( value, decimalSeparator, decimalPlaces, leftDigits ){
-            decimalSeparator = decimalSeparator || '.';
-            var numb = InkValidator.number(value, {
+            return InkValidator.number(value, {
                 decimalSep: decimalSeparator || '.',
-                decimalPlaces: +decimalPlaces || 0,
-                returnNumb: true
+                decimalPlaces: +decimalPlaces || null,
+                maxDigits: +leftDigits
             });
-            if (leftDigits && ('' + Math.round(numb)).length > leftDigits) {
-                return false;
-            }
-
-            return true;
         },
 
         /**
@@ -270,19 +263,21 @@ Ink.createModule('Ink.UI.FormValidator', '2', [ 'Ink.UI.Aux_1','Ink.Dom.Element_
          * @method validationFunctions.numeric
          * @param  {String} value   Value to be checked
          * @param  {String} decimalSeparator Verifies if it's a valid decimal. Otherwise checks if it's a valid integer.
+         * @param  {String} [decimalPlaces] (when the number is decimal) Maximum number of digits that the decimal part must have.
+         * @param  {String} [leftDigits] (when the number is decimal) Maximum number of digits that the integer part must have, when provided.
          * @return {Boolean}         True if the value is numeric. False if not.
          */
-        'numeric': function( value, decimalSeparator ){
+        'numeric': function( value, decimalSeparator, decimalPlaces, leftDigits ){
             decimalSeparator = decimalSeparator || '.';
             if( value.indexOf(decimalSeparator) !== -1  ){
-                return validationFunctions.decimal( value, decimalSeparator );
+                return validationFunctions.decimal( value, decimalSeparator, decimalPlaces, leftDigits );
             } else {
                 return validationFunctions.integer( value );
             }
         },
 
         /**
-         * Checks if the value is in a specific range of values.
+         * Checks if the value is in a specific range of values. The parameters after the first one are used for specifying the range, and are similar in function to python's range() function.
          *
          * @method validationFunctions.range
          * @param  {String} value   Value to be checked
@@ -330,8 +325,8 @@ Ink.createModule('Ink.UI.FormValidator', '2', [ 'Ink.UI.Aux_1','Ink.Dom.Element_
          * @param  {String} fieldToCompare Name or ID of the field to compare.
          * @return {Boolean}         True if the values match. False if not.
          */
-        'matches': function( value, fieldToCompare, arrElements ){
-            return ( value === arrElements[fieldToCompare][0].getValue() );
+        'matches': function( value, fieldToCompare ){
+            return ( value === this.getFormElements()[fieldToCompare][0].getValue() );
         }
 
     };
@@ -451,7 +446,6 @@ Ink.createModule('Ink.UI.FormValidator', '2', [ 'Ink.UI.Aux_1','Ink.Dom.Element_
                                 params[p];
                         }
                         params.splice(0,0,this.getValue());
-                        params.push(this._options.form._formElements);
 
                         rule = rule.substr(0,paramStartPos);
 
@@ -550,6 +544,17 @@ Ink.createModule('Ink.UI.FormValidator', '2', [ 'Ink.UI.Aux_1','Ink.Dom.Element_
         },
 
         /**
+         * Get other elements in the same form.
+         *
+         * @method getFormElements
+         * @return {Object} A mapping of keys to other elements in this form.
+         * @public
+         */
+        getFormElements: function () {
+            return this._options.form.getElements();
+        },
+
+        /**
          * Function used to validate the element based on the rules defined.
          * It parses the rules defined in the _options.rules property.
          *
@@ -561,26 +566,27 @@ Ink.createModule('Ink.UI.FormValidator', '2', [ 'Ink.UI.Aux_1','Ink.Dom.Element_
 
             this._errors = {};
 
-            if( "rules" in this._options || 1){
+            if( "rules" in this._options){
                 this._parseRules( this._options.rules );
             }
 
             for(var rule in this._rules){
 
-                if( this._rules.hasOwnProperty( rule ) && (typeof validationFunctions[rule] === 'function') ){
+                if (this._rules.hasOwnProperty(rule)) {
+                    if( (typeof validationFunctions[rule] === 'function') ){
 
-                    if( validationFunctions[rule].apply(this, this._rules[rule] ) === false ){
+                        if( validationFunctions[rule].apply(this, this._rules[rule] ) === false ){
 
-                        this._addError( rule, validationMessages[rule] || 'Error message not defined' );
+                            this._addError( rule, validationMessages[rule] || 'Error message not defined' );
+                            return false;
+
+                        }
+
+                    } else {
+
+                        this._addError( rule, validationMessages['validation_function_not_found'] );
                         return false;
-
                     }
-
-                } else {
-
-                    this._addError( rule, validationMessages['validation_function_not_found'] );
-                    return false;
-
                 }
 
             }
