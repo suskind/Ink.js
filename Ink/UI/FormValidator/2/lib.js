@@ -374,6 +374,9 @@ Ink.createModule('Ink.UI.FormValidator', '2', [ 'Ink.UI.Aux_1','Ink.Dom.Element_
      * @return {FormElement} FormElement object
      */
     var FormElement = function( element, options ){
+        if (element.id === 'name') {
+            debugger
+        }
 
         this._element = Aux.elOrSelector( element, 'Invalid FormElement' );
         this._errors = {};
@@ -551,7 +554,7 @@ Ink.createModule('Ink.UI.FormValidator', '2', [ 'Ink.UI.Aux_1','Ink.Dom.Element_
          * @public
          */
         getFormElements: function () {
-            return this._options.form.getElements();
+            return this._options.form._formElements;
         },
 
         /**
@@ -566,7 +569,7 @@ Ink.createModule('Ink.UI.FormValidator', '2', [ 'Ink.UI.Aux_1','Ink.Dom.Element_
 
             this._errors = {};
 
-            if( "rules" in this._options){
+            if( "rules" in this._options || 1){
                 this._parseRules( this._options.rules );
             }
 
@@ -574,7 +577,7 @@ Ink.createModule('Ink.UI.FormValidator', '2', [ 'Ink.UI.Aux_1','Ink.Dom.Element_
 
                 if (this._rules.hasOwnProperty(rule)) {
                     if( (typeof validationFunctions[rule] === 'function') ){
-
+                        if (rule === 'matches')debugger
                         if( validationFunctions[rule].apply(this, this._rules[rule] ) === false ){
 
                             this._addError( rule, validationMessages[rule] || 'Error message not defined' );
@@ -757,9 +760,9 @@ Ink.createModule('Ink.UI.FormValidator', '2', [ 'Ink.UI.Aux_1','Ink.Dom.Element_
             for( var key in this._formElements ){
                 if( this._formElements.hasOwnProperty(key) ){
                     for( var counter = 0; counter < this._formElements[key].length; counter+=1 ){
-                         if( !this._formElements[key][counter].validate() ) {
+                        if( !this._formElements[key][counter].validate() ) {
                             errorElements.push(this._formElements[key][counter]);
-                         }
+                        }
                     }
                 }
             }
