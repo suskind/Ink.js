@@ -1217,7 +1217,6 @@ Ink.createModule('Ink.Util.Validator', '1', [], function() {
         /**
          * Luhn function, to be used when validating credit cards
          *
-         * TODO implement isCreditCard
          */
         _luhn: function (num){
 
