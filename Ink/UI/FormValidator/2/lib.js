@@ -339,58 +339,54 @@ Ink.createModule('Ink.UI.FormValidator', '2', [ 'Ink.UI.Aux_1','Ink.Dom.Element_
      */
     var validationMessages = new I18n({
         en_US: {
-            _formvalidator: {
-                'required' : 'The {field} filling is mandatory',
-                'min_length': 'The {field} must have a minimum size of {param1} characters',
-                'max_length': 'The {field} must have a maximum size of {param1} characters',
-                'exact_length': 'The {field} must have an exact size of {param1} characters',
-                'email': 'The {field} must have a valid e-mail address',
-                'url': 'The {field} must have a valid URL',
-                'ip': 'The {field} does not contain a valid {param1} IP address',
-                'phone': 'The {field} does not contain a valid {param1} phone number',
-                'credit_card': 'The {field} does not contain a valid {param1} credit card',
-                'date': 'The {field} should contain a date in the {param1} format',
-                'alpha': 'The {field} should only contain letters',
-                'text': 'The {field} should only contain alphabetic characters',
-                'latin': 'The {field} should only contain alphabetic characters',
-                'alpha_numeric': 'The {field} should only contain letters or numbers',
-                'alpha_dashes': 'The {field} should only contain letters or dashes',
-                'digit': 'The {field} should only contain a digit',
-                'integer': 'The {field} should only contain an integer',
-                'decimal': 'The {field} should contain a valid decimal number',
-                'numeric': 'The {field} should contain a number',
-                'range': 'The {field} should contain a number between {param1} and {param2}',
-                'color': 'The {field} should contain a valid color',
-                'matches': 'The {field} should match the field {param1}',
-                'validation_function_not_found': 'The rule {rule} has not been defined'
-            }
+            'formvalidator.required' : 'The {field} filling is mandatory',
+            'formvalidator.min_length': 'The {field} must have a minimum size of {param1} characters',
+            'formvalidator.max_length': 'The {field} must have a maximum size of {param1} characters',
+            'formvalidator.exact_length': 'The {field} must have an exact size of {param1} characters',
+            'formvalidator.email': 'The {field} must have a valid e-mail address',
+            'formvalidator.url': 'The {field} must have a valid URL',
+            'formvalidator.ip': 'The {field} does not contain a valid {param1} IP address',
+            'formvalidator.phone': 'The {field} does not contain a valid {param1} phone number',
+            'formvalidator.credit_card': 'The {field} does not contain a valid {param1} credit card',
+            'formvalidator.date': 'The {field} should contain a date in the {param1} format',
+            'formvalidator.alpha': 'The {field} should only contain letters',
+            'formvalidator.text': 'The {field} should only contain alphabetic characters',
+            'formvalidator.latin': 'The {field} should only contain alphabetic characters',
+            'formvalidator.alpha_numeric': 'The {field} should only contain letters or numbers',
+            'formvalidator.alpha_dashes': 'The {field} should only contain letters or dashes',
+            'formvalidator.digit': 'The {field} should only contain a digit',
+            'formvalidator.integer': 'The {field} should only contain an integer',
+            'formvalidator.decimal': 'The {field} should contain a valid decimal number',
+            'formvalidator.numeric': 'The {field} should contain a number',
+            'formvalidator.range': 'The {field} should contain a number between {param1} and {param2}',
+            'formvalidator.color': 'The {field} should contain a valid color',
+            'formvalidator.matches': 'The {field} should match the field {param1}',
+            'formvalidator.validation_function_not_found': 'The rule {rule} has not been defined'
         },
         pt_PT: {
-            _formvalidator: {
-                'required' : 'Preencher {field} é obrigatório',
-                'min_length': '{field} deve ter no mínimo {param1} caracteres',
-                'max_length': '{field} tem um tamanho máximo de {param1} caracteres',
-                'exact_length': '{field} devia ter exactamente {param1} caracteres',
-                'email': '{field} deve ser um e-mail válido',
-                'url': 'O {field} deve ser um URL válido',
-                'ip': '{field} não tem um endereço IP {param1} válido',
-                'phone': '{field} deve ser preenchido com um número de telefone {param1} válido.',
-                'credit_card': '{field} não tem um cartão de crédito {param1} válido',
-                'date': '{field} deve conter uma data no formato {param1}',
-                'alpha': 'O campo {field} deve conter apenas caracteres alfabéticos',
-                'text': 'O campo {field} deve conter apenas caracteres alfabéticos',
-                'latin': 'O campo {field} deve conter apenas caracteres alfabéticos',
-                'alpha_numeric': '{field} deve conter apenas letras e números',
-                'alpha_dashes': '{field} deve conter apenas letras e traços',
-                'digit': '{field} destina-se a ser preenchido com apenas um dígito',
-                'integer': '{field} deve conter um número inteiro',
-                'decimal': '{field} deve conter um número válido',
-                'numeric': '{field} deve conter um número válido',
-                'range': '{field} deve conter um número entre {param1} e {param2}',
-                'color': '{field} deve conter uma cor válida',
-                'matches': '{field} deve corresponder ao campo {param1}',
-                'validation_function_not_found': '[A regra {rule} não foi definida]'
-            }
+            'formvalidator.required' : 'Preencher {field} é obrigatório',
+            'formvalidator.min_length': '{field} deve ter no mínimo {param1} caracteres',
+            'formvalidator.max_length': '{field} tem um tamanho máximo de {param1} caracteres',
+            'formvalidator.exact_length': '{field} devia ter exactamente {param1} caracteres',
+            'formvalidator.email': '{field} deve ser um e-mail válido',
+            'formvalidator.url': 'O {field} deve ser um URL válido',
+            'formvalidator.ip': '{field} não tem um endereço IP {param1} válido',
+            'formvalidator.phone': '{field} deve ser preenchido com um número de telefone {param1} válido.',
+            'formvalidator.credit_card': '{field} não tem um cartão de crédito {param1} válido',
+            'formvalidator.date': '{field} deve conter uma data no formato {param1}',
+            'formvalidator.alpha': 'O campo {field} deve conter apenas caracteres alfabéticos',
+            'formvalidator.text': 'O campo {field} deve conter apenas caracteres alfabéticos',
+            'formvalidator.latin': 'O campo {field} deve conter apenas caracteres alfabéticos',
+            'formvalidator.alpha_numeric': '{field} deve conter apenas letras e números',
+            'formvalidator.alpha_dashes': '{field} deve conter apenas letras e traços',
+            'formvalidator.digit': '{field} destina-se a ser preenchido com apenas um dígito',
+            'formvalidator.integer': '{field} deve conter um número inteiro',
+            'formvalidator.decimal': '{field} deve conter um número válido',
+            'formvalidator.numeric': '{field} deve conter um número válido',
+            'formvalidator.range': '{field} deve conter um número entre {param1} e {param2}',
+            'formvalidator.color': '{field} deve conter uma cor válida',
+            'formvalidator.matches': '{field} deve corresponder ao campo {param1}',
+            'formvalidator.validation_function_not_found': '[A regra {rule} não foi definida]'
         },
     }, 'en_US');
 
@@ -492,30 +488,29 @@ Ink.createModule('Ink.UI.FormValidator', '2', [ 'Ink.UI.Aux_1','Ink.Dom.Element_
          * Then it replaces some tokens in the message for a more 'custom' reading
          *
          * @method _addError
-         * @param  {String} rule    Rule that failed
-         * @param  {String} message Message from the validationMessages object.
+         * @param  {String|null} rule    Rule that failed, or null if no rule was found.
          * @private
          * @static
          */
-        _addError: function(rule, message ){
+        _addError: function(rule){
+            var params = this._rules[rule] || [];
 
-            var params, paramsLength;
+            var paramObj = {
+                field: this._options.label,
+                value: this.getValue()
+            };
 
-            if( rule in this._rules ){
-                params = this._rules[rule];
-            } else {
-                params = [];
+            for( var i = 1; i < params.length; i++ ){
+                paramObj['param' + i] = params[i];
             }
-            paramsLength = params.length;
-            debugger
 
-            this._errors[rule] = message;
-            this._errors[rule] = this._errors[rule].replace(':field',this._options.label).replace(':value',this.getValue()).replace(':rule',rule);
-            for( var i = 1; i < paramsLength; i++ ){
-                this._errors[rule] = this._errors[rule].replace(':param'+(i), params[i]);
+            var i18nKey = 'formvalidator.' + rule;
+
+            this._errors[rule] = validationMessages.text(i18nKey, paramObj);
+
+            if (this._errors[rule] === i18nKey) {
+                this._errors[rule] = 'Validation message not found';
             }
-            // fix "does not contain a valid :param1 IP address"-like messages:
-            this._errors[rule] = this._errors[rule].replace(/:param\d+/g, '');
         },
 
         /**
@@ -592,7 +587,6 @@ Ink.createModule('Ink.UI.FormValidator', '2', [ 'Ink.UI.Aux_1','Ink.Dom.Element_
          * @public
          */
         validate: function(){
-
             this._errors = {};
 
             if( "rules" in this._options || 1){
@@ -605,14 +599,14 @@ Ink.createModule('Ink.UI.FormValidator', '2', [ 'Ink.UI.Aux_1','Ink.Dom.Element_
                     if( (typeof validationFunctions[rule] === 'function') ){
                         if( validationFunctions[rule].apply(this, this._rules[rule] ) === false ){
 
-                            this._addError( rule, validationMessages[rule] || 'Error message not defined' );
+                            this._addError( rule );
                             return false;
 
                         }
 
                     } else {
 
-                        this._addError( rule, validationMessages['validation_function_not_found'] );
+                        this._addError( null );
                         return false;
                     }
                 }
@@ -686,14 +680,59 @@ Ink.createModule('Ink.UI.FormValidator', '2', [ 'Ink.UI.Aux_1','Ink.Dom.Element_
      *
      * @method setRule
      * @param {String}   name         Name of the function. E.g. 'required'
-     * @param {String}   errorMessage Error message to be displayed in case of returning false. E.g. 'Oops, you passed :param1 as parameter1, lorem ipsum dolor...'
+     * @param {String}   errorMessage Error message to be displayed in case of returning false. E.g. 'Oops, you passed {param1} as parameter1, lorem ipsum dolor...'
      * @param {Function} cb           Function to be executed when calling this rule
      * @public
      * @static
      */
     FormValidator.setRule = function( name, errorMessage, cb ){
         validationFunctions[ name ] = cb;
-        validationMessages[ name ] = errorMessage;  // TODO
+        if (validationMessages.getKey('formvalidator.' + name) !== errorMessage) {
+            var langObj = {}; langObj['formvalidator.' + name] = errorMessage;
+            var dictObj = {}; dictObj[validationMessages.lang()] = langObj;
+            validationMessages.append(dictObj);
+        }
+    };
+
+    /**
+     * Get the i18n object in charge of the error messages
+     *
+     * @method getI18n
+     * @return {Ink.Util.I18n} The i18n object the FormValidator is using.
+     */
+    FormValidator.getI18n = function () {
+        return validationMessages;
+    };
+
+     /**
+     * Sets the I18n object for validation error messages
+     *
+     * @method setI18n
+     * @param {Ink.Util.I18n} i18n  The I18n object.
+     */
+    FormValidator.setI18n = function (i18n) {
+        validationMessages = i18n;
+    };
+
+   /**
+     * Add to the I18n dictionary. See `Ink.Util.I18n.append()` documentation.
+     *
+     * @method AppendI18n
+     */
+    FormValidator.appendI18n = function () {
+        validationMessages.append.apply(validationMessages, [].slice.call(arguments));
+    };
+
+    /**
+     * Sets the language of the error messages. pt_PT and en_US are available, but you can add new languages by using append()
+     *
+     * See the `Ink.Util.I18n.lang()` setter
+     *
+     * @method setLanguage
+     * @param language  The language to set i18n to.
+     */
+    FormValidator.setLanguage = function (language) {
+        validationMessages.lang(language);
     };
 
     /**
