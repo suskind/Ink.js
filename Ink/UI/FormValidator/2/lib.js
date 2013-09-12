@@ -3,7 +3,7 @@
  * @author inkdev AT sapo.pt
  * @version 2
  */
-Ink.createModule('Ink.UI.FormValidator', '2', [ 'Ink.UI.Aux_1','Ink.Dom.Element_1','Ink.Dom.Event_1','Ink.Dom.Selector_1','Ink.Dom.Css_1','Ink.Util.Array_1','Ink.Util.I18n','Ink.Util.Validator_1'], function( Aux, Element, Event, Selector, Css, InkArray, I18n, InkValidator ) {
+Ink.createModule('Ink.UI.FormValidator', '2', [ 'Ink.UI.Aux_1','Ink.Dom.Element_1','Ink.Dom.Event_1','Ink.Dom.Selector_1','Ink.Dom.Css_1','Ink.Util.Array_1','Ink.Util.I18n_1','Ink.Util.Validator_1'], function( Aux, Element, Event, Selector, Css, InkArray, I18n, InkValidator ) {
     'use strict';
 
     /**
@@ -337,33 +337,62 @@ Ink.createModule('Ink.UI.FormValidator', '2', [ 'Ink.UI.Aux_1','Ink.Dom.Element_
      * @private
      * @static
      */
-    var validationMessages = {
-
-        'required' : 'The :field filling is mandatory',
-        'min_length': 'The :field must have a minimum size of :param1 characters',
-        'max_length': 'The :field must have a maximum size of :param1 characters',
-        'exact_length': 'The :field must have an exact size of :param1 characters',
-        'email': 'The :field must have a valid e-mail address',
-        'url': 'The :field must have a valid URL',
-        'ip': 'The :field does not contain a valid :param1 IP address',
-        'phone': 'The :field does not contain a valid :param1 phone number',
-        'credit_card': 'The :field does not contain a valid :param1 credit card',
-        'date': 'The :field should contain a date in the :param1 format',
-        'alpha': 'The :field should only contain letters',
-        'text': 'The :field should only contain alphabetic characters',
-        'latin': 'The :field should only contain alphabetic characters',
-        'alpha_numeric': 'The :field should only contain letters or numbers',
-        'alpha_dashes': 'The :field should only contain letters or dashes',
-        'digit': 'The :field should only contain a digit',
-        'integer': 'The :field should only contain an integer',
-        'decimal': 'The :field should contain a valid decimal number',
-        'numeric': 'The :field should contain a number',
-        'range': 'The :field should contain a number between :param1 and :param2',
-        'color': 'The :field should contain a valid color',
-        'matches': 'The :field should match the field :param1',
-        'validation_function_not_found': 'The rule :rule has not been defined'
-
-    };
+    var validationMessages = new I18n({
+        en_US: {
+            _formvalidator: {
+                'required' : 'The {field} filling is mandatory',
+                'min_length': 'The {field} must have a minimum size of {param1} characters',
+                'max_length': 'The {field} must have a maximum size of {param1} characters',
+                'exact_length': 'The {field} must have an exact size of {param1} characters',
+                'email': 'The {field} must have a valid e-mail address',
+                'url': 'The {field} must have a valid URL',
+                'ip': 'The {field} does not contain a valid {param1} IP address',
+                'phone': 'The {field} does not contain a valid {param1} phone number',
+                'credit_card': 'The {field} does not contain a valid {param1} credit card',
+                'date': 'The {field} should contain a date in the {param1} format',
+                'alpha': 'The {field} should only contain letters',
+                'text': 'The {field} should only contain alphabetic characters',
+                'latin': 'The {field} should only contain alphabetic characters',
+                'alpha_numeric': 'The {field} should only contain letters or numbers',
+                'alpha_dashes': 'The {field} should only contain letters or dashes',
+                'digit': 'The {field} should only contain a digit',
+                'integer': 'The {field} should only contain an integer',
+                'decimal': 'The {field} should contain a valid decimal number',
+                'numeric': 'The {field} should contain a number',
+                'range': 'The {field} should contain a number between {param1} and {param2}',
+                'color': 'The {field} should contain a valid color',
+                'matches': 'The {field} should match the field {param1}',
+                'validation_function_not_found': 'The rule {rule} has not been defined'
+            }
+        },
+        pt_PT: {
+            _formvalidator: {
+                'required' : 'Preencher {field} é obrigatório',
+                'min_length': '{field} deve ter no mínimo {param1} caracteres',
+                'max_length': '{field} tem um tamanho máximo de {param1} caracteres',
+                'exact_length': '{field} devia ter exactamente {param1} caracteres',
+                'email': '{field} deve ser um e-mail válido',
+                'url': 'O {field} deve ser um URL válido',
+                'ip': '{field} não tem um endereço IP {param1} válido',
+                'phone': '{field} deve ser preenchido com um número de telefone {param1} válido.',
+                'credit_card': '{field} não tem um cartão de crédito {param1} válido',
+                'date': '{field} deve conter uma data no formato {param1}',
+                'alpha': 'O campo {field} deve conter apenas caracteres alfabéticos',
+                'text': 'O campo {field} deve conter apenas caracteres alfabéticos',
+                'latin': 'O campo {field} deve conter apenas caracteres alfabéticos',
+                'alpha_numeric': '{field} deve conter apenas letras e números',
+                'alpha_dashes': '{field} deve conter apenas letras e traços',
+                'digit': '{field} destina-se a ser preenchido com apenas um dígito',
+                'integer': '{field} deve conter um número inteiro',
+                'decimal': '{field} deve conter um número válido',
+                'numeric': '{field} deve conter um número válido',
+                'range': '{field} deve conter um número entre {param1} e {param2}',
+                'color': '{field} deve conter uma cor válida',
+                'matches': '{field} deve corresponder ao campo {param1}',
+                'validation_function_not_found': '[A regra {rule} não foi definida]'
+            }
+        },
+    }, 'en_US');
 
     /**
      * Constructor of a FormElement.
@@ -478,6 +507,7 @@ Ink.createModule('Ink.UI.FormValidator', '2', [ 'Ink.UI.Aux_1','Ink.Dom.Element_
                 params = [];
             }
             paramsLength = params.length;
+            debugger
 
             this._errors[rule] = message;
             this._errors[rule] = this._errors[rule].replace(':field',this._options.label).replace(':value',this.getValue()).replace(':rule',rule);
@@ -663,7 +693,7 @@ Ink.createModule('Ink.UI.FormValidator', '2', [ 'Ink.UI.Aux_1','Ink.Dom.Element_
      */
     FormValidator.setRule = function( name, errorMessage, cb ){
         validationFunctions[ name ] = cb;
-        validationMessages[ name ] = errorMessage;
+        validationMessages[ name ] = errorMessage;  // TODO
     };
 
     /**
