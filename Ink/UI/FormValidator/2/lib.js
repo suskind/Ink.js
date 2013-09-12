@@ -374,10 +374,6 @@ Ink.createModule('Ink.UI.FormValidator', '2', [ 'Ink.UI.Aux_1','Ink.Dom.Element_
      * @return {FormElement} FormElement object
      */
     var FormElement = function( element, options ){
-        if (element.id === 'name') {
-            debugger
-        }
-
         this._element = Aux.elOrSelector( element, 'Invalid FormElement' );
         this._errors = {};
         this._rules = {};
@@ -577,7 +573,6 @@ Ink.createModule('Ink.UI.FormValidator', '2', [ 'Ink.UI.Aux_1','Ink.Dom.Element_
 
                 if (this._rules.hasOwnProperty(rule)) {
                     if( (typeof validationFunctions[rule] === 'function') ){
-                        if (rule === 'matches')debugger
                         if( validationFunctions[rule].apply(this, this._rules[rule] ) === false ){
 
                             this._addError( rule, validationMessages[rule] || 'Error message not defined' );
