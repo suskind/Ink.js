@@ -382,7 +382,7 @@ Ink.createModule('Ink.UI.Table', '1', ['Ink.Net.Ajax_1','Ink.UI.Aux_1','Ink.Dom.
                     }
 
                     if( ("label" in header) ){
-                        th.innerText = header.label;
+                        Element.setTextContent(th, header.label);
                     }
 
                     this._originalFields.push(field);
